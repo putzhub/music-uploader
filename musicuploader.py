@@ -18,12 +18,18 @@ import argparse
 # Prep data for manual upload to: itch, newgrounds and patreon (make it easy to copy and paste)
 # Publicize launch: ludoloon.studio, bluesky, mastodon, instagram and (hopefully) discord
 
-if __name__ == "__main__":
-    # Read metadata and store into release info
+def read_json(fname="release.json"):
     release_info = []
-    with open("release.json") as f:
+    with open(fname) as f:
         release_info = json.load(f)
         release_info["date"] = datetime.datetime.strptime(release_info["date"], "%Y-%m-%d")
+
+    return release_info
+
+if __name__ == "__main__":
+    # Read metadata and store into release info
+    release_info = read_json()
+   
 
     #Construct the parser
     parser = argparse.ArgumentParser(
@@ -32,7 +38,7 @@ if __name__ == "__main__":
         epilog="(Author: Pierce - LudoLoon Studio, ludoloon.studio)")
     
     #Add arguments
-    #parser.add_argument("--help")
+    parser.add_argument("--json", type="", help="Specify a release.json file")
 
     #Parse arguments
     parser.parse_args()
