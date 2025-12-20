@@ -1,5 +1,5 @@
 .venv
 client_secrets.json
-__pycache__
+*__pycache__*
 youtube.py-oauth2.json
 itch_key
