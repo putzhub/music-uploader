@@ -29,10 +29,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog='Music Uploader',
         description="Utility to quickly upload music releases online",
-        epilog="(Not sure what this does)")
+        epilog="(Author: Pierce - LudoLoon Studio, ludoloon.studio)")
     
     #Add arguments
     #parser.add_argument("--help")
 
     #Parse arguments
     parser.parse_args()
+
+    #Continue through workflow...
