@@ -1,5 +1,6 @@
 import services.youtube
 import json
+import datetime
 
 # TODO
 # Figure out what the flow is
@@ -15,5 +16,6 @@ if __name__ == "__main__":
     release_info = ""
     with open("release.json") as f:
         release_info = json.load(f)
+        release_info["date"] = datetime.datetime.strptime(release_info["date"], "%Y-%m-%d")
 
-    print(release_info)
+    print(release_info["date"])
