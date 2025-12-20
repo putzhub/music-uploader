@@ -1,4 +1,4 @@
-import services.youtube
+import services
 import json
 import datetime
 
@@ -17,5 +17,3 @@ if __name__ == "__main__":
     with open("release.json") as f:
         release_info = json.load(f)
         release_info["date"] = datetime.datetime.strptime(release_info["date"], "%Y-%m-%d")
-
-    print(release_info["date"])
