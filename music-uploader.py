@@ -1,4 +1,5 @@
 import services.youtube
+import json
 
 # TODO
 # Figure out what the flow is
@@ -11,4 +12,8 @@ import services.youtube
 # Publicize launch: ludoloon.studio, bluesky, mastodon, instagram and (hopefully) discord
 
 if __name__ == "__main__":
-    print("hello world!")
+    release_info = ""
+    with open("release.json") as f:
+        release_info = json.load(f)
+
+    print(release_info)
