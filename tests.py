@@ -1,6 +1,7 @@
 import unittest
+from musicuploader import *
 
-class TestTesting(unittest.TestCase):
+class TestInit(unittest.TestCase):
     def test_success(self):
         self.assertTrue(True)
 
