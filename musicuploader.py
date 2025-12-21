@@ -29,13 +29,13 @@ def read_json(fname="release.json"):
 
     return release_info
 
-def preprocessing(content_dir, release_info):
+def preprocessing(args, release_info):
     '''The process of creating .mp3, .mp4, .webp, etc'''
-    #Create MP3
-    for wav in glob.glob(content_dir + "/*.wav"):
+    for wav in glob.glob(args.content_dir + "/*.wav"):
+        #Create MP3
         create_mp3(wav)
-    #Create MP4
-    #Create webp
+        #Create MP4
+        #Create webp
 
 def create_mp3(source_file, dest_file=None):
     '''Use the shell to run lame and create an MP3'''
@@ -43,6 +43,15 @@ def create_mp3(source_file, dest_file=None):
         subprocess.run(["lame", "-V0", source_file])
     else:
         subprocess.run(["lame", "-V0", source_file, dest_file])
+
+def create_mp4(source_file, dest_file=None, cover="Cover.png"):
+    '''Use the shell to run lame and create an MP4'''
+    
+    if dest_file is None:
+        dest_file = source_file[:-3] + "mp4"
+    
+    subprocess.run(["ffmpeg", "-loop", "1", "-i", cover, "-i", source_file, "-shortest",
+                    "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", dest_file])
 
 if __name__ == "__main__":
     #Construct the parser
@@ -53,11 +62,14 @@ if __name__ == "__main__":
     
     #Add arguments
     parser.add_argument("content_dir", help="Root directory of music content")
-    parser.add_argument("--json", type=str, default="release.json", help="Specify a release.json config file")
+    parser.add_argument("--json", type=str, default="release.json", 
+                        help="Specify a release.json config file")
+    parser.add_argument("--cover", type=str, default="Cover.png", 
+                        help="Specify the name of the cover art image")
 
     #Parse arguments
     args = parser.parse_args() 
 
     # Read metadata and store into release info
     release_info = read_json(args.json)
-    preprocessing(args.content_dir, release_info)
+    preprocessing(args, release_info)

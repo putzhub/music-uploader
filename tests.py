@@ -37,5 +37,13 @@ class TestPreProcessing(unittest.TestCase):
         create_mp3(src_path, dest_path)
         self.assertIsFile(dest_path)
 
+    def test_make_mp4(self):
+        fname = "Chill Shop (Loop).wav"
+        src_path = pathlib.Path(tests_dir, fname)
+        dest_path = pathlib.Path(testing_dir, fname[:-3] + "mp4")
+        cover = pathlib.Path(tests_dir, "Cover.png")
+        create_mp4(src_path, dest_path, cover)
+        self.assertIsFile(dest_path)
+
 if __name__ == "__main__":
     unittest.main()
