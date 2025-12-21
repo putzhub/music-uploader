@@ -27,10 +27,6 @@ def read_json(fname="release.json"):
     return release_info
 
 if __name__ == "__main__":
-    # Read metadata and store into release info
-    release_info = read_json()
-   
-
     #Construct the parser
     parser = argparse.ArgumentParser(
         prog='Music Uploader',
@@ -38,9 +34,11 @@ if __name__ == "__main__":
         epilog="(Author: Pierce - LudoLoon Studio, ludoloon.studio)")
     
     #Add arguments
-    parser.add_argument("--json", type="", help="Specify a release.json file")
+    parser.add_argument("--json", type=str, help="Specify a release.json config file")
 
     #Parse arguments
-    parser.parse_args()
+    args = parser.parse_args() 
 
     #Continue through workflow...
+    # Read metadata and store into release info
+    release_info = read_json(args.json)
