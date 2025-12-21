@@ -38,7 +38,8 @@ RETRIABLE_STATUS_CODES = [500, 502, 503, 504]
 #   https://developers.google.com/youtube/v3/guides/authentication
 # For more information about the client_secrets.json file format, see:
 #   https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
-CLIENT_SECRETS_FILE = "client_secrets.json"
+SECRETS_DIR = "secrets/"
+CLIENT_SECRETS_FILE = SECRETS_DIR + "client_secrets.json"
 
 # This OAuth 2.0 access scope allows an application to upload files to the
 # authenticated user's YouTube channel, but doesn't allow other types of access.
@@ -72,7 +73,7 @@ def get_authenticated_service(args):
     scope=YOUTUBE_UPLOAD_SCOPE,
     message=MISSING_CLIENT_SECRETS_MESSAGE)
 
-  storage = Storage("%s-oauth2.json" % sys.argv[0])
+  storage = Storage(SECRETS_DIR + "%s-oauth2.json" % sys.argv[0])
   credentials = storage.get()
 
   if credentials is None or credentials.invalid:
@@ -116,7 +117,8 @@ def initialize_upload(youtube, options):
     media_body=MediaFileUpload(options.file, chunksize=-1, resumable=True)
   )
 
-  resumable_upload(insert_request)
+  id = resumable_upload(insert_request)
+  return id
 
 # This method implements an exponential backoff strategy to resume a
 # failed upload.
@@ -131,6 +133,7 @@ def resumable_upload(insert_request):
       if response is not None:
         if 'id' in response:
           print("Video id '%s' was successfully uploaded." % response['id'])
+          return response['id']
         else:
           exit("The upload failed with an unexpected response: %s" % response)
     except HttpError as e:
@@ -153,7 +156,9 @@ def resumable_upload(insert_request):
       print("Sleeping %f seconds and then retrying..." % sleep_seconds)
       time.sleep(sleep_seconds)
 
+#If ran directly...
 if __name__ == '__main__':
+  #argparser through OAuth2
   argparser.add_argument("--file", required=True, help="Video file to upload")
   argparser.add_argument("--title", help="Video title", default="Test Title")
   argparser.add_argument("--description", help="Video description",
