@@ -3,6 +3,7 @@ import json
 import datetime
 import argparse
 import subprocess
+import glob
 
 # TODO
 # Figure out what the flow is
@@ -31,11 +32,12 @@ def read_json(fname="release.json"):
 def preprocessing(content_dir, release_info):
     '''The process of creating .mp3, .mp4, .webp, etc'''
     #Create MP3
+    for wav in glob.glob(content_dir + "/*.wav"):
+        create_mp3(wav)
     #Create MP4
     #Create webp
-    pass
 
-def create_mp3(source_file, dest_file):
+def create_mp3(source_file, dest_file=None):
     '''Use the shell to run lame and create an MP3'''
     if dest_file is None:
         subprocess.run(["lame", "-V0", source_file])
@@ -51,7 +53,7 @@ if __name__ == "__main__":
     
     #Add arguments
     parser.add_argument("content_dir", help="Root directory of music content")
-    parser.add_argument("--json", type=str, help="Specify a release.json config file")
+    parser.add_argument("--json", type=str, default="release.json", help="Specify a release.json config file")
 
     #Parse arguments
     args = parser.parse_args() 
