@@ -1,11 +1,16 @@
 {
-    "title": "Roguelike Adventure Music Pack",
+    "title": "Test",
     "date": "2025-12-20",
-    "url": "roguelike-adventure",
-    "cover": "roguelike-adventure.webp",
+    "url": "test-url",
     "summary": "Music for all types of classic RPG & Action Adventure locations! Ready to go, easy to customize. ",
     "embed": "https://www.youtube.com/embed/videoseries?list=PLL06MmY4OQnbZhDoKYUFZCEu5WgvtxPIg",
     "tags": [ "Music Pack" ],
+    "mp3": {
+        "genre": "game",
+        "comment": "https://ludoloon.studio",
+        "artist": "LudoLoon Studio",
+        "album": "test"
+    }, 
     "details": 
         {"cost": "Paid",
         "loop": "Loopable",
