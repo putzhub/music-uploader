@@ -3,6 +3,7 @@ from musicuploader import *
 import os
 import pathlib
 import shutil
+from mutagen.mp3 import MP3
 
 testing_dir = "./test/testing"
 tests_dir = "./tests"
@@ -31,13 +32,17 @@ class TestPreProcessing(unittest.TestCase):
 
     #Tests
     def test_make_mp3(self):
+        #create the file
         fname = "Chill Shop (Loop).wav"
         src_path = pathlib.Path(tests_dir, fname)
         dest_path = pathlib.Path(testing_dir, fname[:-3] + "mp3")
         create_mp3(src_path, dest_path)
         self.assertIsFile(dest_path)
+        audio = MP3(dest_path)
+        self.assertEqual(audio["title"], "Test")
 
     def test_make_mp4(self):
+        #Create the file
         fname = "Chill Shop (Loop).wav"
         src_path = pathlib.Path(tests_dir, fname)
         dest_path = pathlib.Path(testing_dir, fname[:-3] + "mp4")
@@ -46,6 +51,7 @@ class TestPreProcessing(unittest.TestCase):
         self.assertIsFile(dest_path)
 
     def test_make_webp(self):
+        #Create the file
         fname = "Cover.png"
         dest_path = pathlib.Path(testing_dir, fname[:-3] + "webp")
         cover = pathlib.Path(tests_dir, "Cover.png")

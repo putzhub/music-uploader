@@ -5,6 +5,7 @@ import argparse
 import subprocess
 import glob
 from pathlib import Path
+from mutagen.mp3 import MP3
 
 # TODO
 # Figure out what the flow is
@@ -64,7 +65,6 @@ def create_webp(cover, dest_path=None):
     subprocess.run(["magick", cover, "-quality", "90", dest_path])
 
 if __name__ == "__main__":
-
     #Construct the parser
     parser = argparse.ArgumentParser(
         prog='Music Uploader',
