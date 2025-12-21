@@ -32,12 +32,14 @@ class TestPreProcessing(unittest.TestCase):
 
     #Tests
     def test_make_mp3(self):
-        #create the file
+        #Create the file
         fname = "Chill Shop (Loop).wav"
         src_path = pathlib.Path(tests_dir, fname)
         dest_path = pathlib.Path(testing_dir, fname[:-3] + "mp3")
         create_mp3(src_path, dest_path)
         self.assertIsFile(dest_path)
+
+        #Test tag data
         audio = MP3(dest_path)
         self.assertEqual(audio["title"], "Test")
 
