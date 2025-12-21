@@ -90,12 +90,6 @@ def create_zip(source, dest_path=None):
 
     shutil.make_archive(dest_path, "zip", source)
 
-
-# Prepare for services Youtube, Soundcloud, Itch, Newgrounds, LudoLoon Studio, etc
-#Music hosting
-
-#Social Media
-
 if __name__ == "__main__":
     #Construct the parser
     parser = argparse.ArgumentParser(
@@ -116,3 +110,9 @@ if __name__ == "__main__":
     # Read metadata and store into release info
     release_info = read_json(args.json)
     preprocessing(args, release_info)
+
+    # TODO Move to services module & plan out
+    # Prepare for services Youtube, Soundcloud, Itch, Newgrounds, etc
+    #Music hosting
+
+    #Website & Social Media

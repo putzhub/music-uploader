@@ -1,2 +1,1 @@
-def test():
-    print("hello world")
+# https://blog.apify.com/python-discord-api/
