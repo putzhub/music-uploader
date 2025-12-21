@@ -6,6 +6,12 @@
     "summary": "Music for all types of classic RPG & Action Adventure locations! Ready to go, easy to customize. ",
     "embed": "https://www.youtube.com/embed/videoseries?list=PLL06MmY4OQnbZhDoKYUFZCEu5WgvtxPIg",
     "tags": [ "Music Pack" ],
+    "mp3": {
+        "genre": "game",
+        "website": "https://ludoloon.studio",
+        "artist": "LudoLoon Studio",
+        "album": "test"
+    }, 
     "details": 
         {"cost": "Paid",
         "loop": "Loopable",

@@ -5,6 +5,7 @@ import argparse
 import subprocess
 import glob
 from pathlib import Path
+from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
 
 # TODO
@@ -27,7 +28,7 @@ def read_json(fname="release.json"):
     release_info = []
     with open(fname) as f:
         release_info = json.load(f)
-        release_info["date"] = datetime.datetime.strptime(release_info["date"], "%Y-%m-%d")
+        #release_info["date"] = datetime.datetime.strptime(release_info["date"], "%Y-%m-%d")
 
     return release_info
 
@@ -36,18 +37,27 @@ def preprocessing(args, release_info):
     cover_path=Path(args.content_dir, args.cover)
 
     for wav_file in glob.glob(args.content_dir + "/*.wav"):
-        create_mp3(wav_file)
+        create_mp3(wav_file, release_info)
         create_mp4(wav_file, cover=cover_path)
     #Create .webp version of cover art for ludoloon.studio
     create_webp(cover_path)
 
-def create_mp3(source_file, dest_path=None):
-    '''Use the shell to run lame and create an MP3'''
-    
+def create_mp3(source_file, json, dest_path=None):
+    '''Use the shell to run LAME and create an MP3, add tags'''
+    #Create file
     if dest_path is None:
-        dest_path = source_file[:-3] + "mp3"
-        
+        dest_path = str(source_file)[:-3] + "mp3"
     subprocess.run(["lame", "-V0", source_file, dest_path])
+
+    #Add MP3 tags
+    mp3 = MP3(dest_path, ID3=EasyID3)
+    mp3.add_tags()  #Add EasyID3 header
+    mp3["title"] = json["title"]
+    mp3["date"] = json["date"]
+    tags = ["artist", "website", "genre", "album"]
+    for tag in tags:
+        mp3[tag] = json["mp3"][tag]
+    mp3.save()
 
 def create_mp4(source_file, dest_path=None, cover="Cover.png"):
     '''Use the shell to run lame and create an MP4'''

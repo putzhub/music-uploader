@@ -3,17 +3,17 @@ from musicuploader import *
 import os
 import pathlib
 import shutil
-from mutagen.mp3 import MP3
+from mutagen.easyid3 import EasyID3
 
 testing_dir = "./test/testing"
 tests_dir = "./tests"
+json = read_json("release_example.json")
 
 class TestInit(unittest.TestCase):
     def test_read_json(self):
         '''Make sure we're working with valid data'''
         results = read_json("release_example.json")
         self.assertEqual(results["title"], "Test")
-        self.assertEqual(results["date"], datetime.datetime(2025, 12, 20))
 
 class TestPreProcessing(unittest.TestCase):
     #Helper functions
@@ -36,14 +36,17 @@ class TestPreProcessing(unittest.TestCase):
         fname = "Chill Shop (Loop).wav"
         src_path = pathlib.Path(tests_dir, fname)
         dest_path = pathlib.Path(testing_dir, fname[:-3] + "mp3")
-        create_mp3(src_path, dest_path)
+        create_mp3(src_path, json, dest_path=dest_path)
         self.assertIsFile(dest_path)
 
         #Test tag data
-        audio = MP3(dest_path)
-        self.assertEqual(audio["title"], "Test")
+        audio = EasyID3(dest_path)
+        self.assertEqual(audio["title"], ["Test"])
+        tags = ["artist", "website", "genre", "album"]
+        for tag in tags:
+            self.assertEqual(audio[tag], [json["mp3"][tag]])
 
-    @unittest.skip("Too verbose")
+    #@unittest.skip("Too verbose")
     def test_make_mp4(self):
         #Create the file
         fname = "Chill Shop (Loop).wav"
