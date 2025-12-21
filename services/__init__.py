@@ -6,4 +6,5 @@ from . import lls
 from . import mastodon
 from . import patreon
 from . import reddit
+from . import soundcloud
 from . import youtube
