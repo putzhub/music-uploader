@@ -44,9 +44,9 @@ def preprocessing(args, release_info):
     create_webp(cover_path)
 
     #If we have stems then package them
-    if Path(args.content_dir,"Stems").exists:
-        #create_zip
-        pass
+    stems_path = Path(args.content_dir, "Stems")
+    if stems_path.exists:
+        create_zip(stems_path)
 
 #Preprocessing helpers
 def create_mp3(source_file, json, dest_path=None):
