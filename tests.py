@@ -64,5 +64,11 @@ class TestPreProcessing(unittest.TestCase):
         create_webp(cover, dest_path)
         self.assertIsFile(dest_path)
 
+    def test_zip_stems(self):
+        src = pathlib.Path(tests_dir, "Stems/")
+        target = pathlib.Path(testing_dir, "Stems.zip")
+        create_zip(src, str(target)[:-4]) #shutil.make_archive() doesn't need .zip
+        self.assertIsFile(target)
+
 if __name__ == "__main__":
     unittest.main()

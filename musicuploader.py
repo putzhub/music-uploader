@@ -7,6 +7,7 @@ import glob
 from pathlib import Path
 from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
+import shutil
 
 # TODO
 # Figure out what the flow is
@@ -42,6 +43,12 @@ def preprocessing(args, release_info):
     #Create .webp version of cover art for ludoloon.studio
     create_webp(cover_path)
 
+    #If we have stems then package them
+    if Path(args.content_dir,"Stems").exists:
+        #create_zip
+        pass
+
+#Preprocessing helpers
 def create_mp3(source_file, json, dest_path=None):
     '''Use the shell to run LAME and create an MP3, add tags'''
     #Create file
@@ -73,6 +80,18 @@ def create_webp(cover, dest_path=None):
         dest_path = str(cover)[:-3] + "webp"
 
     subprocess.run(["magick", cover, "-quality", "90", dest_path])
+
+def create_zip(source, dest_path=None):
+    if dest_path is None:
+        dest_path = str(source)
+
+    shutil.make_archive(dest_path, "zip", source)
+
+
+# Prepare for services Youtube, Soundcloud, Itch, Newgrounds, LudoLoon Studio, etc
+#Music hosting
+
+#Social Media
 
 if __name__ == "__main__":
     #Construct the parser
