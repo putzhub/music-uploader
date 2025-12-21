@@ -59,10 +59,11 @@ class TestPreProcessing(unittest.TestCase):
     def test_make_webp(self):
         #Create the file
         fname = "Cover.png"
-        dest_path = pathlib.Path(testing_dir, fname[:-3] + "webp")
+        dest_path = pathlib.Path(testing_dir, json["cover"])
         cover = pathlib.Path(tests_dir, "Cover.png")
         create_webp(cover, dest_path)
         self.assertIsFile(dest_path)
+
 
     def test_zip_stems(self):
         src = pathlib.Path(tests_dir, "Stems/")

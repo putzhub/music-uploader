@@ -41,7 +41,10 @@ def preprocessing(args, release_info):
         create_mp3(wav_file, release_info)
         create_mp4(wav_file, cover=cover_path)
     #Create .webp version of cover art for ludoloon.studio
-    create_webp(cover_path)
+    if release_info["cover"]:
+        create_webp(cover_path, Path(args.content_dir, release_info["cover"]))
+    else:
+        create_webp(cover_path)
 
     #If we have stems then package them
     stems_path = Path(args.content_dir, "Stems")
