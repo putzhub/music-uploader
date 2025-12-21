@@ -2,6 +2,7 @@ import services
 import json
 import datetime
 import argparse
+import subprocess
 
 # TODO
 # Figure out what the flow is
@@ -18,6 +19,7 @@ import argparse
 # Prep data for manual upload to: itch, newgrounds and patreon (make it easy to copy and paste)
 # Publicize launch: ludoloon.studio, bluesky, mastodon, instagram and (hopefully) discord
 
+# Pre-processing
 def read_json(fname="release.json"):
     release_info = []
     with open(fname) as f:
@@ -25,6 +27,17 @@ def read_json(fname="release.json"):
         release_info["date"] = datetime.datetime.strptime(release_info["date"], "%Y-%m-%d")
 
     return release_info
+
+def preprocessing(content_dir, release_info):
+    '''The process of creating .mp3, .mp4, .webp, etc'''
+    #Create MP3
+    #Create MP4
+    #Create webp
+    pass
+
+def create_mp3(source_file):
+    '''Use the shell to run lame and create an MP3'''
+    subprocess.call(["lame", "-V0", source_file])
 
 if __name__ == "__main__":
     #Construct the parser
@@ -34,11 +47,12 @@ if __name__ == "__main__":
         epilog="(Author: Pierce - LudoLoon Studio, ludoloon.studio)")
     
     #Add arguments
+    parser.add_argument("content_dir", help="Root directory of music content")
     parser.add_argument("--json", type=str, help="Specify a release.json config file")
 
     #Parse arguments
     args = parser.parse_args() 
 
-    #Continue through workflow...
     # Read metadata and store into release info
     release_info = read_json(args.json)
+    preprocessing(args.content_dir, release_info)

@@ -1,5 +1,17 @@
 # Read Me
 
+# About
+
+This is a personal project to make my life easier when uploading music to the web.
+
+It probably won't be as useful to the broader public, but who knows!
+
+Regardless, you'll need a few things to be true:
+
+1. You're on linux
+2. You have the following installed:
+    * LAME, ffmpeg, (tbd)
+
 ## Setup
 0. Setup venv: 
 
