@@ -4,6 +4,7 @@ import datetime
 import argparse
 import subprocess
 import glob
+from pathlib import Path
 
 # TODO
 # Figure out what the flow is
@@ -31,11 +32,14 @@ def read_json(fname="release.json"):
 
 def preprocessing(args, release_info):
     '''The process of creating .mp3, .mp4, .webp, etc'''
-    for wav in glob.glob(args.content_dir + "/*.wav"):
+    for wav_file in glob.glob(args.content_dir + "/*.wav"):
+        cover=Path(args.content_dir, args.cover)
         #Create MP3
-        create_mp3(wav)
+        create_mp3(wav_file)
         #Create MP4
-        #Create webp
+        create_mp4(wav_file, cover=cover)
+    #Create webp
+    #create_webp(cover)
 
 def create_mp3(source_file, dest_file=None):
     '''Use the shell to run lame and create an MP3'''
@@ -52,6 +56,9 @@ def create_mp4(source_file, dest_file=None, cover="Cover.png"):
     
     subprocess.run(["ffmpeg", "-loop", "1", "-i", cover, "-i", source_file, "-shortest",
                     "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", dest_file])
+
+def create_webp():
+    pass
 
 if __name__ == "__main__":
     #Construct the parser

@@ -10,7 +10,7 @@ Regardless, you'll need a few things to be true:
 
 1. You're on linux
 2. You have the following installed:
-    * LAME, ffmpeg, (tbd)
+    * LAME, ffmpeg, ImageMagick, (tbd)
 
 ## Setup
 0. Setup venv: 

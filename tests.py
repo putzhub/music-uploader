@@ -45,5 +45,12 @@ class TestPreProcessing(unittest.TestCase):
         create_mp4(src_path, dest_path, cover)
         self.assertIsFile(dest_path)
 
+    def test_make_webp(self):
+        fname = "Cover.png"
+        dest_path = pathlib.Path(testing_dir, fname[:-3] + "webp")
+        cover = pathlib.Path(tests_dir, "Cover.png")
+        create_webp(cover)
+        self.assertIsFile(dest_path)
+
 if __name__ == "__main__":
     unittest.main()
