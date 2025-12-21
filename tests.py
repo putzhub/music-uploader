@@ -2,6 +2,10 @@ import unittest
 from musicuploader import *
 import os
 import pathlib
+import shutil
+
+testing_dir = "./test/testing"
+tests_dir = "./tests"
 
 class TestInit(unittest.TestCase):
     def test_read_json(self):
@@ -19,16 +23,19 @@ class TestPreProcessing(unittest.TestCase):
     #Prep & cleanup
     @classmethod
     def setUpClass(self):
-        os.makedirs("test/testing")
+        os.makedirs(testing_dir)
     
     @classmethod
     def tearDownClass(self):
-        os.removedirs("test/testing")
+        shutil.rmtree("test")
 
     #Tests
     def test_make_mp3(self):
-        fname = "Chill Shop (Loop).mp3"
-        self.assertIsFile(pathlib.Path("test/testing/" + fname))
+        fname = "Chill Shop (Loop).wav"
+        src_path = pathlib.Path(tests_dir, fname)
+        dest_path = pathlib.Path(testing_dir, fname[:-3] + "mp3")
+        create_mp3(src_path, dest_path)
+        self.assertIsFile(dest_path)
 
 if __name__ == "__main__":
     unittest.main()

@@ -35,9 +35,12 @@ def preprocessing(content_dir, release_info):
     #Create webp
     pass
 
-def create_mp3(source_file):
+def create_mp3(source_file, dest_file):
     '''Use the shell to run lame and create an MP3'''
-    subprocess.call(["lame", "-V0", source_file])
+    if dest_file is None:
+        subprocess.run(["lame", "-V0", source_file])
+    else:
+        subprocess.run(["lame", "-V0", source_file, dest_file])
 
 if __name__ == "__main__":
     #Construct the parser
