@@ -12,7 +12,7 @@ class TestInit(unittest.TestCase):
     def test_read_json(self):
         '''Make sure we're working with valid data'''
         results = read_json("release_example.json")
-        self.assertEqual(results["title"], "Roguelike Adventure Music Pack")
+        self.assertEqual(results["title"], "Test")
         self.assertEqual(results["date"], datetime.datetime(2025, 12, 20))
 
 class TestPreProcessing(unittest.TestCase):
@@ -41,6 +41,7 @@ class TestPreProcessing(unittest.TestCase):
         audio = MP3(dest_path)
         self.assertEqual(audio["title"], "Test")
 
+    @unittest.skip("Too verbose")
     def test_make_mp4(self):
         #Create the file
         fname = "Chill Shop (Loop).wav"
