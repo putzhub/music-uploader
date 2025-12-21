@@ -49,7 +49,7 @@ class TestPreProcessing(unittest.TestCase):
         fname = "Cover.png"
         dest_path = pathlib.Path(testing_dir, fname[:-3] + "webp")
         cover = pathlib.Path(tests_dir, "Cover.png")
-        create_webp(cover)
+        create_webp(cover, dest_path)
         self.assertIsFile(dest_path)
 
 if __name__ == "__main__":

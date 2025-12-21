@@ -32,35 +32,39 @@ def read_json(fname="release.json"):
 
 def preprocessing(args, release_info):
     '''The process of creating .mp3, .mp4, .webp, etc'''
+    cover_path=Path(args.content_dir, args.cover)
+
     for wav_file in glob.glob(args.content_dir + "/*.wav"):
-        cover=Path(args.content_dir, args.cover)
-        #Create MP3
         create_mp3(wav_file)
-        #Create MP4
-        create_mp4(wav_file, cover=cover)
-    #Create webp
-    #create_webp(cover)
+        create_mp4(wav_file, cover=cover_path)
+    #Create .webp version of cover art for ludoloon.studio
+    create_webp(cover_path)
 
-def create_mp3(source_file, dest_file=None):
+def create_mp3(source_file, dest_path=None):
     '''Use the shell to run lame and create an MP3'''
-    if dest_file is None:
-        subprocess.run(["lame", "-V0", source_file])
-    else:
-        subprocess.run(["lame", "-V0", source_file, dest_file])
+    
+    if dest_path is None:
+        dest_path = source_file[:-3] + "mp3"
+        
+    subprocess.run(["lame", "-V0", source_file, dest_path])
 
-def create_mp4(source_file, dest_file=None, cover="Cover.png"):
+def create_mp4(source_file, dest_path=None, cover="Cover.png"):
     '''Use the shell to run lame and create an MP4'''
     
-    if dest_file is None:
-        dest_file = source_file[:-3] + "mp4"
+    if dest_path is None:
+        dest_path = source_file[:-3] + "mp4"
     
     subprocess.run(["ffmpeg", "-loop", "1", "-i", cover, "-i", source_file, "-shortest",
-                    "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", dest_file])
+                    "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", dest_path])
 
-def create_webp():
-    pass
+def create_webp(cover, dest_path=None):
+    if dest_path is None:
+        dest_path = str(cover)[:-3] + "webp"
+
+    subprocess.run(["magick", cover, "-quality", "90", dest_path])
 
 if __name__ == "__main__":
+
     #Construct the parser
     parser = argparse.ArgumentParser(
         prog='Music Uploader',
