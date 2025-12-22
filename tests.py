@@ -9,6 +9,8 @@ TESTING_DIR = "./test/testing"
 TESTS_DIR = "./tests"
 JSON = read_json("release_example.json")
 
+#ASSUMPTIONS
+# Files in tests forlder: Cover.png and *.wav 
 class TestInit(unittest.TestCase):
     #Make sure we can load a valid configuration
     def test_read_json(self):

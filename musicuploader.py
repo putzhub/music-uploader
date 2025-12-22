@@ -29,7 +29,6 @@ def read_json(fname="release.json"):
     release_info = []
     with open(fname) as f:
         release_info = json.load(f)
-        #release_info["date"] = datetime.datetime.strptime(release_info["date"], "%Y-%m-%d")
 
     return release_info
 
@@ -75,7 +74,7 @@ def create_mp4(source_file, dest_path=None, cover="Cover.png"):
     if dest_path is None:
         dest_path = source_file[:-3] + "mp4"
     
-    subprocess.run(["ffmpeg", "-loop", "1", "-i", cover, "-i", source_file, "-shortest",
+    subprocess.run(["ffmpeg", "-y", "-loop", "1", "-i", cover, "-i", source_file, "-shortest",
                     "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", dest_path])
 
 def create_webp(cover, dest_path=None):
