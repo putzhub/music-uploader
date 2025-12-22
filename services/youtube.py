@@ -177,7 +177,8 @@ def upload(mp4, args):
   tags = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
           "soundtrack", "indie", "renoise", "composer", "game", "videogame",
           "gamemusic", "ost", "pack", "bundle"]
-  tags.append(*args["tags"])
+  for tag in args["tags"]:
+    tags.append(tag)
   #Get the keywords before they're hashtags
   args["keywords"] = ",".join(tags)
   #give 'em hashtags and remove spaces for description
