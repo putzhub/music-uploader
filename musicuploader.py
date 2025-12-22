@@ -33,16 +33,16 @@ def read_json(fname="release.json"):
     #RETURN FIRST RESULT ONLY FOR NOW
     return release_info[0]
 
-def preprocessing(args, release_info):
+def preprocessing(content_dir, cover, release_info):
     '''The process of creating .mp3, .mp4, .webp, etc'''
-    cover_path=Path(args.content_dir, args.cover)
+    cover_path=Path(content_dir, cover)
 
     for wav_file in glob.glob(args.content_dir + "/*.wav"):
         create_mp3(wav_file, release_info)
         create_mp4(wav_file, cover=cover_path)
     #Create .webp version of cover art for ludoloon.studio
     if release_info["cover"]:
-        create_webp(cover_path, Path(args.content_dir, release_info["cover"]))
+        create_webp(cover_path, Path(content_dir, release_info["cover"]))
     else:
         create_webp(cover_path)
 
@@ -118,8 +118,8 @@ if __name__ == "__main__":
 
     # Read metadata and store into release info
     release_info = read_json(args.json)
-    preprocessing(args, release_info)
-    upload_music(args, release_info)
+    preprocessing(args.content_dir, args.cover, release_info)
+    #upload_music(args, release_info)
 
     # TODO Move to services module & plan out
     # Prepare for services Youtube, Soundcloud, Itch, Newgrounds, etc
