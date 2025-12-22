@@ -48,7 +48,7 @@ def preprocessing(content_dir, cover, release_info):
 
     #If we have stems then package them
     stems_path = Path(args.content_dir, "Stems")
-    if stems_path.exists:
+    if stems_path.exists():
         create_zip(stems_path)
 
 #Preprocessing helpers
