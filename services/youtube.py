@@ -117,8 +117,7 @@ def initialize_upload(youtube, options):
     media_body=MediaFileUpload(options.file, chunksize=-1, resumable=True)
   )
 
-  id = resumable_upload(insert_request)
-  return id
+  return resumable_upload(insert_request)
 
 # This method implements an exponential backoff strategy to resume a
 # failed upload.
@@ -155,6 +154,20 @@ def resumable_upload(insert_request):
       sleep_seconds = random.random() * max_sleep
       print("Sleeping %f seconds and then retrying..." % sleep_seconds)
       time.sleep(sleep_seconds)
+
+def upload(args):
+  #Upload to youtube
+
+  #...unless we already have a video ID present
+  if "embed" in args:
+    return False
+
+  youtube = get_authenticated_service(args)
+  try:
+    return initialize_upload(youtube, args)
+  except HttpError as e:
+    print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
+    return False
 
 #If ran directly...
 if __name__ == '__main__':

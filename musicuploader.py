@@ -90,6 +90,10 @@ def create_zip(source, dest_path=None):
 
     shutil.make_archive(dest_path, "zip", source)
 
+#Upload music online
+def upload_music(args, release_info):
+    pass
+
 if __name__ == "__main__":
     #Construct the parser
     parser = argparse.ArgumentParser(

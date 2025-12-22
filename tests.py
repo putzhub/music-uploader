@@ -71,5 +71,10 @@ class TestPreProcessing(unittest.TestCase):
         create_zip(src, str(target)[:-4]) #shutil.make_archive() doesn't need .zip
         self.assertIsFile(target)
 
+class TestServices(unittest.TestCase):
+    def test_youtube(self):
+        #Don't upload if there's already an ID
+        self.assertFalse(services.youtube.upload(json))
+
 if __name__ == "__main__":
     unittest.main()
