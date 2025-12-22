@@ -1,6 +1,5 @@
 import services
 import json
-import datetime
 import argparse
 import subprocess
 import glob
@@ -30,14 +29,14 @@ import shutil
 
 class MusicRelease():
     metadata = []
-    #titles = []
+    content_dir = ""
 
-    def __init__(self, json_file):
+    def __init__(self, json_file, content_dir):
+        self.content_dir = content_dir
         #read in from JSON file
         with open(json_file) as f:
             self.metadata = json.load(f)
-
-        #Make sure we have the expected data, otherwise tell the user
+        #Make sure we have the expected data
         for entry in self.metadata:
             for key in ["title", "summary", "date", "url", "tags"]:
                 assert key in entry
@@ -46,36 +45,47 @@ class MusicRelease():
                 assert key in entry["details"]
             for key in ["genre", "album", "artist", "website"]:
                 assert key in entry["mp3"]
-        
-
-    #Processing methods...
-
-def preprocessing(content_dir, cover, release_info):
-    '''The process of creating .mp3, .mp4, .webp, etc
     
-    ONLY USE WITH ONE FILE FOR NOW'''
+    #Processing methods...
+    def preprocessing(self, cover):
+        '''The process of creating .mp3, .mp4, .webp, etc'''
 
-    #Create a list of all the titles 
-    titles = [title["title"] for title in release_info]
+        #Create a list of all the titles 
+        titles = [title["title"] for title in release_info]
+        cover_path=Path(self.content_dir, cover)
 
-    cover_path=Path(content_dir, cover)
+        #If a title and a filename match up, put 'em together
+        for wav_file in glob.glob(self.content_dir + "/*.wav"):
+            for (i, title) in enumerate(titles):
+                if title in wav_file:
+                    create_mp3(wav_file, release_info[i])
+                    create_mp4(wav_file, cover=cover_path)
+                #Create .webp version of cover art for ludoloon.studio
+                if release_info[i]["cover"]:
+                    create_webp(cover_path, Path(self.content_dir, release_info[i]["cover"]))
+                else:
+                    create_webp(cover_path)
 
-    #If a title and a filename match up, put 'em together
-    for wav_file in glob.glob(content_dir + "/*.wav"):
-        for (i, title) in enumerate(titles):
-            if title in wav_file:
-                create_mp3(wav_file, release_info[i])
-                create_mp4(wav_file, cover=cover_path)
-            #Create .webp version of cover art for ludoloon.studio
-            if release_info[i]["cover"]:
-                create_webp(cover_path, Path(content_dir, release_info[i]["cover"]))
-            else:
-                create_webp(cover_path)
-
-    #If we have stems then package them
-    stems_path = Path(args.content_dir, "Stems")
-    if stems_path.exists():
-        create_zip(stems_path)
+        #If we have stems then package them
+        stems_path = Path(args.content_dir, "Stems")
+        if stems_path.exists():
+            create_zip(stems_path)
+    
+    #Upload music online
+    def upload_music(args, release_info):
+        #Create a list of all the titles 
+        titles = [title["title"] for title in release_info]
+        #TODO: 
+        # Use class to help with updating release_info?
+        # Capture embed ID & save into release info
+        # Put together as part of same list if multiple
+        #WARNING: NOT READY FOR MULTIPLE FILES
+        for mp4 in glob.glob(args.content_dir + "/*.mp4"):
+            for (i, title) in enumerate(titles):
+                if title in mp4:
+                    ytid = services.youtube.upload(mp4, release_info[i])
+                    if ytid is not False:
+                        release_info[i]["embed"] = "https://youtube.com/embed/"+ytid
 
 #Preprocessing helpers
 def create_mp3(source_file, json, dest_path=None):
@@ -113,22 +123,6 @@ def create_zip(source, dest_path=None):
     if dest_path is None:
         dest_path = str(source)
     shutil.make_archive(dest_path, "zip", source)
-
-#Upload music online
-def upload_music(args, release_info):
-    #Create a list of all the titles 
-    titles = [title["title"] for title in release_info]
-    #TODO: 
-    # Use class to help with updating release_info?
-    # Capture embed ID & save into release info
-    # Put together as part of same list if multiple
-    #WARNING: NOT READY FOR MULTIPLE FILES
-    for mp4 in glob.glob(args.content_dir + "/*.mp4"):
-        for (i, title) in enumerate(titles):
-            if title in mp4:
-                ytid = services.youtube.upload(mp4, release_info[i])
-                if ytid is not False:
-                    release_info[i]["embed"] = "https://youtube.com/embed/"+ytid
 
 if __name__ == "__main__":
     #Construct the parser

@@ -6,7 +6,8 @@ import shutil
 from mutagen.easyid3 import EasyID3
 
 TESTING_DIR = "./test/testing"
-TESTS_DIR = "./tests/Source"
+TESTS_DIR = "./tests/"
+CONTENT_DIR = "./tests/Source"
 TEST_JSON_PATH = "tests/release_example.json"
 
 #ASSUMPTIONS
@@ -18,12 +19,12 @@ class TestInit(unittest.TestCase):
     #Make sure we can load a valid configuration
     def test_read_json(self):
         '''Make sure we can load the music data json file'''
-        music_release = MusicRelease(TEST_JSON_PATH)
+        music_release = MusicRelease(TEST_JSON_PATH, CONTENT_DIR)
         self.assertIsInstance(music_release, MusicRelease)
         self.assertEqual(music_release.metadata[0]["title"], "Test")
 
 class TestWithFiles(unittest.TestCase):
-    music_release = MusicRelease(TEST_JSON_PATH)
+    music_release = MusicRelease(TEST_JSON_PATH, CONTENT_DIR)
 
     #Helper functions
     def assertIsFile(self, path):
@@ -43,7 +44,7 @@ class TestWithFiles(unittest.TestCase):
     def test_make_mp3(self):
         #Create the file
         fname = "Test.wav"
-        src_path = pathlib.Path(TESTS_DIR, fname)
+        src_path = pathlib.Path(CONTENT_DIR, fname)
         dest_path = pathlib.Path(TESTING_DIR, fname[:-3] + "mp3")
         create_mp3(src_path, self.music_release.metadata[0], dest_path=dest_path)
         self.assertIsFile(dest_path)
@@ -59,9 +60,9 @@ class TestWithFiles(unittest.TestCase):
     def test_make_mp4(self):
         #Create the file
         fname = "Test.wav"
-        src_path = pathlib.Path(TESTS_DIR, fname)
+        src_path = pathlib.Path(CONTENT_DIR, fname)
         dest_path = pathlib.Path(TESTING_DIR, fname[:-3] + "mp4")
-        cover = pathlib.Path(TESTS_DIR, "Cover.png")
+        cover = pathlib.Path(CONTENT_DIR, "Cover.png")
         create_mp4(src_path, dest_path, cover)
         self.assertIsFile(dest_path)
 
@@ -69,12 +70,12 @@ class TestWithFiles(unittest.TestCase):
         #Create the file
         fname = "Cover.png"
         dest_path = pathlib.Path(TESTING_DIR, self.music_release.metadata[0]["cover"])
-        cover = pathlib.Path(TESTS_DIR, "Cover.png")
+        cover = pathlib.Path(CONTENT_DIR, "Cover.png")
         create_webp(cover, dest_path)
         self.assertIsFile(dest_path)
 
     def test_zip_stems(self):
-        src = pathlib.Path(TESTS_DIR, "Stems/")
+        src = pathlib.Path(CONTENT_DIR, "Stems/")
         target = pathlib.Path(TESTING_DIR, "Stems.zip")
         create_zip(src, str(target)[:-4]) #shutil.make_archive() doesn't need .zip
         self.assertIsFile(target)
@@ -82,7 +83,7 @@ class TestWithFiles(unittest.TestCase):
 class TestServices(unittest.TestCase):
     def test_youtube(self):
         #Initialize the class
-        music_release = MusicRelease(TEST_JSON_PATH)
+        music_release = MusicRelease(TEST_JSON_PATH, CONTENT_DIR)
         #Don't upload if there's already an ID, if this fails check config for embed
         self.assertFalse(services.youtube.upload(None, music_release.metadata[0]))
 
