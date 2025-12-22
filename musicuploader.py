@@ -50,13 +50,6 @@ class MusicRelease():
 
     #Processing methods...
 
-# Pre-processing
-def read_json(fname="release.json"):
-    release_info = []
-    with open(fname) as f:
-        release_info = json.load(f)
-    return release_info
-
 def preprocessing(content_dir, cover, release_info):
     '''The process of creating .mp3, .mp4, .webp, etc
     

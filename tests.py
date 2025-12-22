@@ -6,7 +6,7 @@ import shutil
 from mutagen.easyid3 import EasyID3
 
 TESTING_DIR = "./test/testing"
-TESTS_DIR = "./tests"
+TESTS_DIR = "./tests/Source"
 TEST_JSON_PATH = "tests/release_example.json"
 
 #ASSUMPTIONS
@@ -23,6 +23,8 @@ class TestInit(unittest.TestCase):
         self.assertEqual(music_release.metadata[0]["title"], "Test")
 
 class TestWithFiles(unittest.TestCase):
+    music_release = MusicRelease(TEST_JSON_PATH)
+
     #Helper functions
     def assertIsFile(self, path):
         if not pathlib.Path(path).resolve().is_file():
@@ -39,49 +41,42 @@ class TestWithFiles(unittest.TestCase):
 
     #Tests
     def test_make_mp3(self):
-        '''Should create an .mp3 file with appropriate tags'''
-        #Initialize the class
-        music_release = MusicRelease(TEST_JSON_PATH)
         #Create the file
-        dest_path = pathlib.Path(TESTING_DIR, "Test.mp3")
-        music_release.create_mp3(dest_path=dest_path)
+        fname = "Test.wav"
+        src_path = pathlib.Path(TESTS_DIR, fname)
+        dest_path = pathlib.Path(TESTING_DIR, fname[:-3] + "mp3")
+        create_mp3(src_path, self.music_release.metadata[0], dest_path=dest_path)
         self.assertIsFile(dest_path)
 
         #Test tag data
         audio = EasyID3(dest_path)
-        self.assertEqual(audio["title"], music_release.metadata[0]["title"])
+        self.assertEqual(audio["title"], ["Test"])
         tags = ["artist", "website", "genre", "album"]
         for tag in tags:
-            self.assertEqual(audio[tag], [music_release.metadata[0]["mp3"][tag]])
+            self.assertEqual(audio[tag], [self.music_release.metadata[0]["mp3"][tag]])
 
     #@unittest.skip("Too verbose")
     def test_make_mp4(self):
-        '''Should create an .mp4'''
-        #Initialize the class
-        music_release = MusicRelease(TEST_JSON_PATH)
         #Create the file
-        dest_path = pathlib.Path(TESTING_DIR, "Test.mp4")
-        music_release.create_mp4(dest_path)
+        fname = "Test.wav"
+        src_path = pathlib.Path(TESTS_DIR, fname)
+        dest_path = pathlib.Path(TESTING_DIR, fname[:-3] + "mp4")
+        cover = pathlib.Path(TESTS_DIR, "Cover.png")
+        create_mp4(src_path, dest_path, cover)
         self.assertIsFile(dest_path)
 
     def test_make_webp(self):
-        '''Should create a webp from a provided image'''
-        #Initialize the class
-        music_release = MusicRelease(TEST_JSON_PATH)
         #Create the file
-        dest_path = pathlib.Path(TESTING_DIR, music_release[0]["cover"])
+        fname = "Cover.png"
+        dest_path = pathlib.Path(TESTING_DIR, self.music_release.metadata[0]["cover"])
         cover = pathlib.Path(TESTS_DIR, "Cover.png")
-        music_release.create_webp(cover)
+        create_webp(cover, dest_path)
         self.assertIsFile(dest_path)
 
     def test_zip_stems(self):
-        '''Should produce a .zip of the Stems folder'''
-        #Initialize the class
-        music_release = MusicRelease(TEST_JSON_PATH)
-        #Make .zip
-        src = pathlib.Path(TESTS_DIR, "Source/Stems/")
+        src = pathlib.Path(TESTS_DIR, "Stems/")
         target = pathlib.Path(TESTING_DIR, "Stems.zip")
-        music_release.create_zip(src, str(target)[:-4]) #shutil.make_archive() doesn't need .zip
+        create_zip(src, str(target)[:-4]) #shutil.make_archive() doesn't need .zip
         self.assertIsFile(target)
 
 class TestServices(unittest.TestCase):
