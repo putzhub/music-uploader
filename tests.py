@@ -8,7 +8,8 @@ from mutagen.easyid3 import EasyID3
 TESTING_DIR = "./test/testing"
 TESTS_DIR = "./tests"
 JSON = read_json("release_example.json")
-SINGLE_JSON = JSON[0]
+#Same for now, may change in future to refer to first index
+SINGLE_JSON = JSON
 
 #ASSUMPTIONS
 # Files in tests forlder: Cover.png and *.wav 
@@ -19,7 +20,7 @@ class TestInit(unittest.TestCase):
     def test_read_json(self):
         '''Make sure we're working with valid data'''
         results = read_json("release_example.json")
-        self.assertEqual(results[0]["title"], "Test")
+        self.assertEqual(results["title"], "Test")
 
 class TestWithFiles(unittest.TestCase):
     #Helper functions
