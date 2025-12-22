@@ -13,7 +13,7 @@ import shutil
 # Scenarios:
 #   1. Single release
 #   2. Album release (same album)
-#   3. Multiple individual releases
+#   3. Multiple individual releases (probably not though)
 # 
 # Make single (ALBUM EXPORTING NOT YET SUPPORTED)
 # Read in metadata
@@ -28,16 +28,29 @@ import shutil
 # Publicize launch: ludoloon.studio, bluesky, mastodon, instagram and (hopefully) discord
 
 class MusicRelease():
-    metadata = []
+    #Class Variables
+    tracks = []
     content_dir = ""
+    source_dir = ""
+    output_dir = ""
+    cover_file = ""
 
-    def __init__(self, json_file, content_dir):
+    def __init__(self, json_file, content_dir, output_dir="", cover_file="Cover.png"):
+        #Init variables
+        #Content dir is the root of all our work
         self.content_dir = content_dir
+        #Source path is where files we build with live
+        source = Path(content_dir, "Source")
+        self.source_dir = source if source.exists() else self.content_dir
+        self.output_dir = output_dir if output_dir != "" else self.source_dir
+        #Cover path
+        self.cover_file = Path(self.source_dir, cover_file) if Path(self.source_dir, cover_file).exists() else ""
         #read in from JSON file
         with open(json_file) as f:
-            self.metadata = json.load(f)
+            self.tracks = json.load(f)
+        
         #Make sure we have the expected data
-        for entry in self.metadata:
+        for entry in self.tracks:
             for key in ["title", "summary", "date", "url", "tags"]:
                 assert key in entry
             #Do the same for MP3 and Details tags
@@ -47,45 +60,43 @@ class MusicRelease():
                 assert key in entry["mp3"]
     
     #Processing methods...
-    def preprocessing(self, cover):
+    def preprocessing(self):
         '''The process of creating .mp3, .mp4, .webp, etc'''
 
-        #Create a list of all the titles 
-        titles = [title["title"] for title in release_info]
-        cover_path=Path(self.content_dir, cover)
+        for (i, track) in enumerate(self.tracks):
+            #Build the filename
+            wav_file = Path(self.source_dir, track["title"] + ".wav")
 
-        #If a title and a filename match up, put 'em together
-        for wav_file in glob.glob(self.content_dir + "/*.wav"):
-            for (i, title) in enumerate(titles):
-                if title in wav_file:
-                    create_mp3(wav_file, release_info[i])
-                    create_mp4(wav_file, cover=cover_path)
-                #Create .webp version of cover art for ludoloon.studio
-                if release_info[i]["cover"]:
-                    create_webp(cover_path, Path(self.content_dir, release_info[i]["cover"]))
-                else:
-                    create_webp(cover_path)
+            #Create files
+            create_mp3(wav_file, self.tracks[i], Path(self.output_dir, wav_file.stem + ".mp3"))
+            create_mp4(wav_file, Path(self.output_dir, wav_file.stem + ".mp4"), self.cover_file)
+            #Create .webp version of cover art for ludoloon.studio
+            if self.tracks[i]["cover"]:
+                webp_file = Path(self.output_dir, self.tracks[i]["cover"])
+                if webp_file.exists():
+                    continue
+                create_webp(self.cover_file, webp_file)
 
         #If we have stems then package them
-        stems_path = Path(args.content_dir, "Stems")
+        stems_path = Path(self.source_dir, "Stems/")
         if stems_path.exists():
-            create_zip(stems_path)
-    
+            create_zip(stems_path, Path(self.output_dir, "Stems"))
+
     #Upload music online
-    def upload_music(args, release_info):
+    def upload_music(args):
         #Create a list of all the titles 
-        titles = [title["title"] for title in release_info]
+        titles = [title["title"] for title in self.tracks]
         #TODO: 
-        # Use class to help with updating release_info?
+        # Use class to help with updating self.tracks?
         # Capture embed ID & save into release info
         # Put together as part of same list if multiple
         #WARNING: NOT READY FOR MULTIPLE FILES
         for mp4 in glob.glob(args.content_dir + "/*.mp4"):
             for (i, title) in enumerate(titles):
                 if title in mp4:
-                    ytid = services.youtube.upload(mp4, release_info[i])
+                    ytid = services.youtube.upload(mp4, self.tracks[i])
                     if ytid is not False:
-                        release_info[i]["embed"] = "https://youtube.com/embed/"+ytid
+                        self.tracks[i]["embed"] = "https://youtube.com/embed/"+ytid
 
 #Preprocessing helpers
 def create_mp3(source_file, json, dest_path=None):
@@ -108,7 +119,7 @@ def create_mp3(source_file, json, dest_path=None):
 def create_mp4(source_file, dest_path=None, cover="Cover.png"):
     '''Use the shell to run ffmpeg and create an MP4'''
     if dest_path is None:
-        dest_path = source_file[:-3] + "mp4"
+        dest_path = str(source_file)[:-3] + "mp4"
     subprocess.run(["ffmpeg", "-y", "-loop", "1", "-i", cover, "-i", source_file, "-shortest",
                     "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", dest_path])
 
@@ -142,8 +153,8 @@ if __name__ == "__main__":
     args = parser.parse_args() 
 
     # Read metadata and store into release info
-    release_info = read_json(args.json)
-    preprocessing(args.content_dir, args.cover, release_info)
+    music_release = MusicRelease(args.json, args.content_dir)
+    music_release.preprocessing()
     #upload_music(args, release_info)
 
     # TODO Move to services module & plan out
