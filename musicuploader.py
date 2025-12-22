@@ -24,27 +24,43 @@ import shutil
 # Prep data for manual upload to: itch, newgrounds and patreon (make it easy to copy and paste)
 # Publicize launch: ludoloon.studio, bluesky, mastodon, instagram and (hopefully) discord
 
+class MusicRelease():
+    release_metadata = []
+
+    def __init__(self, json_file):
+        #read in from JSON file
+        pass
+
+    #Processing methods...
+
 # Pre-processing
 def read_json(fname="release.json"):
     release_info = []
     with open(fname) as f:
         release_info = json.load(f)
-
-    #RETURN FIRST RESULT ONLY FOR NOW
-    return release_info[0]
+    return release_info
 
 def preprocessing(content_dir, cover, release_info):
-    '''The process of creating .mp3, .mp4, .webp, etc'''
+    '''The process of creating .mp3, .mp4, .webp, etc
+    
+    ONLY USE WITH ONE FILE FOR NOW'''
+
+    #Create a list of all the titles 
+    titles = [title["title"] for title in release_info]
+
     cover_path=Path(content_dir, cover)
 
+    #If a title and a filename match up, put 'em together
     for wav_file in glob.glob(content_dir + "/*.wav"):
-        create_mp3(wav_file, release_info)
-        create_mp4(wav_file, cover=cover_path)
-    #Create .webp version of cover art for ludoloon.studio
-    if release_info["cover"]:
-        create_webp(cover_path, Path(content_dir, release_info["cover"]))
-    else:
-        create_webp(cover_path)
+        for (i, title) in enumerate(titles):
+            if title in wav_file:
+                create_mp3(wav_file, release_info[i])
+                create_mp4(wav_file, cover=cover_path)
+            #Create .webp version of cover art for ludoloon.studio
+            if release_info[i]["cover"]:
+                create_webp(cover_path, Path(content_dir, release_info[i]["cover"]))
+            else:
+                create_webp(cover_path)
 
     #If we have stems then package them
     stems_path = Path(args.content_dir, "Stems")
@@ -70,34 +86,39 @@ def create_mp3(source_file, json, dest_path=None):
     mp3.save()
 
 def create_mp4(source_file, dest_path=None, cover="Cover.png"):
-    '''Use the shell to run lame and create an MP4'''
-    
+    '''Use the shell to run ffmpeg and create an MP4'''
     if dest_path is None:
         dest_path = source_file[:-3] + "mp4"
-    
     subprocess.run(["ffmpeg", "-y", "-loop", "1", "-i", cover, "-i", source_file, "-shortest",
                     "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", dest_path])
 
 def create_webp(cover, dest_path=None):
+    '''Use the shell to run ImageMagick to convert to .webp'''
     if dest_path is None:
         dest_path = str(cover)[:-3] + "webp"
-
     subprocess.run(["magick", cover, "-quality", "90", dest_path])
 
 def create_zip(source, dest_path=None):
+    "Create an archive"
     if dest_path is None:
         dest_path = str(source)
-
     shutil.make_archive(dest_path, "zip", source)
 
 #Upload music online
 def upload_music(args, release_info):
+    #Create a list of all the titles 
+    titles = [title["title"] for title in release_info]
     #TODO: 
+    # Use class to help with updating release_info?
     # Capture embed ID & save into release info
     # Put together as part of same list if multiple
     #WARNING: NOT READY FOR MULTIPLE FILES
     for mp4 in glob.glob(args.content_dir + "/*.mp4"):
-        services.youtube.upload(mp4, release_info)
+        for (i, title) in enumerate(titles):
+            if title in mp4:
+                ytid = services.youtube.upload(mp4, release_info[i])
+                if ytid is not False:
+                    release_info[i]["embed"] = "https://youtube.com/embed/"+ytid
 
 if __name__ == "__main__":
     #Construct the parser

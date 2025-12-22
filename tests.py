@@ -9,7 +9,7 @@ TESTING_DIR = "./test/testing"
 TESTS_DIR = "./tests"
 JSON = read_json("release_example.json")
 #Same for now, may change in future to refer to first index
-SINGLE_JSON = JSON
+SINGLE_JSON = JSON[0]
 
 #ASSUMPTIONS
 # Files in tests forlder: Cover.png and *.wav 
@@ -19,8 +19,7 @@ class TestInit(unittest.TestCase):
     #Make sure we can load a valid configuration
     def test_read_json(self):
         '''Make sure we're working with valid data'''
-        results = read_json("release_example.json")
-        self.assertEqual(results["title"], "Test")
+        self.assertEqual(SINGLE_JSON["title"], "Test")
 
 class TestWithFiles(unittest.TestCase):
     #Helper functions
