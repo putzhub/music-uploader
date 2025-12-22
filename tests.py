@@ -14,11 +14,13 @@ TEST_JSON_PATH = "tests/release_example.json"
 # Test does not cover albums yet
 
 #Move to class itself
-#class TestInit(unittest.TestCase):
+class TestInit(unittest.TestCase):
     #Make sure we can load a valid configuration
-    #def test_read_json(self):
-        #'''Make sure we're working with valid data'''
-        #self.assertTrue(SINGLE_JSON["title"], "Test")
+    def test_read_json(self):
+        '''Make sure we can load the music data json file'''
+        music_release = MusicRelease(TEST_JSON_PATH)
+        self.assertIsInstance(music_release, MusicRelease)
+        self.assertEqual(music_release.metadata[0]["title"], "Test")
 
 class TestWithFiles(unittest.TestCase):
     #Helper functions
@@ -37,6 +39,7 @@ class TestWithFiles(unittest.TestCase):
 
     #Tests
     def test_make_mp3(self):
+        '''Should create an .mp3 file with appropriate tags'''
         #Initialize the class
         music_release = MusicRelease(TEST_JSON_PATH)
         #Create the file
@@ -53,6 +56,7 @@ class TestWithFiles(unittest.TestCase):
 
     #@unittest.skip("Too verbose")
     def test_make_mp4(self):
+        '''Should create an .mp4'''
         #Initialize the class
         music_release = MusicRelease(TEST_JSON_PATH)
         #Create the file
@@ -61,6 +65,7 @@ class TestWithFiles(unittest.TestCase):
         self.assertIsFile(dest_path)
 
     def test_make_webp(self):
+        '''Should create a webp from a provided image'''
         #Initialize the class
         music_release = MusicRelease(TEST_JSON_PATH)
         #Create the file
@@ -70,6 +75,7 @@ class TestWithFiles(unittest.TestCase):
         self.assertIsFile(dest_path)
 
     def test_zip_stems(self):
+        '''Should produce a .zip of the Stems folder'''
         #Initialize the class
         music_release = MusicRelease(TEST_JSON_PATH)
         #Make .zip

@@ -35,16 +35,17 @@ class MusicRelease():
     def __init__(self, json_file):
         #read in from JSON file
         with open(json_file) as f:
-            release_info = json.load(f)
+            self.metadata = json.load(f)
 
         #Make sure we have the expected data, otherwise tell the user
-        for key in ["title", "summary", "date", "url", "tags"]:
-            assert key in release_info
-        #Do the same for MP3 and Details tags
-        for key in ["cost", "loop", "stems"]:
-            assert key in release_info["details"]
-        for key in ["genre", "album", "artist", "website"]:
-            assert key in release_info["mp3"]
+        for entry in self.metadata:
+            for key in ["title", "summary", "date", "url", "tags"]:
+                assert key in entry
+            #Do the same for MP3 and Details tags
+            for key in ["cost", "loop", "stems"]:
+                assert key in entry["details"]
+            for key in ["genre", "album", "artist", "website"]:
+                assert key in entry["mp3"]
         
 
     #Processing methods...
