@@ -7,26 +7,25 @@ from mutagen.easyid3 import EasyID3
 
 TESTING_DIR = "./test/testing"
 TESTS_DIR = "./tests"
-JSON = read_json("release_example.json")
-#Same for now, may change in future to refer to first index
-SINGLE_JSON = JSON[0]
+TEST_JSON_PATH = "tests/release_example.json"
 
 #ASSUMPTIONS
 # Files in tests forlder: Cover.png and *.wav 
 # Test does not cover albums yet
 
-class TestInit(unittest.TestCase):
+#Move to class itself
+#class TestInit(unittest.TestCase):
     #Make sure we can load a valid configuration
-    def test_read_json(self):
-        '''Make sure we're working with valid data'''
-        self.assertEqual(SINGLE_JSON["title"], "Test")
+    #def test_read_json(self):
+        #'''Make sure we're working with valid data'''
+        #self.assertTrue(SINGLE_JSON["title"], "Test")
 
 class TestWithFiles(unittest.TestCase):
     #Helper functions
     def assertIsFile(self, path):
         if not pathlib.Path(path).resolve().is_file():
             raise AssertionError("File does not exist: %s" % str(path))
-    
+
     #Prep & cleanup
     @classmethod
     def setUpClass(self):
@@ -38,48 +37,53 @@ class TestWithFiles(unittest.TestCase):
 
     #Tests
     def test_make_mp3(self):
+        #Initialize the class
+        music_release = MusicRelease(TEST_JSON_PATH)
         #Create the file
-        fname = "Chill Shop (Loop).wav"
-        src_path = pathlib.Path(TESTS_DIR, fname)
-        dest_path = pathlib.Path(TESTING_DIR, fname[:-3] + "mp3")
-        create_mp3(src_path, SINGLE_JSON, dest_path=dest_path)
+        dest_path = pathlib.Path(TESTING_DIR, "Test.mp3")
+        music_release.create_mp3(dest_path=dest_path)
         self.assertIsFile(dest_path)
 
         #Test tag data
         audio = EasyID3(dest_path)
-        self.assertEqual(audio["title"], ["Test"])
+        self.assertEqual(audio["title"], music_release.metadata[0]["title"])
         tags = ["artist", "website", "genre", "album"]
         for tag in tags:
-            self.assertEqual(audio[tag], [SINGLE_JSON["mp3"][tag]])
+            self.assertEqual(audio[tag], [music_release.metadata[0]["mp3"][tag]])
 
     #@unittest.skip("Too verbose")
     def test_make_mp4(self):
+        #Initialize the class
+        music_release = MusicRelease(TEST_JSON_PATH)
         #Create the file
-        fname = "Chill Shop (Loop).wav"
-        src_path = pathlib.Path(TESTS_DIR, fname)
-        dest_path = pathlib.Path(TESTING_DIR, fname[:-3] + "mp4")
-        cover = pathlib.Path(TESTS_DIR, "Cover.png")
-        create_mp4(src_path, dest_path, cover)
+        dest_path = pathlib.Path(TESTING_DIR, "Test.mp4")
+        music_release.create_mp4(dest_path)
         self.assertIsFile(dest_path)
 
     def test_make_webp(self):
+        #Initialize the class
+        music_release = MusicRelease(TEST_JSON_PATH)
         #Create the file
-        fname = "Cover.png"
-        dest_path = pathlib.Path(TESTING_DIR, SINGLE_JSON["cover"])
+        dest_path = pathlib.Path(TESTING_DIR, music_release[0]["cover"])
         cover = pathlib.Path(TESTS_DIR, "Cover.png")
-        create_webp(cover, dest_path)
+        music_release.create_webp(cover)
         self.assertIsFile(dest_path)
 
     def test_zip_stems(self):
-        src = pathlib.Path(TESTS_DIR, "Stems/")
+        #Initialize the class
+        music_release = MusicRelease(TEST_JSON_PATH)
+        #Make .zip
+        src = pathlib.Path(TESTS_DIR, "Source/Stems/")
         target = pathlib.Path(TESTING_DIR, "Stems.zip")
-        create_zip(src, str(target)[:-4]) #shutil.make_archive() doesn't need .zip
+        music_release.create_zip(src, str(target)[:-4]) #shutil.make_archive() doesn't need .zip
         self.assertIsFile(target)
 
 class TestServices(unittest.TestCase):
     def test_youtube(self):
+        #Initialize the class
+        music_release = MusicRelease(TEST_JSON_PATH)
         #Don't upload if there's already an ID, if this fails check config for embed
-        self.assertFalse(services.youtube.upload(None, SINGLE_JSON))
+        self.assertFalse(services.youtube.upload(None, music_release.metadata[0]))
 
 if __name__ == "__main__":
     unittest.main()

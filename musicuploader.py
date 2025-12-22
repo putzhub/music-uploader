@@ -11,6 +11,10 @@ import shutil
 
 # TODO
 # Figure out what the flow is
+# Scenarios:
+#   1. Single release
+#   2. Album release (same album)
+#   3. Multiple individual releases
 # 
 # Make single (ALBUM EXPORTING NOT YET SUPPORTED)
 # Read in metadata
@@ -25,11 +29,23 @@ import shutil
 # Publicize launch: ludoloon.studio, bluesky, mastodon, instagram and (hopefully) discord
 
 class MusicRelease():
-    release_metadata = []
+    metadata = []
+    #titles = []
 
     def __init__(self, json_file):
         #read in from JSON file
-        pass
+        with open(json_file) as f:
+            release_info = json.load(f)
+
+        #Make sure we have the expected data, otherwise tell the user
+        for key in ["title", "summary", "date", "url", "tags"]:
+            assert key in release_info
+        #Do the same for MP3 and Details tags
+        for key in ["cost", "loop", "stems"]:
+            assert key in release_info["details"]
+        for key in ["genre", "album", "artist", "website"]:
+            assert key in release_info["mp3"]
+        
 
     #Processing methods...
 
