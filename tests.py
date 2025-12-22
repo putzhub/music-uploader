@@ -7,13 +7,13 @@ from mutagen.easyid3 import EasyID3
 
 TESTING_DIR = "./test/testing"
 TESTS_DIR = "./tests"
-JSON = read_json("release_example.JSON")
+JSON = read_json("release_example.json")
 
 class TestInit(unittest.TestCase):
     #Make sure we can load a valid configuration
     def test_read_json(self):
         '''Make sure we're working with valid data'''
-        results = read_json("release_example.JSON")
+        results = read_json("release_example.json")
         self.assertEqual(results["title"], "Test")
 
 class TestWithFiles(unittest.TestCase):
