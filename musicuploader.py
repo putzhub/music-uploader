@@ -34,9 +34,11 @@ class MusicRelease():
     source_dir = ""
     output_dir = ""
     cover_file = ""
+    json_file = ""
 
     def __init__(self, json_file, content_dir, output_dir="", cover_file="Cover.png"):
         #Init variables
+        self.json_file = json_file
         #Content dir is the root of all our work
         self.content_dir = content_dir
         #Source path is where files we build with live
@@ -49,7 +51,7 @@ class MusicRelease():
         with open(json_file) as f:
             self.tracks = json.load(f)
         
-        #Make sure we have the expected data
+        #Make sure we have the expected keys (and hopefully by extension data)
         for entry in self.tracks:
             for key in ["title", "summary", "date", "url", "tags"]:
                 assert key in entry
@@ -59,23 +61,31 @@ class MusicRelease():
             for key in ["genre", "album", "artist", "website"]:
                 assert key in entry["mp3"]
     
-    #Processing methods...
+    #Helpers
+    def save(self):
+        '''Save our tracks[] JSON metadata to the file we read from.'''
+        with open(self.json_file,"w") as f:
+            f.write(json.dumps(self.tracks, indent=4))
+
+    #Preprocess the source material into the needed files
     def preprocessing(self):
         '''The process of creating .mp3, .mp4, .webp, etc'''
 
+        #Iterate over each track in the pack
         for (i, track) in enumerate(self.tracks):
             #Build the filename
             wav_file = Path(self.source_dir, track["title"] + ".wav")
 
             #Create files
-            create_mp3(wav_file, self.tracks[i], Path(self.output_dir, wav_file.stem + ".mp3"))
-            create_mp4(wav_file, Path(self.output_dir, wav_file.stem + ".mp4"), self.cover_file)
+            mp3_path = Path(self.output_dir, wav_file.stem + ".mp3")
+            mp4_path = Path(self.output_dir, wav_file.stem + ".mp4")
+            create_mp3(wav_file, self.tracks[i], mp3_path)
+            create_mp4(wav_file, mp4_path, self.cover_file)
             #Create .webp version of cover art for ludoloon.studio
             if self.tracks[i]["cover"]:
                 webp_file = Path(self.output_dir, self.tracks[i]["cover"])
-                if webp_file.exists():
-                    continue
-                create_webp(self.cover_file, webp_file)
+                if not webp_file.exists():
+                    create_webp(self.cover_file, webp_file)
 
         #If we have stems then package them
         stems_path = Path(self.source_dir, "Stems/")
@@ -83,20 +93,16 @@ class MusicRelease():
             create_zip(stems_path, Path(self.output_dir, "Stems"))
 
     #Upload music online
-    def upload_music(args):
-        #Create a list of all the titles 
-        titles = [title["title"] for title in self.tracks]
-        #TODO: 
-        # Use class to help with updating self.tracks?
-        # Capture embed ID & save into release info
-        # Put together as part of same list if multiple
-        #WARNING: NOT READY FOR MULTIPLE FILES
-        for mp4 in glob.glob(args.content_dir + "/*.mp4"):
-            for (i, title) in enumerate(titles):
-                if title in mp4:
-                    ytid = services.youtube.upload(mp4, self.tracks[i])
-                    if ytid is not False:
-                        self.tracks[i]["embed"] = "https://youtube.com/embed/"+ytid
+    def upload_music(self):
+        #WARNING: NOT TESTED FOR MULTIPLE FILES
+
+        #Youtube first
+        for (i, track) in enumerate(self.tracks):
+            mp4 = str(Path(self.output_dir, track["title"] + ".mp4"))
+            ytid = services.youtube.upload(mp4, track)
+            if ytid is not False:
+                self.tracks[i]["embed"] = str("https://youtube.com/embed/"+ytid)
+                self.save()
 
 #Preprocessing helpers
 def create_mp3(source_file, json, dest_path=None):
@@ -155,7 +161,7 @@ if __name__ == "__main__":
     # Read metadata and store into release info
     music_release = MusicRelease(args.json, args.content_dir)
     music_release.preprocessing()
-    #upload_music(args, release_info)
+    music_release.upload_music()
 
     # TODO Move to services module & plan out
     # Prepare for services Youtube, Soundcloud, Itch, Newgrounds, etc

@@ -6,6 +6,7 @@ import random
 import sys
 import time
 from types import SimpleNamespace
+from copy import deepcopy
 
 from apiclient.discovery import build
 from apiclient.errors import HttpError
@@ -155,13 +156,15 @@ def resumable_upload(insert_request):
       print("Sleeping %f seconds and then retrying..." % sleep_seconds)
       time.sleep(sleep_seconds)
 
-def upload(mp4, args):
+def upload(mp4, track_json):
   #Upload to youtube
+  #make a copy of the track metadata so it doesn't modify the source
+  args = deepcopy(track_json)
 
   #...unless we already have a video ID present
   if "embed" in args:
     return False
-  
+
   #Process tags
   args["file"] = mp4
 
