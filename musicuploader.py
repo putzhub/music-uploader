@@ -12,7 +12,7 @@ import shutil
 # TODO
 # Figure out what the flow is
 # 
-# Make album or single
+# Make single (ALBUM EXPORTING NOT YET SUPPORTED)
 # Read in metadata
 # Process .wav and .png coverart into relevant exports (video, .mp3, .webp, etc)
 # Soure files - .wav and .png

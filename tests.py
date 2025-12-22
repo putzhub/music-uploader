@@ -8,15 +8,18 @@ from mutagen.easyid3 import EasyID3
 TESTING_DIR = "./test/testing"
 TESTS_DIR = "./tests"
 JSON = read_json("release_example.json")
+SINGLE_JSON = JSON[0]
 
 #ASSUMPTIONS
 # Files in tests forlder: Cover.png and *.wav 
+# Test does not cover albums yet
+
 class TestInit(unittest.TestCase):
     #Make sure we can load a valid configuration
     def test_read_json(self):
         '''Make sure we're working with valid data'''
         results = read_json("release_example.json")
-        self.assertEqual(results["title"], "Test")
+        self.assertEqual(results[0]["title"], "Test")
 
 class TestWithFiles(unittest.TestCase):
     #Helper functions
@@ -39,7 +42,7 @@ class TestWithFiles(unittest.TestCase):
         fname = "Chill Shop (Loop).wav"
         src_path = pathlib.Path(TESTS_DIR, fname)
         dest_path = pathlib.Path(TESTING_DIR, fname[:-3] + "mp3")
-        create_mp3(src_path, JSON, dest_path=dest_path)
+        create_mp3(src_path, SINGLE_JSON, dest_path=dest_path)
         self.assertIsFile(dest_path)
 
         #Test tag data
@@ -47,7 +50,7 @@ class TestWithFiles(unittest.TestCase):
         self.assertEqual(audio["title"], ["Test"])
         tags = ["artist", "website", "genre", "album"]
         for tag in tags:
-            self.assertEqual(audio[tag], [JSON["mp3"][tag]])
+            self.assertEqual(audio[tag], [SINGLE_JSON["mp3"][tag]])
 
     #@unittest.skip("Too verbose")
     def test_make_mp4(self):
@@ -62,7 +65,7 @@ class TestWithFiles(unittest.TestCase):
     def test_make_webp(self):
         #Create the file
         fname = "Cover.png"
-        dest_path = pathlib.Path(TESTING_DIR, JSON["cover"])
+        dest_path = pathlib.Path(TESTING_DIR, SINGLE_JSON["cover"])
         cover = pathlib.Path(TESTS_DIR, "Cover.png")
         create_webp(cover, dest_path)
         self.assertIsFile(dest_path)
@@ -76,7 +79,7 @@ class TestWithFiles(unittest.TestCase):
 class TestServices(unittest.TestCase):
     def test_youtube(self):
         #Don't upload if there's already an ID, if this fails check config for embed
-        self.assertFalse(services.youtube.upload(None, JSON))
+        self.assertFalse(services.youtube.upload(None, SINGLE_JSON))
 
 if __name__ == "__main__":
     unittest.main()
