@@ -27,3 +27,14 @@ Regardless, you'll need a few things to be true:
 
 To use music-uploader.py, fill out a release.json file with the relevant information (see release_example.json).
 
+Structure a folder as so:
+
+CONTENT_DIRECTORY/
+    - Source/
+        Stems/
+            [...]
+        Cover.png
+        files.wav
+        [...]
+
+Titles in the release.json file must match filenames of the .wavs you want processed.
