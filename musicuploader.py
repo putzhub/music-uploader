@@ -37,7 +37,7 @@ def preprocessing(content_dir, cover, release_info):
     '''The process of creating .mp3, .mp4, .webp, etc'''
     cover_path=Path(content_dir, cover)
 
-    for wav_file in glob.glob(args.content_dir + "/*.wav"):
+    for wav_file in glob.glob(content_dir + "/*.wav"):
         create_mp3(wav_file, release_info)
         create_mp4(wav_file, cover=cover_path)
     #Create .webp version of cover art for ludoloon.studio
