@@ -5,6 +5,7 @@ import os
 import random
 import sys
 import time
+from types import SimpleNamespace
 
 from apiclient.discovery import build
 from apiclient.errors import HttpError
@@ -66,7 +67,6 @@ https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
                                    CLIENT_SECRETS_FILE))
 
 VALID_PRIVACY_STATUSES = ("public", "private", "unlisted")
-
 
 def get_authenticated_service(args):
   flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE,
@@ -155,16 +155,52 @@ def resumable_upload(insert_request):
       print("Sleeping %f seconds and then retrying..." % sleep_seconds)
       time.sleep(sleep_seconds)
 
-def upload(args):
+def upload(mp4, args):
   #Upload to youtube
 
   #...unless we already have a video ID present
   if "embed" in args:
     return False
+  
+  #Process tags
+  args["file"] = mp4
 
-  youtube = get_authenticated_service(args)
+  #Music category
+  args["category"] = "10"
+
+  #Add "free" if relevant
+  if args["details"]["cost"].lower() == "free":
+    args["title"] += " (Free Music)"
+    args["tags"].append("free")
+
+  #Default hashtags + specifics from release.json
+  tags = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
+          "soundtrack", "indie", "renoise", "composer", "game", "videogame",
+          "gamemusic", "ost", "pack", "bundle"]
+  tags.append(*args["tags"])
+  #Get the keywords before they're hashtags
+  args["keywords"] = ",".join(tags)
+  #give 'em hashtags and remove spaces for description
+  tags = [str("#"+tag).replace(" ", "") for tag in tags]
+
+  #Prep the description
+  args["description"] = '''
+{0}
+
+homepage: https://ludoloon.studio/music#{1}
+itch.io: https://ludoloonstudio.itch.io/{1}
+Newgrounds: https://ludoloonstudio.newgrounds.com/audio
+Patreon (get stems & tracks in advance): https://patreon.com/ludoloonstudio
+
+{2}
+'''.format(args["summary"], args["url"], " ".join(tags))
+
+  #Set privacy status
+  args["privacyStatus"] = VALID_PRIVACY_STATUSES[1] #private for now
+
+  youtube = get_authenticated_service(SimpleNamespace(**args))
   try:
-    return initialize_upload(youtube, args)
+    return initialize_upload(youtube, SimpleNamespace(**args))
   except HttpError as e:
     print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
     return False

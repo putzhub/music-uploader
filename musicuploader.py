@@ -92,7 +92,12 @@ def create_zip(source, dest_path=None):
 
 #Upload music online
 def upload_music(args, release_info):
-    pass
+    #TODO: 
+    # Capture embed ID & save into release info
+    # Put together as part of same list if multiple
+    #WARNING: NOT READY FOR MULTIPLE FILES
+    for mp4 in glob.glob(args.content_dir + "/*.mp4"):
+        services.youtube.upload(mp4, release_info)
 
 if __name__ == "__main__":
     #Construct the parser
@@ -114,6 +119,7 @@ if __name__ == "__main__":
     # Read metadata and store into release info
     release_info = read_json(args.json)
     preprocessing(args, release_info)
+    upload_music(args, release_info)
 
     # TODO Move to services module & plan out
     # Prepare for services Youtube, Soundcloud, Itch, Newgrounds, etc

@@ -73,8 +73,8 @@ class TestPreProcessing(unittest.TestCase):
 
 class TestServices(unittest.TestCase):
     def test_youtube(self):
-        #Don't upload if there's already an ID
-        self.assertFalse(services.youtube.upload(json))
+        #Don't upload if there's already an ID, if this fails check config for embed
+        self.assertFalse(services.youtube.upload(None, json))
 
 if __name__ == "__main__":
     unittest.main()
