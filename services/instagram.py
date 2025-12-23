@@ -1,4 +1,6 @@
 #  https://www.geeksforgeeks.org/python/using-python-to-post-stories-on-instagram/
+
+#Previous code, comment out for now.
 '''
 from instabot import Bot
 from getpass import getpass

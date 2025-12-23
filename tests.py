@@ -156,7 +156,7 @@ class TestSocialMedia(unittest.TestCase):
             track["summary"], 
             track["embed"].replace("embed", "video"),
             track["tags"],
-            testing=False))
+            testing=True))
 
     @unittest.skip("Instagram is dogshit ._.")
     def test_instagram(self):
