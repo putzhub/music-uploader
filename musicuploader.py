@@ -48,8 +48,7 @@ class MusicRelease():
         #Cover path
         self.cover_file = Path(self.source_dir, cover_file) if Path(self.source_dir, cover_file).exists() else ""
         #read in from JSON file
-        with open(json_file) as f:
-            self.tracks = json.load(f)
+        self.load()
         
         #Make sure we have the expected keys (and hopefully by extension data)
         for entry in self.tracks:
@@ -62,6 +61,10 @@ class MusicRelease():
                 assert key in entry["mp3"]
     
     #Helpers
+    def load(self):
+        with open(self.json_file) as f:
+            self.tracks = json.load(f)
+
     def save(self):
         '''Save our tracks[] JSON metadata to the file we read from.'''
         with open(self.json_file,"w") as f:
@@ -98,11 +101,14 @@ class MusicRelease():
 
         #Youtube first
         for (i, track) in enumerate(self.tracks):
+            #Converting to string avoids issues, but deepcopy() on services.youtube.upload may make this irrelevant.
             mp4 = str(Path(self.output_dir, track["title"] + ".mp4"))
             ytid = services.youtube.upload(mp4, track)
             if ytid is not False:
                 self.tracks[i]["embed"] = str("https://youtube.com/embed/"+ytid)
                 self.save()
+
+        #Itch.io
 
 #Preprocessing helpers
 def create_mp3(source_file, json, dest_path=None):
