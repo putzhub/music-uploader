@@ -99,7 +99,7 @@ class MusicRelease():
 
     #Upload music online
     def upload_music(self):
-        #WARNING: NOT TESTED FOR MULTIPLE FILES
+        #WARNING: NOT TESTED FOR MULTIPLE FILES - First file assumed as default metadata after youtube
 
         #Youtube first
         for (i, track) in enumerate(self.tracks):
@@ -110,8 +110,15 @@ class MusicRelease():
                 self.tracks[i]["embed"] = str("https://youtube.com/embed/"+ytid)
                 self.save()
         
-        #Itch.io
-        services.itch.upload(self.tracks)
+        #Itch.io - assume that all music will be on same page, use first track to check if online yet or not
+        try:
+            self.tracks[0]["stores"]["itch"]
+        except KeyError:
+            itch_url = services.itch.upload(self.tracks)
+            for track in self.tracks:
+                track["stores"]["itch"] = str(itch_url)
+            #save after creating the itch page
+            self.save()
 
 #Preprocessing helpers
 def create_mp3(source_file, json, dest_path=None):
