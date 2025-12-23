@@ -137,10 +137,18 @@ class TestServices(unittest.TestCase):
 
 class TestSocialMedia(unittest.TestCase):
     def test_mastodon(self):
-        '''Make sure we can do everything besides post'''
+        '''Mastodon - Make sure we can do everything besides post'''
         #Initialize the class
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
-        self.assertTrue(services.mastoposter.post(music_release.tracks, testing=True))
+        track = music_release.tracks[0]
+        self.assertTrue(services.mastoposter.post(track["summary"], track["embed"].replace("embed", "video"), testing=True))
+
+    def test_instagram(self):
+        '''Instagram - Make sure we can do everything besides post'''
+        #Initialize the class
+        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
+        track = music_release.tracks[0]
+        self.assertTrue(services.instagram.post(track["summary"], track["embed"].replace("embed", "video"), testing=True))
 
 if __name__ == "__main__":
     unittest.main()
