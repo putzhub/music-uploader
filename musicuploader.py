@@ -100,6 +100,7 @@ class MusicRelease():
     #Upload music online
     def upload_music(self):
         #WARNING: NOT TESTED FOR MULTIPLE FILES - First file assumed as default metadata after youtube
+        #TODO: Specify which services to skip or use
 
         #Youtube first
         for (i, track) in enumerate(self.tracks):
@@ -110,15 +111,23 @@ class MusicRelease():
                 self.tracks[i]["embed"] = str("https://youtube.com/embed/"+ytid)
                 self.save()
         
-        #Itch.io - assume that all music will be on same page, use first track to check if online yet or not
-        try:
-            self.tracks[0]["stores"]["itch"]
-        except KeyError:
-            itch_url = services.itch.upload(self.tracks)
-            for track in self.tracks:
-                track["stores"]["itch"] = str(itch_url)
-            #save after creating the itch page
-            self.save()
+        #TODO Add soundcloud to the mix
+
+        #Itch.io & Newgrounds- assume that all music will be on same page, use first track to check if online yet or not
+        platforms = {"itch": "stores", "newgrounds": "streaming"}
+        for platform in platforms:
+            #Iterate through places to upload to accounting for whether store or streaming
+            try:
+                #"streaming" or "stores"
+                style = platforms[platform]
+                self.tracks[0][style][platform]
+            except KeyError:
+                #use the platform name to let us call the upload method
+                url = getattr(services, platform).upload(self.tracks)
+                for track in self.tracks:
+                    track[style][platform] = str(url)
+                #save after creating the itch page
+                self.save()
 
 #Preprocessing helpers
 def create_mp3(source_file, json, dest_path=None):

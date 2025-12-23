@@ -26,6 +26,8 @@
         "stores": {
             "itch": "https://itch.io/game/new"
         },
-        "streaming": {}
+        "streaming": {
+            "newgrounds": "shouldwork.com"
+        }
     }
 ]

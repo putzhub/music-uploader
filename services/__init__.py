@@ -9,3 +9,4 @@ from . import reddit
 from . import soundcloud
 from . import youtube
 from . import newgrounds
+from . import archiveorg

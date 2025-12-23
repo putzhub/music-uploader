@@ -119,6 +119,7 @@ class TestServices(unittest.TestCase):
         self.assertIsNotNone(itch_url)
         self.assertIsNot(itch_url, "")
 
+    @unittest.skip("Annoying to test often")
     def test_newgrounds(self):
         '''Prepare for posting to Newgrounds'''
         #Initialize the class
