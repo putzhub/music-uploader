@@ -109,11 +109,13 @@ class TestServices(unittest.TestCase):
         #Ensure that we return False for code that depends on that.
         self.assertFalse(services.youtube.upload(None, music_release.tracks[0]))
     
-    #@unittest.skip("Hangs until input")
+    #@unittest.skip("Annoying to test often")
     def test_itch(self):
         '''Prepare for posting to itch.io'''
+        #Initialize the class
+        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
         #Should return something other than empty
-        itch_url = services.itch.upload()
+        itch_url = services.itch.upload(music_release.tracks)
         self.assertIsNotNone(itch_url)
         self.assertIsNot(itch_url, "")
 
