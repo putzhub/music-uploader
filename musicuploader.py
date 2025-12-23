@@ -3,10 +3,12 @@ import json
 import argparse
 import subprocess
 import glob
+import shutil
+
 from pathlib import Path
 from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
-import shutil
+
 
 # TODO
 # Figure out what the flow is

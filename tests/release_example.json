@@ -17,13 +17,7 @@
             {"cost": "Paid",
             "loop": "Loopable",
             "stems": "Stems"},
-        "stores":
-            {"unity": "https://assetstore.unity.com/packages/slug/216619",
-            "itch": "https://ludoloonstudio.itch.io/roguelike-adventure-music-pack",
-            "gamedevmarket": "https://www.gamedevmarket.net/asset/roguelike-adventure-music-pack/",
-            "godot": "https://godotmarketplace.com/shop/roguelike-adventure-music-pack/"
-            },
-        "streaming":
-            {"bandcamp": "https://ludoloonstudio.bandcamp.com/album/roguelike-adventure-music-pack"}
+        "stores": {},
+        "streaming": {}
     }
 ]

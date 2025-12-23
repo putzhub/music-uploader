@@ -77,7 +77,7 @@ class TestWithFiles(unittest.TestCase):
     def test_zip_stems(self):
         src = Path(SOURCE_DIR, "Stems/")
         target = Path(TESTING_DIR, "Stems.zip")
-        create_zip(src, str(target)[:-4]) #shutil.make_archive() doesn't need .zip
+        create_zip(src, str(target)[:-4]) #shutil.make_archive() doesn't need .zip extension
         assertIsFile(target)
 
 #@unittest.skip("testing")
@@ -103,10 +103,19 @@ class TestPreprocessing(unittest.TestCase):
 
 class TestServices(unittest.TestCase):
     def test_youtube(self):
+        '''Youtube related tests'''
         #Initialize the class
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
-        #Don't upload if there's already an ID, if this fails check config for embed
+        #Ensure that we return False for code that depends on that.
         self.assertFalse(services.youtube.upload(None, music_release.tracks[0]))
+    
+    #@unittest.skip("Hangs until input")
+    def test_itch(self):
+        '''Prepare for posting to itch.io'''
+        #Should return something other than empty
+        itch_url = services.itch.upload()
+        self.assertIsNotNone(itch_url)
+        self.assertIsNot(itch_url, "")
 
 if __name__ == "__main__":
     unittest.main()
