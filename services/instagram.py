@@ -1,4 +1,5 @@
 #  https://www.geeksforgeeks.org/python/using-python-to-post-stories-on-instagram/
+'''
 from instabot import Bot
 from getpass import getpass
 
@@ -23,13 +24,7 @@ def post(summary, video, tags, testing=False):
     post_tags = [str("#"+tag).replace(" ", "") for tag in post_tags]
     post_tags = " ".join(post_tags)
 
-    msg = '''
-{0}
-
-See link in bio for more!
-
-{1}
-'''.format(summary, post_tags)
+    msg = ''.format(summary, post_tags)
 
     if testing:
         print(msg)
@@ -41,3 +36,4 @@ See link in bio for more!
     #Successfully posted
     bot.logout()
     return True
+'''
