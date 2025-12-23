@@ -136,7 +136,7 @@ def create_mp3(source_file, json, dest_path=None):
     #Create file
     if dest_path is None:
         dest_path = str(source_file)[:-3] + "mp3"
-    subprocess.run(["lame", "-V0", source_file, dest_path])
+    subprocess.run(["lame", "--quiet", "-V0", "-h", source_file, dest_path])
 
     #Add MP3 tags
     mp3 = MP3(dest_path, ID3=EasyID3)
@@ -152,7 +152,7 @@ def create_mp4(source_file, dest_path=None, cover="Cover.png"):
     '''Use the shell to run ffmpeg and create an MP4'''
     if dest_path is None:
         dest_path = str(source_file)[:-3] + "mp4"
-    subprocess.run(["ffmpeg", "-y", "-loop", "1", "-i", cover, "-i", source_file, "-shortest",
+    subprocess.run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-loop", "1", "-i", cover, "-i", source_file, "-shortest",
                     "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", dest_path])
 
 def create_webp(cover, dest_path=None):
