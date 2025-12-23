@@ -42,7 +42,7 @@ Description:
 </ul>
 
 <h4>Socials</h4>
-<a href="https://bsky.app/profile/ludoloonstudio.bsky.social">Bluesky</a> | <a href="https://mastodon.gamedev.place/@ludoloon">Instagram</a> | <a href="https://instagram.com/ludoloonstudio/">Mastodon</a>
+<a href="https://bsky.app/profile/ludoloonstudio.bsky.social">Bluesky</a> | <a href="https://instagram.com/ludoloonstudio/">Instagram</a> | <a href="https://mastodon.gamedev.place/@ludoloon">Mastodon</a>
 
 -----
 Tags: royalty-free, music, asset-pack, indie, wav, {3}
