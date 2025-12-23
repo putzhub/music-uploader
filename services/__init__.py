@@ -8,3 +8,4 @@ from . import patreon
 from . import reddit
 from . import soundcloud
 from . import youtube
+from . import newgrounds
