@@ -57,7 +57,7 @@ class MusicRelease():
             for key in ["title", "summary", "date", "url", "tags"]:
                 assert key in entry
             #Do the same for MP3 and Details tags
-            for key in ["cost", "loop", "stems"]:
+            for key in ["bpm", "cost", "loop", "stems"]:
                 assert key in entry["details"]
             for key in ["genre", "album", "artist", "website"]:
                 assert key in entry["mp3"]
@@ -109,8 +109,9 @@ class MusicRelease():
             if ytid is not False:
                 self.tracks[i]["embed"] = str("https://youtube.com/embed/"+ytid)
                 self.save()
-
+        
         #Itch.io
+        services.itch.upload(self.tracks)
 
 #Preprocessing helpers
 def create_mp3(source_file, json, dest_path=None):
