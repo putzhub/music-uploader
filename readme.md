@@ -20,8 +20,10 @@ Regardless, you'll need a few things to be true:
 
 1. Install dependencies: python3 -m pip install -r requirements.txt
 2. Setup Google api access: https://cloud.google.com (make sure youtube data api is enabled for uploading).
-3. Put OAuth2 api ID & secret into client_secrets.json (rename from client_secrets_example.json)
-4. (in progress)
+3. Create a folder called "secrets" for your login details in the root folder of this app (readme.md and secrets/ should be visible in your file browswer)
+3. For youtube, put OAuth2 api ID & secret into "client_secrets.json" (rename from client_secrets_example.json)
+4. For Mastodon on the Developers section ([mastodon.instance]/settings/applications) make a file called "mastodoncred.secrets" an application with access to post with your account and put Client Key, Client Secret and Your Access Token, with a line return after each entry (in that order).
+5. For Bluesky put your login and password (make an app password under Privacy & Security) in "bluesky.secrets"
 
 ## Usage
 
