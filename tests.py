@@ -135,5 +135,12 @@ class TestServices(unittest.TestCase):
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
         music_release.upload_music()
 
+class TestSocialMedia(unittest.TestCase):
+    def test_mastodon(self):
+        '''Make sure we can do everything besides post'''
+        #Initialize the class
+        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
+        services.mastodon.post()
+
 if __name__ == "__main__":
     unittest.main()
