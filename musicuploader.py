@@ -124,9 +124,10 @@ class MusicRelease():
             except KeyError:
                 #use the platform name to let us call the upload method
                 url = getattr(services, platform).upload(self.tracks)
+                #Apply the link to *all* tracks
                 for track in self.tracks:
                     track[style][platform] = str(url)
-                #save after creating the itch page
+                #save after creating the URL for relevant page
                 self.save()
 
 #Preprocessing helpers
@@ -174,11 +175,14 @@ if __name__ == "__main__":
         epilog="(Author: Pierce - LudoLoon Studio, ludoloon.studio)")
     
     #Add arguments
-    parser.add_argument("content_dir", help="Root directory of music content")
+    parser.add_argument("content_dir", 
+                        help="Root directory of music content")
     parser.add_argument("--json", type=str, default="release.json", 
                         help="Specify a release.json config file")
     parser.add_argument("--cover", type=str, default="Cover.png", 
                         help="Specify the name of the cover art image")
+    parser.add_argument("--promote", action="store_true",
+                        help="Publish to social media channels")
 
     #Parse arguments
     args = parser.parse_args() 
@@ -187,9 +191,6 @@ if __name__ == "__main__":
     music_release = MusicRelease(args.json, args.content_dir)
     music_release.preprocessing()
     music_release.upload_music()
-
-    # TODO Move to services module & plan out
-    # Prepare for services Youtube, Soundcloud, Itch, Newgrounds, etc
-    #Music hosting
-
-    #Website & Social Media
+    if args.promote is True:
+        print(args.promote)
+        #music_release.promote()
