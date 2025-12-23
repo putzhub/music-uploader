@@ -140,7 +140,7 @@ class TestSocialMedia(unittest.TestCase):
         '''Make sure we can do everything besides post'''
         #Initialize the class
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
-        services.mastodon.post()
+        self.assertTrue(services.mastoposter.post(music_release.tracks, testing=True))
 
 if __name__ == "__main__":
     unittest.main()

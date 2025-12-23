@@ -3,7 +3,7 @@ from . import discord
 from . import instagram
 from . import itch
 from . import lls
-from . import mastodon
+from . import mastoposter
 from . import patreon
 from . import reddit
 from . import soundcloud
