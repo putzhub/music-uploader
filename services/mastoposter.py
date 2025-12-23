@@ -10,13 +10,17 @@ SECRETS_FILE="secrets/mastocred.secrets"
 # distributing rather than hosting an application, most likely per device and server).
 # Uncomment the code and substitute in your information:
 
-def post(tracks, testing=False):
+def post(summary, embed, testing=False):
+    if embed is "" or embed is None or summary is "" or summary is None:
+        #Don't bother posting without a video
+        print("no video or summary")
+        return False
+    
     #Initialize our vairables.
     client_id = ""
     client_secret = ""
     access_token = ""
     #Assume only one track for now
-    track = tracks[0]
 
     with open(SECRETS_FILE) as f:
         client_id = f.readline()
@@ -32,7 +36,7 @@ def post(tracks, testing=False):
 {1}
 
 #vgm #royaltyfree #asset #music
-'''.format(track["summary"], track["embed"].replace("embed", "video"))
+'''.format(summary, embed)
 
     if testing:
         print(msg)
