@@ -119,6 +119,15 @@ class TestServices(unittest.TestCase):
         self.assertIsNotNone(itch_url)
         self.assertIsNot(itch_url, "")
 
+    def test_newgrounds(self):
+        '''Prepare for posting to Newgrounds'''
+        #Initialize the class
+        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
+        #Should return something other than empty
+        ng_url = services.newgrounds.upload(music_release.tracks)
+        self.assertIsNotNone(ng_url)
+        self.assertIsNot(ng_url, "")
+
     def test_upload_music(self):
         '''Make sure the full flow of uploading music works'''
         #Initialize the class
