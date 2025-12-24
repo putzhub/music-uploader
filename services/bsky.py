@@ -2,9 +2,19 @@
 #TODO: Refer to this doc to get embeds (hopefully) working
 #https://github.com/MarshalX/atproto/blob/main/examples/advanced_usage/send_embed.py
 
-from atproto import Client, client_utils, models
+from atproto import Client, client_utils, models, exceptions
+from getpass import getpass
 
 SECRETS_FILE = "secrets/bluesky.secrets"
+
+def request_credentials(msg="Requesting login credentials"):
+    print(msg)
+    with open(SECRETS_FILE, "w") as f:
+        login = input("Full Handle:")
+        password = getpass("App Password: ")
+        f.writelines([login + "\n", password])
+    
+    return login, password
 
 def post(summary, embed, tags, testing=False):
     if embed == "" or embed is None or summary == "" or summary is None:
@@ -15,13 +25,19 @@ def post(summary, embed, tags, testing=False):
     #Initialize our vairables.
     login = ""
     password = ""
-    with open(SECRETS_FILE) as f:
-        login = f.readline().strip()
-        password = f.readline().strip()
+    try:
+        with open(SECRETS_FILE) as f:
+            login = f.readline().strip()
+            password = f.readline().strip()
+    except FileNotFoundError:
+        login, password = request_credentials("Bluesky - Login for the first time.")
 
     #Login
     client = Client()
-    client.login(login=login, password=password)
+    try:
+        client.login(login=login, password=password)
+    except exceptions.UnauthorizedError:
+        login, password = request_credentials("Login unsuccessful, try again.")
 
     #Prep message
     #TODO probably have the message  written elsewhere or brought in as an arg
@@ -46,9 +62,7 @@ def post(summary, embed, tags, testing=False):
     #    )
     #)
 
-    if testing:
-        print(msg)
-    else:
+    if not testing:
         client.send_post(msg)
 
     #Successfully posted
