@@ -8,6 +8,7 @@ import shutil
 from pathlib import Path
 from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
+from PIL import Image
 
 
 # TODO
@@ -155,11 +156,18 @@ def create_mp4(source_file, dest_path=None, cover="Cover.png"):
     subprocess.run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-loop", "1", "-i", cover, "-i", source_file, "-shortest",
                     "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", dest_path])
 
-def create_webp(cover, dest_path=None):
+def create_webp(src_path, dest_path=None):
     '''Use the shell to run ImageMagick to convert to .webp'''
     if dest_path is None:
-        dest_path = str(cover)[:-3] + "webp"
-    subprocess.run(["magick", cover, "-quality", "90", dest_path])
+        dest_path = str(src_path)[:-3] + "webp"
+    
+    with Image.open(src_path) as img:
+        # PNGs support transparency, which WebP also supports.
+        # However, if the image has a palette (e.g., PNG-8), converting to 'RGB' 
+        # or 'RGBA' first is often safer for saving to other formats.
+        if img.mode in ('P', 'LA', 'L'):
+            img = img.convert('RGBA')
+        img.save(dest_path, "WEBP", quality=90)
 
 def create_zip(source, dest_path=None):
     "Create an archive"
