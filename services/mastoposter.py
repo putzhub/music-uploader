@@ -1,14 +1,19 @@
 # https://mastodonpy.readthedocs.io/en/stable/
 
-from mastodon import Mastodon
+from mastodon import Mastodon, errors
+from getpass import getpass
 
-USERCRED_FILE="secrets/masto_usercred.secret"
-CLIENTCRED_FILE="secrets/masto_clientcred.secret"
 SECRETS_FILE="secrets/mastocred.secrets"
 
-# Register your app! This only needs to be done once (per server, or when
-# distributing rather than hosting an application, most likely per device and server).
-# Uncomment the code and substitute in your information:
+def request_credentials(msg="Requesting login credentials"):
+    print(msg)
+    with open(SECRETS_FILE, "w") as f:
+        client_id = getpass("Client ID:")
+        client_secret = getpass("Client Secret: ")
+        access_token = getpass("Your Access Token: ")
+        f.writelines([client_id + "\n", client_secret + "\n", access_token + "\n"])
+    
+    return client_id, client_secret, access_token
 
 def post(summary, embed, tags, testing=False):
     if embed == "" or embed is None or summary == "" or summary is None:
@@ -22,14 +27,17 @@ def post(summary, embed, tags, testing=False):
     access_token = ""
     #Assume only one track for now
 
-    with open(SECRETS_FILE) as f:
-        client_id = f.readline()
-        client_secret = f.readline()
-        access_token = f.readline()
-
+    try:
+        with open(SECRETS_FILE) as f:
+            client_id = f.readline()
+            client_secret = f.readline()
+            access_token = f.readline()
+    except FileNotFoundError:
+        client_id, client_secret, access_token = request_credentials("Mastodon - first time login.")
+            
     # Then, log in. This can be done every time your application starts, or you can use the persisted information:
     mastodon = Mastodon(client_id, client_secret, access_token, api_base_url="https://mastodon.gamedev.place")
-    
+
     #Prep message
     #TODO probably have the message  written elsewhere or brought in as an arg
     post_tags = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
@@ -50,6 +58,9 @@ def post(summary, embed, tags, testing=False):
 '''.format(summary, embed, post_tags)
 
     if testing:
+        #Make sure we can login successfully if testing. Must have profile scope.
+        mastodon.account_verify_credentials()
+        #Make sure the message is what we expect
         print(msg)
     else:
         mastodon.toot(msg)
