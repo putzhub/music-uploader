@@ -1,5 +1,6 @@
 annotated-types==0.7.0
 anyio==4.12.0
+asarPy==1.0.1
 atproto==0.0.65
 blurhash==1.1.5
 cachetools==6.2.4
@@ -26,6 +27,7 @@ Mastodon.py==2.1.4
 mutagen==1.47.0
 oauth2client==4.1.3
 oauthlib==3.3.1
+pillow==12.0.0
 proto-plus==1.27.0
 protobuf==6.33.2
 pyasn1==0.6.1
