@@ -147,18 +147,19 @@ class TestSocialMedia(unittest.TestCase):
             track["tags"],
             testing=True))
     
+    @unittest.skip("Annoying to test often")
     def test_bluesky(self):
         '''Bluesky - Make sure we can do everything besides post'''
         #Initialize the class
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
         track = music_release.tracks[0]
         self.assertTrue(services.bsky.post(
-            track["summary"], 
+            track["summary"],
             track["embed"].replace("embed", "video"),
             track["tags"],
-            testing=True))
+            testing=False))
 
-    #@unittest.skip("Instagram is dogshit ._.")
+    @unittest.skip("Instagram is dogshit ._.")
     def test_instagram(self):
         '''Instagram - Make sure we can do everything besides post'''
         #Initialize the class

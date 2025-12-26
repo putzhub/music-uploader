@@ -167,7 +167,7 @@ def create_webp(src_path, dest_path=None):
         # or 'RGBA' first is often safer for saving to other formats.
         if img.mode in ('P', 'LA', 'L'):
             img = img.convert('RGBA')
-        img.save(dest_path, "WEBP", quality=90)
+        img.save(dest_path, "WEBP", quality=85)
 
 def create_zip(source, dest_path=None):
     "Create an archive"
