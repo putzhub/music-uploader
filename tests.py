@@ -158,7 +158,7 @@ class TestSocialMedia(unittest.TestCase):
             track["tags"],
             testing=True))
 
-    @unittest.skip("Instagram is dogshit ._.")
+    #@unittest.skip("Instagram is dogshit ._.")
     def test_instagram(self):
         '''Instagram - Make sure we can do everything besides post'''
         #Initialize the class
@@ -166,7 +166,6 @@ class TestSocialMedia(unittest.TestCase):
         track = music_release.tracks[0]
         self.assertTrue(services.instagram.post(
             track["summary"], 
-            str(Path(SOURCE_DIR, track["title"] + ".mp4")),
             track["tags"],
             testing=True))
 

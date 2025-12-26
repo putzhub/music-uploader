@@ -1,22 +1,9 @@
-#  https://www.geeksforgeeks.org/python/using-python-to-post-stories-on-instagram/
+import webbrowser
 
-#Previous code, comment out for now.
-'''
-from instabot import Bot
-from getpass import getpass
+def post(summary, tags, testing=False):
+    '''Create an easy message to copy and paste for instagram.'''
 
-def post(summary, video, tags, testing=False):
-    if video == "" or video is None or summary == "" or summary is None:
-        #Don't bother posting without a video
-        print("No video or summary, not posting to Instagram")
-        return False
-
-    #Initialize our vairables.
-    bot = Bot("secrets/config/")
-    bot.login(username="ludoloonstudio", password=getpass(prompt="Password: "))
-    
-    #Prep message
-    #TODO probably have the message  written elsewhere or brought in as an arg
+    #testing bool is unused here but use it in the future if we ever connect to the api
     post_tags = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
           "soundtrack", "indie", "renoise", "composer", "game", "videogame",
           "gamemusic", "ost", "pack", "bundle"]
@@ -26,16 +13,15 @@ def post(summary, video, tags, testing=False):
     post_tags = [str("#"+tag).replace(" ", "") for tag in post_tags]
     post_tags = " ".join(post_tags)
 
-    msg = ''.format(summary, post_tags)
+    msg = '''
+{0}
 
-    if testing:
-        print(msg)
-        print(video)
-    else:
-        id = bot.upload_video(video, msg)
-        bot.upload_story_photo(upload_id=id)
-    
-    #Successfully posted
-    bot.logout()
+See link in bio for more.
+
+{1}
+'''.format(summary, post_tags)
+
+    print(msg)
+    webbrowser.open("https://instagram.com")
+    input("Welp, did ya post it to instagram? [press enter]")
     return True
-'''
