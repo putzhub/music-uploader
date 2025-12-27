@@ -41,6 +41,8 @@ def post(summary, embed, tags, testing=False):
     input("Welp, did ya post it to bluesky? [press enter]")
     return True
 
+#Previous attempt at using bluesky api ._.
+#Problem: haven't figured out either embedding the video link for youtube or image for itch
 def wastetime(title, summary, embed, tags, cover, testing=False, artist="LudoLoon Studio"):
     if embed == "" or embed is None or summary == "" or summary is None:
         #Don't bother posting without a video
