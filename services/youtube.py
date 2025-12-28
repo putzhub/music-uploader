@@ -202,6 +202,11 @@ Patreon (get stems & tracks in advance): https://patreon.com/ludoloonstudio
   #Set privacy status
   args["privacyStatus"] = VALID_PRIVACY_STATUSES[1] #private for now
 
+  #TODO Figure out how argparser below works and send expected args
+  args["logging_level"] = "ERROR"
+  args["noauth_local_webserver"] = False
+  args["auth_host_name"] = "localhost"
+  args["auth_host_port"] = [8080,8090]
   youtube = get_authenticated_service(SimpleNamespace(**args))
   try:
     return initialize_upload(youtube, SimpleNamespace(**args))
