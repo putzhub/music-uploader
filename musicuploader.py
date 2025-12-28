@@ -110,6 +110,7 @@ class MusicRelease():
             ytid = services.youtube.upload(mp4, track)
             if ytid is not False:
                 self.tracks[i]["embed"] = str("https://youtube.com/embed/"+ytid)
+                self.tracks[i]["streaming"]["youtube"] = str("https://youtu.be/"+ytid)
                 self.save()
         
         #TODO Add soundcloud to the mix
@@ -130,6 +131,12 @@ class MusicRelease():
                     track[style][platform] = str(url)
                 #save after creating the URL for relevant page
                 self.save()
+    
+    def promote(self):
+        track = music_release.tracks[0]
+        services.mastoposter.post(track["summary"], track["embed"].replace("embed", "video"), track["tags"])
+        services.bsky.post(track["summary"], track["embed"].replace("embed", "video"), track["tags"])
+        services.instagram.post(track["summary"], track["tags"])
 
 #Preprocessing helpers
 def create_mp3(source_file, json, dest_path=None):
@@ -200,5 +207,5 @@ if __name__ == "__main__":
     music_release.preprocessing()
     music_release.upload_music()
     if args.promote is True:
-        print(args.promote)
-        #music_release.promote()
+        #print(args.promote)
+        music_release.promote()
