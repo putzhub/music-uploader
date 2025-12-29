@@ -207,7 +207,7 @@ class TestSocialMedia(unittest.TestCase):
     
     def test_ludoloon_studio(self):
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
-        track = music_release[0]
+        track = music_release.tracks[0]
         services.lls.post(track)
 
 if __name__ == "__main__":
