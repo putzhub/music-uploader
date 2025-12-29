@@ -30,6 +30,7 @@ def request_credentials(msg="Requesting login credentials"):
     return login, password
 
 #Problem: haven't figured out either embedding the video link for youtube or image for itch
+'''
 def wastetime(title, summary, embed, tags, cover, testing=False, artist="LudoLoon Studio"):
     if embed == "" or embed is None or summary == "" or summary is None:
         #Don't bother posting without a video
@@ -86,3 +87,4 @@ def wastetime(title, summary, embed, tags, cover, testing=False, artist="LudoLoo
 
     #Successfully posted
     return True
+'''
