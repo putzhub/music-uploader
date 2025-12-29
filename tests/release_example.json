@@ -27,7 +27,8 @@
             "itch": "https://itch.io/game/new"
         },
         "streaming": {
-            "newgrounds": "shouldwork.com"
+            "newgrounds": "https://newgrounds.com",
+            "youtube": "https://youtube.com"
         }
     }
 ]
