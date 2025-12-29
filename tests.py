@@ -202,8 +202,13 @@ class TestSocialMedia(unittest.TestCase):
     @unittest.skip("Annoying to test often")
     def test_patreon(self):
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
-        services.patreon.post(music_release)
-
+        track = music_release.tracks[0]
+        services.patreon.post(track)
+    
+    def test_ludoloon_studio(self):
+        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
+        track = music_release[0]
+        services.lls.post(track)
 
 if __name__ == "__main__":
     unittest.main()
