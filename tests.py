@@ -102,6 +102,34 @@ class TestPreprocessing(unittest.TestCase):
             assertIsFile(Path(TESTING_DIR, f))
 
 class TestServices(unittest.TestCase):
+    def test_combine_tags(self):
+        tags = ["test", "if", "tags", "work", "Combined Word"]
+        additional_tags = ["more", "of", "them"]
+        tags_with_hashtags = "#test #if #tags #work #CombinedWord #more #of #them"
+        tags_with_spaces = "test if tags work CombinedWord more of them"
+        tags_with_commas = "test,if,tags,work,CombinedWord,more,of,them"
+
+        c = services.combine_tags
+
+        self.assertEqual(c(tags, additional_tags), tags_with_spaces)
+        self.assertEqual(c(tags, additional_tags, separator=","), tags_with_commas)
+        self.assertEqual(c(tags, additional_tags, prepend="#"), tags_with_hashtags)
+
+    def test_post_prep(self):
+        #Initialize the class
+        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
+        track = music_release.tracks[0]
+        msg = '''
+{0}
+
+{1}
+
+{2}
+'''.format(track["summary"], 
+           track["streaming"]["youtube"], 
+           services.combine_tags(services.mastoposter.DEFAULT_TAGS, track["tags"]))
+        self.assertEqual(msg, services.prep_post(music_release, services.Service.MASTODON))
+
     def test_youtube(self):
         '''Youtube related tests'''
         #Initialize the class
