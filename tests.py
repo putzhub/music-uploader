@@ -14,10 +14,9 @@ TEST_JSON_PATH = "tests/release_example.json"
 # - Track that hasn't been uploaded yet
 # - Fully uploaded track
 # - Multiple tracks
-
-#ASSUMPTIONS
-# Files in tests forlder: Cover.png and *.wav 
+# Files in tests folder: Cover.png and *.wav 
 # Test does not cover albums yet
+# Account for Missing cover image
 
 #Helpers
 def assertIsFile(path):

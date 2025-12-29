@@ -6,6 +6,7 @@ import glob
 import shutil
 
 from pathlib import Path
+from mutagen.id3 import APIC, ID3
 from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
 from PIL import Image
@@ -15,8 +16,8 @@ from PIL import Image
 # Add album exporting
 #Figure out where release.json should live
 #TODO: Specify which services to skip or use
-#TODO Add soundcloud to the mix, combine youtube into this
-#Jamendo?
+#TODO Add more services: Bandcamp, Soundcloud, Jamendo, Archive.org, Godot marketplace, Unity, Unreal, Gamedevmarket
+#Implement logger
 
 class MusicRelease():
     #Class Variables
@@ -72,14 +73,17 @@ class MusicRelease():
 
             #Create files
             mp3_path = Path(self.output_dir, wav_file.stem + ".mp3")
-            mp4_path = Path(self.output_dir, wav_file.stem + ".mp4")
-            create_mp3(wav_file, self.tracks[i], mp3_path)
-            create_mp4(wav_file, mp4_path, self.cover_file)
-            #Create .webp version of cover art for ludoloon.studio
-            if self.tracks[i]["cover"]:
-                webp_file = Path(self.output_dir, self.tracks[i]["cover"])
-                if not webp_file.exists():
-                    create_webp(self.cover_file, webp_file)
+            create_mp3(wav_file, self.tracks[i], mp3_path, self.cover_file)
+            if self.cover_file != "":
+                mp4_path = Path(self.output_dir, wav_file.stem + ".mp4")
+                create_mp4(wav_file, mp4_path, self.cover_file)
+                #Create .webp version of cover art for ludoloon.studio
+                if self.tracks[i]["cover"]:
+                    webp_file = Path(self.output_dir, self.tracks[i]["cover"])
+                    if not webp_file.exists():
+                        create_webp(self.cover_file, webp_file)
+            else:
+                print("Cover file not found, skipping .mp4 & .webp in preprocessing", )
 
         #If we have stems then package them
         stems_path = Path(self.source_dir, "Stems/")
@@ -133,7 +137,7 @@ class MusicRelease():
             getattr(services, platform).post(self)
 
 #Preprocessing helpers
-def create_mp3(source_file, json, dest_path=None):
+def create_mp3(source_file, json, dest_path=None, cover=""):
     '''Use the shell to run LAME and create an MP3, add tags'''
     #Create file
     if dest_path is None:
@@ -149,6 +153,21 @@ def create_mp3(source_file, json, dest_path=None):
     for tag in ["artist", "website", "genre", "album"]:
         mp3[tag] = json["mp3"][tag]
     mp3.save()
+    #Add cover if available
+    if cover != "":
+        with open(cover, 'rb') as art:
+            audio = ID3(dest_path)
+            audio.add(
+                    APIC(
+                        encoding=3, # 3 is for utf-8
+                        mime='image/png', # image/jpeg or image/png
+                        type=3, # 3 is for the cover image
+                        desc=u'Cover',
+                        data=art.read()
+                    )
+                )
+            audio.save()
+    
 
 def create_mp4(source_file, dest_path=None, cover="Cover.png"):
     '''Use the shell to run ffmpeg and create an MP4'''
@@ -190,7 +209,7 @@ if __name__ == "__main__":
     parser.add_argument("--json", type=str, default="release.json", 
                         help="Specify a release.json config file")
     parser.add_argument("--cover", type=str, default="Cover.png", 
-                        help="Specify the name of the cover art image")
+                        help="Specify the filename of the PNG cover art image (FILENAME ONLY, default: Cover.png)")
     parser.add_argument("--promote", action="store_true",
                         help="Publish to social media channels")
 
@@ -198,7 +217,7 @@ if __name__ == "__main__":
     args = parser.parse_args() 
 
     # Read metadata and store into release info
-    music_release = MusicRelease(args.json, args.content_dir)
+    music_release = MusicRelease(args.json, args.content_dir, cover_file=args.cover)
     music_release.preprocessing()
     music_release.upload_music()
     if args.promote is True:
