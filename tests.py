@@ -120,7 +120,9 @@ class TestServices(unittest.TestCase):
         #Initialize the class
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
         track = music_release.tracks[0]
-        msg = '''
+        #Prep the test message
+        #MASTODON
+        masto_msg = '''
 {0}
 
 {1}
@@ -129,7 +131,17 @@ class TestServices(unittest.TestCase):
 '''.format(track["summary"], 
            track["streaming"]["youtube"], 
            services.combine_tags(services.mastoposter.DEFAULT_TAGS, track["tags"], prepend="#"))
-        self.assertEqual(msg, services.prep_post(music_release.tracks[0], services.Service.MASTODON))
+        #INSTAGRAM
+        insta_msg = '''
+{0}
+
+See link in bio for more.
+
+{1}
+'''.format(track["summary"], services.combine_tags(services.instagram.DEFAULT_TAGS, track["tags"], prepend="#"))
+
+        #Test if we got the expected results
+        self.assertEqual(insta_msg, services.prep_post(music_release.tracks[0], services.Service.INSTAGRAM))
 
     def test_youtube(self):
         '''Youtube related tests'''

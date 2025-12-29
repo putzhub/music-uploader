@@ -1,12 +1,14 @@
 import webbrowser
 
+DEFAULT_TAGS = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
+          "soundtrack", "indie", "renoise", "composer", "game", "videogame",
+          "gamemusic", "ost", "pack", "bundle"]
+
 def post(summary, tags, testing=False):
     '''Create an easy message to copy and paste for instagram.'''
 
     #testing bool is unused here but use it in the future if we ever connect to the api
-    post_tags = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
-          "soundtrack", "indie", "renoise", "composer", "game", "videogame",
-          "gamemusic", "ost", "pack", "bundle"]
+    post_tags = DEFAULT_TAGS
     for tag in tags:
         post_tags.append(tag)
     #give 'em hashtags and remove spaces for description

@@ -45,6 +45,7 @@ def prep_post(release, service):
     msg = ""
     module = service.value
 
+    #MASTODON
     if service == Service.MASTODON:
         msg = '''
 {0}
@@ -54,6 +55,16 @@ def prep_post(release, service):
 {2}
 '''.format(release["summary"], 
            release["streaming"]["youtube"], 
+           combine_tags(module.DEFAULT_TAGS, release["tags"], prepend="#"))
+    #INSTAGRAM
+    elif service == Service.INSTAGRAM:
+        msg = '''
+{0}
+
+See link in bio for more.
+
+{1}
+'''.format(release["summary"], 
            combine_tags(module.DEFAULT_TAGS, release["tags"], prepend="#"))
 
     return msg
