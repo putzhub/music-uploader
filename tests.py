@@ -92,8 +92,7 @@ class TestPreprocessing(unittest.TestCase):
     #Tests
     def test_preprocessing(self):
         #Init the release
-        music_release = MusicRelease(TEST_JSON_PATH, CONTENT_DIR, TESTING_DIR)
-        music_release.preprocessing()
+        MusicRelease(TEST_JSON_PATH, CONTENT_DIR, TESTING_DIR).preprocessing()
 
         files = ["Test.mp3", "Test.mp4", "Stems.zip", "test.webp"]
         for f in files:
@@ -115,8 +114,8 @@ class TestServices(unittest.TestCase):
         self.assertEqual(c(tags, additional_tags, prepend="#"), tags_with_hashtags)
 
     def test_post_prep(self):
-        #Initialize the class
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
+        #Still relevant for constructing the message to refer to one track
         track = music_release.tracks[0]
         #Prep the test message
         #MASTODON
@@ -130,7 +129,7 @@ class TestServices(unittest.TestCase):
            track["streaming"]["youtube"], 
            services.combine_tags(services.mastoposter.DEFAULT_TAGS, track["tags"], prepend="#"))
         #Test results
-        self.assertEqual(masto_msg, services.prep_post(track, services.Service.MASTODON))
+        self.assertEqual(masto_msg, services.prep_post(music_release, services.Service.MASTODON))
         #INSTAGRAM
         insta_msg = '''
 {0}
@@ -140,75 +139,58 @@ See link in bio for more.
 {1}
 '''.format(track["summary"], services.combine_tags(services.instagram.DEFAULT_TAGS, track["tags"], prepend="#"))
         #Test if we got the expected results
-        self.assertEqual(insta_msg, services.prep_post(track, services.Service.INSTAGRAM))
+        self.assertEqual(insta_msg, services.prep_post(music_release, services.Service.INSTAGRAM))
 
     def test_youtube(self):
         '''Youtube related tests'''
-        #Initialize the class
-        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
         #Ensure that we return False for code that depends on that.
-        self.assertFalse(services.youtube.upload(None, music_release.tracks[0]))
+        self.assertFalse(services.youtube.upload(MusicRelease(TEST_JSON_PATH, SOURCE_DIR)))
     
-    @unittest.skip("Annoying to test often")
+    #@unittest.skip("Annoying to test often")
     def test_itch(self):
         '''Prepare for posting to itch.io'''
-        #Initialize the class
-        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
         #Should return something other than empty
-        itch_url = services.itch.upload(music_release.tracks)
+        itch_url = services.itch.upload(MusicRelease(TEST_JSON_PATH, SOURCE_DIR))
         self.assertIsNotNone(itch_url)
         self.assertIsNot(itch_url, "")
 
-    @unittest.skip("Annoying to test often")
+    #@unittest.skip("Annoying to test often")
     def test_newgrounds(self):
         '''Prepare for posting to Newgrounds'''
-        #Initialize the class
-        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
         #Should return something other than empty
-        ng_url = services.newgrounds.upload(music_release.tracks)
+        ng_url = services.newgrounds.upload(MusicRelease(TEST_JSON_PATH, SOURCE_DIR))
         self.assertIsNotNone(ng_url)
         self.assertIsNot(ng_url, "")
 
     def test_upload_music(self):
         '''Make sure the full flow of uploading music works'''
         #Initialize the class
-        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
-        music_release.upload_music()
+        MusicRelease(TEST_JSON_PATH, SOURCE_DIR).upload_music()
 
 class TestSocialMedia(unittest.TestCase):
     def test_mastodon(self):
         '''Mastodon - Make sure we can do everything besides post'''
-        #Initialize the class
-        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
-        track = music_release.tracks[0]
-        self.assertTrue(services.mastoposter.post(track, testing=True))
+        self.assertTrue(services.mastoposter.post(MusicRelease(TEST_JSON_PATH, SOURCE_DIR), 
+                                                  testing=True))
     
-    @unittest.skip("Annoying to test often")
+    #@unittest.skip("Annoying to test often")
     def test_bluesky(self):
         '''Bluesky - Make sure we can do everything besides post'''
-        #Initialize the class
-        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
-        track = music_release.tracks[0]
-        self.assertTrue(services.bsky.post(track, testing=True))
+        self.assertTrue(services.bsky.post(MusicRelease(TEST_JSON_PATH, SOURCE_DIR), 
+                                           testing=True))
 
-    @unittest.skip("Annoying to test often")
+    #@unittest.skip("Annoying to test often")
     def test_instagram(self):
         '''Instagram - Make sure we can do everything besides post'''
-        #Initialize the class
-        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
-        track = music_release.tracks[0]
-        self.assertTrue(services.instagram.post(track, testing=True))
+        self.assertTrue(services.instagram.post(MusicRelease(TEST_JSON_PATH, SOURCE_DIR), 
+                                                testing=True))
 
-    @unittest.skip("Annoying to test often")
+    #@unittest.skip("Annoying to test often")
     def test_patreon(self):
-        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
-        track = music_release.tracks[0]
-        services.patreon.post(track)
+        services.patreon.post(MusicRelease(TEST_JSON_PATH, SOURCE_DIR))
     
     def test_ludoloon_studio(self):
-        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
-        track = music_release.tracks[0]
-        services.lls.post(track)
+        services.lls.post(MusicRelease(TEST_JSON_PATH, SOURCE_DIR))
 
 if __name__ == "__main__":
     unittest.main()
