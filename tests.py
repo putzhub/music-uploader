@@ -56,7 +56,6 @@ class TestWithFiles(unittest.TestCase):
         for tag in tags:
             self.assertEqual(audio[tag], [self.music_release.tracks[0]["mp3"][tag]])
 
-    #@unittest.skip("Too verbose")
     def test_make_mp4(self):
         #Create the file
         fname = "Test.wav"
@@ -80,7 +79,6 @@ class TestWithFiles(unittest.TestCase):
         create_zip(src, str(target)[:-4]) #shutil.make_archive() doesn't need .zip extension
         assertIsFile(target)
 
-#@unittest.skip("testing")
 class TestPreprocessing(unittest.TestCase):
     #Prep & cleanup
     @classmethod
@@ -151,7 +149,7 @@ See link in bio for more.
         #Ensure that we return False for code that depends on that.
         self.assertFalse(services.youtube.upload(None, music_release.tracks[0]))
     
-    #@unittest.skip("Annoying to test often")
+    @unittest.skip("Annoying to test often")
     def test_itch(self):
         '''Prepare for posting to itch.io'''
         #Initialize the class
@@ -161,7 +159,7 @@ See link in bio for more.
         self.assertIsNotNone(itch_url)
         self.assertIsNot(itch_url, "")
 
-    #@unittest.skip("Annoying to test often")
+    @unittest.skip("Annoying to test often")
     def test_newgrounds(self):
         '''Prepare for posting to Newgrounds'''
         #Initialize the class
@@ -185,7 +183,7 @@ class TestSocialMedia(unittest.TestCase):
         track = music_release.tracks[0]
         self.assertTrue(services.mastoposter.post(track, testing=True))
     
-    #@unittest.skip("Annoying to test often")
+    @unittest.skip("Annoying to test often")
     def test_bluesky(self):
         '''Bluesky - Make sure we can do everything besides post'''
         #Initialize the class
@@ -193,7 +191,7 @@ class TestSocialMedia(unittest.TestCase):
         track = music_release.tracks[0]
         self.assertTrue(services.bsky.post(track, testing=True))
 
-    #@unittest.skip("Instagram is dogshit ._.")
+    @unittest.skip("Annoying to test often")
     def test_instagram(self):
         '''Instagram - Make sure we can do everything besides post'''
         #Initialize the class
