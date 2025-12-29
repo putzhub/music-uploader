@@ -199,5 +199,11 @@ class TestSocialMedia(unittest.TestCase):
         track = music_release.tracks[0]
         self.assertTrue(services.instagram.post(track, testing=True))
 
+    @unittest.skip("Annoying to test often")
+    def test_patreon(self):
+        music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
+        services.patreon.post(music_release)
+
+
 if __name__ == "__main__":
     unittest.main()

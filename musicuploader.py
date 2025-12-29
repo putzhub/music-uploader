@@ -11,19 +11,15 @@ from mutagen.mp3 import MP3
 from PIL import Image
 
 
-# TODO Implement flow
-# Make single (ALBUM EXPORTING NOT YET SUPPORTED)
+# TODO
+# Add album exporting
 # Move files to any relevant places
 # -LudoLoon Studio
-
-#FIX
 #Add patreon
 #Refactor code:
 #- post should take message instead
 #Figure out where release.json should live
-
-#Add
-#LudoLoon Studio
+#TODO Add soundcloud to the mix, combine youtube into this
 #Jamendo?
 
 class MusicRelease():
@@ -109,7 +105,6 @@ class MusicRelease():
                 self.tracks[i]["streaming"]["youtube"] = str("https://youtu.be/"+ytid)
                 self.save()
         
-        #TODO Add soundcloud to the mix, combine youtube into this
         #Upload tracks to remaining hosting services
         platforms = {
             "itch": "stores", 
@@ -132,7 +127,7 @@ class MusicRelease():
     
     def promote(self):
         track = music_release.tracks[0]
-        social_media = ["mastoposter", "bksy", "instagram"]
+        social_media = ["mastoposter", "bksy", "instagram", "patreon"]
 
         for platform in social_media:
             getattr(services, platform).post(track)

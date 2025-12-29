@@ -42,8 +42,7 @@ def combine_tags(*args, separator=" ", prepend=""):
 
     return combined_array
 
-#TODO Piece out message builder functions maybe?
-#i.e: 
+#TODO Piece out message builder functions for common info groups maybe?
 def prep_post(release, service):
     msg = ""
     module = service.value
