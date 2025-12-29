@@ -13,11 +13,8 @@ from PIL import Image
 
 # TODO
 # Add album exporting
-# Move files to any relevant places
-# -LudoLoon Studio
-#Refactor code:
-#- post should take message instead
 #Figure out where release.json should live
+#TODO: Specify which services to skip or use
 #TODO Add soundcloud to the mix, combine youtube into this
 #Jamendo?
 
@@ -92,7 +89,6 @@ class MusicRelease():
     #Upload music online
     def upload_music(self):
         #WARNING: NOT TESTED FOR MULTIPLE FILES - First file assumed as default metadata after youtube
-        #TODO: Specify which services to skip or use
         
         #Upload tracks to remaining hosting services
         platforms = {

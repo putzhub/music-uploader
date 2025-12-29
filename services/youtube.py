@@ -200,7 +200,6 @@ def upload_track(mp4, args):
     print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
     return False
 
-#TODO Convert to multi-track flow, return array of youtube IDs
 def upload(release):
   '''Upload a MusicRelease() to youtube'''
   #will hold a tuple

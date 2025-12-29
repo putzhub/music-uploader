@@ -109,7 +109,7 @@ class TestPreprocessing(unittest.TestCase):
         music_release.preprocessing()
         music_release.upload_music()
     
-    @unittest.skip("Annoying to test frequently")
+    @unittest.skip("Annoying to test frequently, most people won't care about this one")
     def test_ludoloon_studio(self):
         music_release = MusicRelease(TEST_JSON_PATH, CONTENT_DIR, TESTING_DIR)
         music_release.preprocessing()
@@ -136,7 +136,7 @@ class TestServices(unittest.TestCase):
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
         #Still relevant for constructing the message to refer to one track
         track = music_release.tracks[0]
-        #Prep the test message
+
         #MASTODON
         masto_msg = '''
 {0}
