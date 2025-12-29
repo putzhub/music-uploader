@@ -12,7 +12,6 @@ MUSIC_DATA = Path(WEBSITE_DIR, "content/music_data.js")
 def post(release):
     src = Path(release.output_dir, release.tracks[0]["cover"])
     dest = Path(IMAGE_DIR)
-    print(src)
     shutil.copy(src, dest)
 
     subprocess.call(["kate", MUSIC_DATA, release.json_file])
