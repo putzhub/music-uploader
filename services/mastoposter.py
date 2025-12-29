@@ -4,6 +4,9 @@ from mastodon import Mastodon, errors
 from getpass import getpass
 
 SECRETS_FILE="secrets/mastocred.secrets"
+DEFAULT_TAGS = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
+          "soundtrack", "indie", "renoise", "composer", "game", "videogame",
+          "gamemusic", "ost", "pack", "bundle"]
 
 def request_credentials(msg="Requesting login credentials"):
     print(msg)
@@ -40,9 +43,7 @@ def post(summary, embed, tags, testing=False):
 
     #Prep message
     #TODO probably have the message  written elsewhere or brought in as an arg
-    post_tags = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
-          "soundtrack", "indie", "renoise", "composer", "game", "videogame",
-          "gamemusic", "ost", "pack", "bundle"]
+    post_tags = DEFAULT_TAGS
     for tag in tags:
         post_tags.append(tag)
     #give 'em hashtags and remove spaces for description
