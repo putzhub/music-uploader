@@ -163,10 +163,10 @@ def create_mp3(source_file, json, dest_path=None):
     #Add MP3 tags
     mp3 = MP3(dest_path, ID3=EasyID3)
     mp3.add_tags()  #Add EasyID3 header
-    mp3["title"] = json["title"]
-    mp3["date"] = json["date"]
-    tags = ["artist", "website", "genre", "album"]
-    for tag in tags:
+    #Write tags to their relevant spots
+    for tag in ["title", "date"]:
+        mp3[tag] = json[tag]
+    for tag in ["artist", "website", "genre", "album"]:
         mp3[tag] = json["mp3"][tag]
     mp3.save()
 
