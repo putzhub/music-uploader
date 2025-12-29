@@ -1,21 +1,22 @@
 [
     {
-        "title": "Test",
+        "title": "Animal Town",
         "date": "2025-12-21",
-        "url": "chill-shop",
-        "cover": "chill-shop.webp",
-        "summary": "Funky little shop music for spending all that loot.",
+        "url": "animal-town",
+        "cover": "animal-town.webp",
+        "summary": "It's a good day to be a chill little critter and vibe.",
         "tags": [
-            "Blues",
             "Chill",
             "Casual",
-            "Downtempo",
+            "Cute",
+            "Exploration",
             "Funky",
             "Groovy",
-            "Menu",
+            "HipHop",
             "Relaxing",
             "RPG",
             "Smooth",
+            "Upbeat",
             "Visual Novel"
         ],
         "mp3": {
@@ -25,18 +26,18 @@
             "album": ""
         },
         "details": {
-            "bpm": 95,
+            "bpm": 94,
             "cost": "Free",
             "loop": "Loopable",
             "stems": "No-Stems"
         },
         "stores": {
-            "itch": "https://ludoloonstudio.itch.io/chill-shop"
+            "itch": "https://ludoloonstudio.itch.io/animal-town"
         },
         "streaming": {
-            "youtube": "https://youtu.be/0IDK_DdBlnM",
-            "newgrounds": "https://www.newgrounds.com/audio/listen/1502506"
+            "youtube": "https://youtu.be/5Ho5VJyXgIY",
+            "newgrounds": "https://www.newgrounds.com/audio/listen/1506338"
         },
-        "embed": "https://youtube.com/embed/9xPGvDy3J4w"
+        "embed": "https://youtube.com/embed/5Ho5VJyXgIY"
     }
 ]
