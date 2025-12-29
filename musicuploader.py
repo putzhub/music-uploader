@@ -30,6 +30,19 @@ from PIL import Image
 # Prep data for manual upload to: itch, newgrounds and patreon (make it easy to copy and paste)
 # Publicize launch: ludoloon.studio, bluesky, mastodon, instagram and (hopefully) discord
 
+#FIX
+#Youtube embed should be youtube streaming link
+#Add patreon
+#ffmpeg should do aspect ratio 16:9
+#Include forum post for itch.io: https://itch.io/category/10022/new-topic
+#Refactor code:
+#- post should take message instead
+#Figure out where release.json should live
+
+#Add
+#LudoLoon Studio
+#Jamendo?
+
 class MusicRelease():
     #Class Variables
     tracks = []
@@ -161,7 +174,7 @@ def create_mp4(source_file, dest_path=None, cover="Cover.png"):
     if dest_path is None:
         dest_path = str(source_file)[:-3] + "mp4"
     subprocess.run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-loop", "1", "-i", cover, "-i", source_file, "-shortest",
-                    "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", dest_path])
+                    "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1", dest_path])
 
 def create_webp(src_path, dest_path=None):
     '''Use the shell to run ImageMagick to convert to .webp'''
