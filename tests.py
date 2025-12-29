@@ -129,7 +129,7 @@ class TestServices(unittest.TestCase):
 '''.format(track["summary"], 
            track["streaming"]["youtube"], 
            services.combine_tags(services.mastoposter.DEFAULT_TAGS, track["tags"], prepend="#"))
-        self.assertEqual(msg, services.prep_post(music_release, services.Service.MASTODON))
+        self.assertEqual(msg, services.prep_post(music_release.tracks[0], services.Service.MASTODON))
 
     def test_youtube(self):
         '''Youtube related tests'''

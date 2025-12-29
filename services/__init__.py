@@ -43,4 +43,17 @@ def combine_tags(*args, separator=" ", prepend=""):
 
 def prep_post(release, service):
     msg = ""
+    module = service.value
+
+    if service == Service.MASTODON:
+        msg = '''
+{0}
+
+{1}
+
+{2}
+'''.format(release["summary"], 
+           release["streaming"]["youtube"], 
+           combine_tags(module.DEFAULT_TAGS, release["tags"], prepend="#"))
+
     return msg
