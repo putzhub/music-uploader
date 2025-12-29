@@ -103,6 +103,7 @@ class TestPreprocessing(unittest.TestCase):
 
 class TestServices(unittest.TestCase):
     def test_combine_tags(self):
+        '''Make sure combine_tags gives the expected output'''
         tags = ["test", "if", "tags", "work", "Combined Word"]
         additional_tags = ["more", "of", "them"]
         tags_with_hashtags = "#test #if #tags #work #CombinedWord #more #of #them"
@@ -127,7 +128,7 @@ class TestServices(unittest.TestCase):
 {2}
 '''.format(track["summary"], 
            track["streaming"]["youtube"], 
-           services.combine_tags(services.mastoposter.DEFAULT_TAGS, track["tags"]))
+           services.combine_tags(services.mastoposter.DEFAULT_TAGS, track["tags"], prepend="#"))
         self.assertEqual(msg, services.prep_post(music_release, services.Service.MASTODON))
 
     def test_youtube(self):

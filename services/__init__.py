@@ -1,3 +1,5 @@
+from enum import Enum
+
 from . import bsky
 from . import discord
 from . import instagram
@@ -10,3 +12,35 @@ from . import soundcloud
 from . import youtube
 from . import newgrounds
 from . import archiveorg
+
+class Service(Enum):
+    BSKY = bsky
+    DISCORD = discord
+    INSTAGRAM = instagram
+    ITCH = itch
+    LLS = lls
+    MASTODON = mastoposter
+    PATREON = patreon
+    REDDIT = reddit
+    SOUNDCLOUD = soundcloud
+    YOUTUBE = youtube
+    NEWGROUNDS = newgrounds
+    ARCHIVEORG = archiveorg
+
+def combine_tags(*args, separator=" ", prepend=""):
+    '''Combine an open ended number of arrays into a single combination of tags as a string.'''
+    combined_array = []
+
+    for arg in args:
+        for list in arg:
+             combined_array.append(list)
+
+    #give 'em hashtags and remove inner tag spaces
+    combined_array = [str(prepend+tag).replace(" ", "") for tag in combined_array]
+    combined_array = separator.join(combined_array)
+
+    return combined_array
+
+def prep_post(release, service):
+    msg = ""
+    return msg
