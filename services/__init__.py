@@ -1,4 +1,5 @@
 from enum import Enum
+from copy import deepcopy
 
 from . import bsky
 from . import discord
@@ -44,9 +45,10 @@ def combine_tags(*args, separator=" ", prepend=""):
 def prep_post(release, service):
     msg = ""
     module = service.value
+    release = deepcopy(release)
 
-    #MASTODON
-    if service == Service.MASTODON:
+    #MASTODON & BLUESKY
+    if service == Service.MASTODON or service == Service.BSKY:
         msg = '''
 {0}
 
@@ -66,5 +68,17 @@ See link in bio for more.
 {1}
 '''.format(release["summary"], 
            combine_tags(module.DEFAULT_TAGS, release["tags"], prepend="#"))
+    #YOUTUBE
+    elif service == Service.YOUTUBE:
+        msg = '''
+{0}
+
+homepage: https://ludoloon.studio/music#{1}
+itch.io: https://ludoloonstudio.itch.io/{1}
+Newgrounds: https://ludoloonstudio.newgrounds.com/audio
+Patreon (get stems & tracks in advance): https://patreon.com/ludoloonstudio
+
+{2}
+'''.format(release["summary"], release["url"], combine_tags(module.DEFAULT_TAGS, release["tags"]))
 
     return msg

@@ -6,9 +6,21 @@ from atproto import Client, client_utils, models, exceptions
 from getpass import getpass
 from PIL import Image
 import webbrowser
+import services
 
 SECRETS_FILE = "secrets/bluesky.secrets"
+DEFAULT_TAGS = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
+          "soundtrack", "indie", "renoise", "composer", "game", "videogame",
+          "gamemusic", "ost", "pack", "bundle"]
 
+def post(release, testing=False):
+    '''Prepare a message to copy & paste onto bluesky for promotion.'''
+    print(services.prep_post(release, services.Service.BSKY))
+    webbrowser.open("https://bsky.app")
+    input("Welp, did ya post it to bluesky? [press enter]")
+    return True
+
+#Previous attempt at using bluesky api ._.
 def request_credentials(msg="Requesting login credentials"):
     print(msg)
     with open(SECRETS_FILE, "w") as f:
@@ -18,30 +30,6 @@ def request_credentials(msg="Requesting login credentials"):
     
     return login, password
 
-def post(summary, embed, tags, testing=False):
-    post_tags = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
-          "soundtrack", "indie", "renoise", "composer", "game", "videogame",
-          "gamemusic", "ost", "pack", "bundle"]
-    for tag in tags:
-        post_tags.append(tag)
-    #give 'em hashtags and remove spaces for description
-    post_tags = [str("#"+tag).replace(" ", "") for tag in post_tags]
-    post_tags = " ".join(post_tags)
-
-    msg = '''
-{0}
-
-{1}
-
-{2}
-'''.format(summary, embed, post_tags)
-
-    print(msg)
-    webbrowser.open("https://bsky.app")
-    input("Welp, did ya post it to bluesky? [press enter]")
-    return True
-
-#Previous attempt at using bluesky api ._.
 #Problem: haven't figured out either embedding the video link for youtube or image for itch
 def wastetime(title, summary, embed, tags, cover, testing=False, artist="LudoLoon Studio"):
     if embed == "" or embed is None or summary == "" or summary is None:

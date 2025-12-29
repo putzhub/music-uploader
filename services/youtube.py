@@ -15,6 +15,12 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from oauth2client.tools import argparser, run_flow
 
+import services
+
+#Default tags for posting
+DEFAULT_TAGS = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
+          "soundtrack", "indie", "renoise", "composer", "game", "videogame",
+          "gamemusic", "ost", "pack", "bundle"]
 
 # Explicitly tell the underlying HTTP transport library not to retry, since
 # we are handling retry logic ourselves.
@@ -162,12 +168,11 @@ def upload(mp4, track_json):
   args = deepcopy(track_json)
 
   #...unless we already have a video ID present
-  if "embed" in args:
-    return False
-
+  if "streaming" in args:
+    if "youtube" in args["streaming"]:
+      return False
   #Process tags
   args["file"] = mp4
-
   #Music category
   args["category"] = "10"
 
@@ -176,37 +181,20 @@ def upload(mp4, track_json):
     args["title"] += " (Free Music)"
     args["tags"].append("free")
 
-  #Default hashtags + specifics from release.json
-  tags = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
-          "soundtrack", "indie", "renoise", "composer", "game", "videogame",
-          "gamemusic", "ost", "pack", "bundle"]
-  for tag in args["tags"]:
-    tags.append(tag)
-  #Get the keywords before they're hashtags
-  args["keywords"] = ",".join(tags)
-  #give 'em hashtags and remove spaces for description
-  tags = [str("#"+tag).replace(" ", "") for tag in tags]
-
+  #Set the keywords
+  args["keywords"] = services.combine_tags(DEFAULT_TAGS, args["tags"])
   #Prep the description
-  args["description"] = '''
-{0}
-
-homepage: https://ludoloon.studio/music#{1}
-itch.io: https://ludoloonstudio.itch.io/{1}
-Newgrounds: https://ludoloonstudio.newgrounds.com/audio
-Patreon (get stems & tracks in advance): https://patreon.com/ludoloonstudio
-
-{2}
-'''.format(args["summary"], args["url"], " ".join(tags))
-
+  args["description"] = services.prep_post(args, services.Service.YOUTUBE)
   #Set privacy status
   args["privacyStatus"] = VALID_PRIVACY_STATUSES[1] #private for now
 
-  #TODO Figure out how argparser below works and send expected args
+  #Avoid issues with oauth stuff
   args["logging_level"] = "ERROR"
   args["noauth_local_webserver"] = False
   args["auth_host_name"] = "localhost"
   args["auth_host_port"] = [8080,8090]
+
+  #Authenticate and upload
   youtube = get_authenticated_service(SimpleNamespace(**args))
   try:
     return initialize_upload(youtube, SimpleNamespace(**args))

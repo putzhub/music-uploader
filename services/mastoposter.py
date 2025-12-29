@@ -2,6 +2,7 @@
 
 from mastodon import Mastodon, errors
 from getpass import getpass
+import services
 
 SECRETS_FILE="secrets/mastocred.secrets"
 DEFAULT_TAGS = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
@@ -18,8 +19,8 @@ def request_credentials(msg="Requesting login credentials"):
     
     return client_id, client_secret, access_token
 
-def post(summary, embed, tags, testing=False):
-    if embed == "" or embed is None or summary == "" or summary is None:
+def post(release, testing=False):
+    if release["embed"] == "" or release["embed"] is None or release["summary"] == "" or release["summary"] is None:
         #Don't bother posting without a video
         print("No video or summary, not posting to Mastodon")
         return False
@@ -42,21 +43,7 @@ def post(summary, embed, tags, testing=False):
     mastodon = Mastodon(client_id, client_secret, access_token, api_base_url="https://mastodon.gamedev.place")
 
     #Prep message
-    #TODO probably have the message  written elsewhere or brought in as an arg
-    post_tags = DEFAULT_TAGS
-    for tag in tags:
-        post_tags.append(tag)
-    #give 'em hashtags and remove spaces for description
-    post_tags = [str("#"+tag).replace(" ", "") for tag in post_tags]
-    post_tags = " ".join(post_tags)
-
-    msg = '''
-{0}
-
-{1}
-
-{2}
-'''.format(summary, embed, post_tags)
+    msg = services.prep_post(release, services.Service.BSKY)
 
     if testing:
         #Make sure we can login successfully if testing. Must have profile scope.

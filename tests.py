@@ -131,6 +131,8 @@ class TestServices(unittest.TestCase):
 '''.format(track["summary"], 
            track["streaming"]["youtube"], 
            services.combine_tags(services.mastoposter.DEFAULT_TAGS, track["tags"], prepend="#"))
+        #Test results
+        self.assertEqual(masto_msg, services.prep_post(track, services.Service.MASTODON))
         #INSTAGRAM
         insta_msg = '''
 {0}
@@ -139,9 +141,8 @@ See link in bio for more.
 
 {1}
 '''.format(track["summary"], services.combine_tags(services.instagram.DEFAULT_TAGS, track["tags"], prepend="#"))
-
         #Test if we got the expected results
-        self.assertEqual(insta_msg, services.prep_post(music_release.tracks[0], services.Service.INSTAGRAM))
+        self.assertEqual(insta_msg, services.prep_post(track, services.Service.INSTAGRAM))
 
     def test_youtube(self):
         '''Youtube related tests'''
@@ -182,11 +183,7 @@ class TestSocialMedia(unittest.TestCase):
         #Initialize the class
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
         track = music_release.tracks[0]
-        self.assertTrue(services.mastoposter.post(
-            track["summary"], 
-            track["embed"].replace("embed", "video"),
-            track["tags"],
-            testing=True))
+        self.assertTrue(services.mastoposter.post(track, testing=True))
     
     @unittest.skip("Annoying to test often")
     def test_bluesky(self):
@@ -194,11 +191,7 @@ class TestSocialMedia(unittest.TestCase):
         #Initialize the class
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
         track = music_release.tracks[0]
-        self.assertTrue(services.bsky.post(
-            track["summary"],
-            track["embed"].replace("embed", "video"),
-            track["tags"],
-            testing=True))
+        self.assertTrue(services.bsky.post(track, testing=True))
 
     @unittest.skip("Instagram is dogshit ._.")
     def test_instagram(self):
@@ -206,10 +199,7 @@ class TestSocialMedia(unittest.TestCase):
         #Initialize the class
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
         track = music_release.tracks[0]
-        self.assertTrue(services.instagram.post(
-            track["summary"], 
-            track["tags"],
-            testing=True))
+        self.assertTrue(services.instagram.post(track, testing=True))
 
 if __name__ == "__main__":
     unittest.main()

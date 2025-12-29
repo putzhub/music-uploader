@@ -118,7 +118,7 @@ class MusicRelease():
 
         #Youtube first
         for (i, track) in enumerate(self.tracks):
-            #Converting to string avoids issues, but deepcopy() on services.youtube.upload may make this irrelevant.
+            #Converting to string avoids issues with putting a Path() into JSON
             mp4 = str(Path(self.output_dir, track["title"] + ".mp4"))
             ytid = services.youtube.upload(mp4, track)
             if ytid is not False:
@@ -147,9 +147,10 @@ class MusicRelease():
     
     def promote(self):
         track = music_release.tracks[0]
-        services.mastoposter.post(track["summary"], track["embed"].replace("embed", "video"), track["tags"])
-        services.bsky.post(track["summary"], track["embed"].replace("embed", "video"), track["tags"])
-        services.instagram.post(track["summary"], track["tags"])
+        social_media = ["mastoposter", "bksy", "instagram"]
+
+        for platform in social_media:
+            getattr(services, platform).post(track)
 
 #Preprocessing helpers
 def create_mp3(source_file, json, dest_path=None):
