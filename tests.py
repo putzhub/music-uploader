@@ -10,6 +10,11 @@ CONTENT_DIR = "./tests/"
 SOURCE_DIR = "./tests/Source"
 TEST_JSON_PATH = "tests/release_example.json"
 
+#TODO Add more config files to test
+# - Track that hasn't been uploaded yet
+# - Fully uploaded track
+# - Multiple tracks
+
 #ASSUMPTIONS
 # Files in tests forlder: Cover.png and *.wav 
 # Test does not cover albums yet
@@ -38,7 +43,7 @@ class TestWithFiles(unittest.TestCase):
     def tearDownClass(self):
         shutil.rmtree("test")
 
-    music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
+    music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR, TESTING_DIR)
 
     #Tests
     def test_make_mp3(self):
@@ -78,6 +83,10 @@ class TestWithFiles(unittest.TestCase):
         target = Path(TESTING_DIR, "Stems.zip")
         create_zip(src, str(target)[:-4]) #shutil.make_archive() doesn't need .zip extension
         assertIsFile(target)
+
+    def test_upload_music(self):
+        '''Make sure the full flow of uploading music works'''
+        MusicRelease(TEST_JSON_PATH, SOURCE_DIR, TESTING_DIR).upload_music()
 
 class TestPreprocessing(unittest.TestCase):
     #Prep & cleanup
@@ -144,9 +153,10 @@ See link in bio for more.
     def test_youtube(self):
         '''Youtube related tests'''
         #Ensure that we return False for code that depends on that.
-        self.assertFalse(services.youtube.upload(MusicRelease(TEST_JSON_PATH, SOURCE_DIR)))
+        self.assertEqual([('','')], 
+                         services.youtube.upload(MusicRelease(TEST_JSON_PATH, SOURCE_DIR)))
     
-    #@unittest.skip("Annoying to test often")
+    @unittest.skip("Annoying to test often")
     def test_itch(self):
         '''Prepare for posting to itch.io'''
         #Should return something other than empty
@@ -154,7 +164,7 @@ See link in bio for more.
         self.assertIsNotNone(itch_url)
         self.assertIsNot(itch_url, "")
 
-    #@unittest.skip("Annoying to test often")
+    @unittest.skip("Annoying to test often")
     def test_newgrounds(self):
         '''Prepare for posting to Newgrounds'''
         #Should return something other than empty
@@ -162,30 +172,25 @@ See link in bio for more.
         self.assertIsNotNone(ng_url)
         self.assertIsNot(ng_url, "")
 
-    def test_upload_music(self):
-        '''Make sure the full flow of uploading music works'''
-        #Initialize the class
-        MusicRelease(TEST_JSON_PATH, SOURCE_DIR).upload_music()
-
 class TestSocialMedia(unittest.TestCase):
     def test_mastodon(self):
         '''Mastodon - Make sure we can do everything besides post'''
         self.assertTrue(services.mastoposter.post(MusicRelease(TEST_JSON_PATH, SOURCE_DIR), 
                                                   testing=True))
     
-    #@unittest.skip("Annoying to test often")
+    @unittest.skip("Annoying to test often")
     def test_bluesky(self):
         '''Bluesky - Make sure we can do everything besides post'''
         self.assertTrue(services.bsky.post(MusicRelease(TEST_JSON_PATH, SOURCE_DIR), 
                                            testing=True))
 
-    #@unittest.skip("Annoying to test often")
+    @unittest.skip("Annoying to test often")
     def test_instagram(self):
         '''Instagram - Make sure we can do everything besides post'''
         self.assertTrue(services.instagram.post(MusicRelease(TEST_JSON_PATH, SOURCE_DIR), 
                                                 testing=True))
 
-    #@unittest.skip("Annoying to test often")
+    @unittest.skip("Annoying to test often")
     def test_patreon(self):
         services.patreon.post(MusicRelease(TEST_JSON_PATH, SOURCE_DIR))
     

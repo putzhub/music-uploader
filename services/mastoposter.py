@@ -24,7 +24,7 @@ def post(release, testing=False):
     track = release.tracks[0]
 
     #Don't bother posting without a video
-    if track["embed"] == "" or track["embed"] is None or track["summary"] == "" or track["summary"] is None:
+    if "embed" not in track or "summary" not in track:
         print("No video or summary, not posting to Mastodon")
         return False
     

@@ -7,6 +7,7 @@ import sys
 import time
 from types import SimpleNamespace
 from copy import deepcopy
+from pathlib import Path
 
 from apiclient.discovery import build
 from apiclient.errors import HttpError
@@ -162,14 +163,8 @@ def resumable_upload(insert_request):
       print("Sleeping %f seconds and then retrying..." % sleep_seconds)
       time.sleep(sleep_seconds)
 
-#TODO Convert to multi-track flow, return array of youtube IDs
-def upload(release):
-  #Upload to youtube
-  #make a copy of the track metadata so it doesn't modify the source
-  track_json = release.tracks[0]
-
-  args = deepcopy(track_json)
-
+def upload_track(mp4, args):
+  '''Upload an individual track / video to youtube'''
   #...unless we already have a video ID present
   if "streaming" in args:
     if "youtube" in args["streaming"]:
@@ -204,6 +199,23 @@ def upload(release):
   except HttpError as e:
     print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
     return False
+
+#TODO Convert to multi-track flow, return array of youtube IDs
+def upload(release):
+  '''Upload a MusicRelease() to youtube'''
+  #will hold a tuple
+  urls = []
+  
+  for track in release.tracks:
+    #Converting to string avoids issues with putting a Path() into JSON
+    mp4 = str(Path(release.output_dir, track["title"] + ".mp4"))
+    ytid = upload_track(mp4, track)
+    if ytid is not False:
+      urls.append((str("https://youtube.com/embed/"+ytid), str("https://youtu.be/"+ytid)))
+    else:
+      urls.append(('', ''))
+  
+  return urls
 
 #If ran directly...
 if __name__ == '__main__':

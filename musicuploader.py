@@ -93,19 +93,10 @@ class MusicRelease():
     def upload_music(self):
         #WARNING: NOT TESTED FOR MULTIPLE FILES - First file assumed as default metadata after youtube
         #TODO: Specify which services to skip or use
-
-        #Youtube first - TODO move for loop into youtube.upload, combine with below
-        for (i, track) in enumerate(self.tracks):
-            #Converting to string avoids issues with putting a Path() into JSON
-            mp4 = str(Path(self.output_dir, track["title"] + ".mp4"))
-            ytid = services.youtube.upload(mp4, track)
-            if ytid is not False:
-                self.tracks[i]["embed"] = str("https://youtube.com/embed/"+ytid)
-                self.tracks[i]["streaming"]["youtube"] = str("https://youtu.be/"+ytid)
-                self.save()
         
         #Upload tracks to remaining hosting services
         platforms = {
+            "youtube": "streaming",
             "itch": "stores", 
             "newgrounds": "streaming"
         }
@@ -114,13 +105,28 @@ class MusicRelease():
             try:
                 #"streaming" or "stores"
                 style = platforms[platform]
+                #if this fails we need to create it
                 self.tracks[0][style][platform]
             except KeyError:
                 #use the platform name to let us call the upload method
-                url = getattr(services, platform).upload(self)
+                urls = getattr(services, platform).upload(self)
                 #Apply the link to *all* tracks
-                for track in self.tracks:
-                    track[style][platform] = str(url)
+                if platform == "youtube":
+                    for i, track in enumerate(self.tracks):
+                        #Skip if a track wasn't uploaded (should already exist)
+                        if urls[i] == ('', ''):
+                            continue
+                        #First entry in tuple is embed url, Second youtu.be/
+                        track["embed"] = urls[i][0]
+                        track[style][platform] = urls[i][1]
+                else:
+                    #Figure out if we have multiple urls or not and apply to all tracks
+                    for track in self.tracks:
+                        if type(urls) == str:
+                            track[style][platform] = urls
+                        else:
+                            track[style][platform] = str(urls[0])
+                    
                 #save after creating the URL for relevant page
                 self.save()
     

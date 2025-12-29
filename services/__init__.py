@@ -47,7 +47,10 @@ def prep_post(release, service):
     msg = ""
     module = service.value
     #First track data only, for where it's relevant
-    track = release.tracks[0]
+    try:
+        track = release.tracks[0]
+    except AttributeError:
+        track = release
 
     #MASTODON & BLUESKY
     if service == Service.MASTODON or service == Service.BSKY:
@@ -121,7 +124,7 @@ Tags:  {2}
     #ITCH.IO
     elif service == Service.ITCH:
         #Get the number of tracks before re-assigning release
-        num_tracks = len(release)
+        num_tracks = len(release.tracks)
         msg = '''
 Title: {0}
 Tagline: {1}
