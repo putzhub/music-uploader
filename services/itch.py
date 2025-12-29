@@ -3,10 +3,10 @@ import services
 
 DEFAULT_TAGS = ["royalty-free", "music", "asset-pack", "indie", "wav"]
 
-def upload(json):
+def upload(release):
     '''Prep copy & paste material for itch.io, grab url when done.'''
     #Get our copy & paste message
-    print(services.prep_post(json, services.Service.ITCH))
+    print(services.prep_post(release, services.Service.ITCH))
 
     #Open relevant pages and post
     webbrowser.open("https://itch.io/game/new")

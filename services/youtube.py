@@ -162,9 +162,12 @@ def resumable_upload(insert_request):
       print("Sleeping %f seconds and then retrying..." % sleep_seconds)
       time.sleep(sleep_seconds)
 
-def upload(mp4, track_json):
+#TODO Convert to multi-track flow, return array of youtube IDs
+def upload(release):
   #Upload to youtube
   #make a copy of the track metadata so it doesn't modify the source
+  track_json = release.tracks[0]
+
   args = deepcopy(track_json)
 
   #...unless we already have a video ID present

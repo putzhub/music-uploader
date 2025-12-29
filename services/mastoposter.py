@@ -20,8 +20,11 @@ def request_credentials(msg="Requesting login credentials"):
     return client_id, client_secret, access_token
 
 def post(release, testing=False):
-    if release["embed"] == "" or release["embed"] is None or release["summary"] == "" or release["summary"] is None:
-        #Don't bother posting without a video
+    #Only use first track's meta data
+    track = release.tracks[0]
+
+    #Don't bother posting without a video
+    if track["embed"] == "" or track["embed"] is None or track["summary"] == "" or track["summary"] is None:
         print("No video or summary, not posting to Mastodon")
         return False
     

@@ -113,7 +113,7 @@ class TestServices(unittest.TestCase):
         self.assertEqual(c(tags, additional_tags, separator=","), tags_with_commas)
         self.assertEqual(c(tags, additional_tags, prepend="#"), tags_with_hashtags)
 
-    def test_post_prep(self):
+    def test_prep_post(self):
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
         #Still relevant for constructing the message to refer to one track
         track = music_release.tracks[0]

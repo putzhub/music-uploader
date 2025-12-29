@@ -46,7 +46,8 @@ def combine_tags(*args, separator=" ", prepend=""):
 def prep_post(release, service):
     msg = ""
     module = service.value
-    release = deepcopy(release)
+    #First track data only, for where it's relevant
+    track = release.tracks[0]
 
     #MASTODON & BLUESKY
     if service == Service.MASTODON or service == Service.BSKY:
@@ -56,9 +57,9 @@ def prep_post(release, service):
 {1}
 
 {2}
-'''.format(release["summary"], 
-           release["streaming"]["youtube"], 
-           combine_tags(module.DEFAULT_TAGS, release["tags"], prepend="#"))
+'''.format(track["summary"], 
+           track["streaming"]["youtube"], 
+           combine_tags(module.DEFAULT_TAGS, track["tags"], prepend="#"))
     
     #INSTAGRAM
     elif service == Service.INSTAGRAM:
@@ -68,8 +69,8 @@ def prep_post(release, service):
 See link in bio for more.
 
 {1}
-'''.format(release["summary"], 
-           combine_tags(module.DEFAULT_TAGS, release["tags"], prepend="#"))
+'''.format(track["summary"], 
+           combine_tags(module.DEFAULT_TAGS, track["tags"], prepend="#"))
     
     #YOUTUBE
     elif service == Service.YOUTUBE:
@@ -82,12 +83,11 @@ Newgrounds: https://ludoloonstudio.newgrounds.com/audio
 Patreon (get stems & tracks in advance): https://patreon.com/ludoloonstudio
 
 {2}
-'''.format(release["summary"], release["url"], combine_tags(module.DEFAULT_TAGS, release["tags"]))
+'''.format(track["summary"], track["url"], combine_tags(module.DEFAULT_TAGS, track["tags"]))
     
     #NEWGROUNDS
     elif service == Service.NEWGROUNDS:
         #Uploads pass multiple files, pick one for now
-        release = release[0]
         msg = '''
 Title: {0}
 Tagline: {1}
@@ -111,18 +111,17 @@ Patreon (get stems & tracks in advance): https://patreon.com/ludoloonstudio
 
 -----
 Tags:  {2}
-'''.format(release["title"], 
-           release["summary"], 
-           combine_tags(module.DEFAULT_TAGS, release["tags"], separator=", "), 
-           release["stores"]["itch"],
-           release["details"]["bpm"],
-           release["embed"])
+'''.format(track["title"], 
+           track["summary"], 
+           combine_tags(module.DEFAULT_TAGS, track["tags"], separator=", "), 
+           track["stores"]["itch"],
+           track["details"]["bpm"],
+           track["embed"])
 
     #ITCH.IO
     elif service == Service.ITCH:
         #Get the number of tracks before re-assigning release
         num_tracks = len(release)
-        release = release[0]
         msg = '''
 Title: {0}
 Tagline: {1}
@@ -166,13 +165,13 @@ BG: #222
 BG2: #333
 Text: #eaeaea
 Link: #2ce8f4
-'''.format(release["title"], 
-           release["summary"], 
-           release["details"]["loop"],
-           ", ".join(release["tags"]),
-           combine_tags(module.DEFAULT_TAGS, release["tags"], separator=", "),
+'''.format(track["title"], 
+           track["summary"], 
+           track["details"]["loop"],
+           ", ".join(track["tags"]),
+           combine_tags(module.DEFAULT_TAGS, track["tags"], separator=", "),
            num_tracks,
-           release["details"]["bpm"],
-           release["streaming"]["youtube"])
+           track["details"]["bpm"],
+           track["streaming"]["youtube"])
 
     return msg

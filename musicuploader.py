@@ -15,7 +15,6 @@ from PIL import Image
 # Add album exporting
 # Move files to any relevant places
 # -LudoLoon Studio
-#Add patreon
 #Refactor code:
 #- post should take message instead
 #Figure out where release.json should live
@@ -118,7 +117,7 @@ class MusicRelease():
                 self.tracks[0][style][platform]
             except KeyError:
                 #use the platform name to let us call the upload method
-                url = getattr(services, platform).upload(self.tracks)
+                url = getattr(services, platform).upload(self)
                 #Apply the link to *all* tracks
                 for track in self.tracks:
                     track[style][platform] = str(url)
@@ -126,11 +125,10 @@ class MusicRelease():
                 self.save()
     
     def promote(self):
-        track = music_release.tracks[0]
-        social_media = ["mastoposter", "bksy", "instagram", "patreon"]
+        social_media = ["mastoposter", "bksy", "instagram", "patreon", "lls"]
 
         for platform in social_media:
-            getattr(services, platform).post(track)
+            getattr(services, platform).post(self)
 
 #Preprocessing helpers
 def create_mp3(source_file, json, dest_path=None):
