@@ -7,7 +7,7 @@ DEFAULT_TAGS = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic",
 
 def post(release, testing=False):
     '''Create an easy message to copy and paste for instagram.'''
-    print(services.prep_post(release, services.Service.BSKY))
+    print(services.prep_post(release, services.Service.INSTAGRAM))
     webbrowser.open("https://instagram.com")
     input("Welp, did ya post it to instagram? [press enter]")
     return True

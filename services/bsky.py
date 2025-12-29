@@ -10,8 +10,7 @@ import services
 
 SECRETS_FILE = "secrets/bluesky.secrets"
 DEFAULT_TAGS = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
-          "soundtrack", "indie", "renoise", "composer", "game", "videogame",
-          "gamemusic", "ost", "pack", "bundle"]
+          "soundtrack", "indie", "gamemusic"]
 
 def post(release, testing=False):
     '''Prepare a message to copy & paste onto bluesky for promotion.'''

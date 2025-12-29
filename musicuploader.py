@@ -11,30 +11,13 @@ from mutagen.mp3 import MP3
 from PIL import Image
 
 
-# TODO
-# Figure out what the flow is
-# Scenarios:
-#   1. Single release
-#   2. Album release (same album)
-#   3. Multiple individual releases (probably not though)
-# 
+# TODO Implement flow
 # Make single (ALBUM EXPORTING NOT YET SUPPORTED)
-# Read in metadata
-# Process .wav and .png coverart into relevant exports (video, .mp3, .webp, etc)
-# Soure files - .wav and .png
-# - mp3 (add tags & cover art)
-# - mp4 (create video w/coverart & music)
-# - webp (ludoloon website)
 # Move files to any relevant places
-# Upload to youtube
-# Prep data for manual upload to: itch, newgrounds and patreon (make it easy to copy and paste)
-# Publicize launch: ludoloon.studio, bluesky, mastodon, instagram and (hopefully) discord
+# -LudoLoon Studio
 
 #FIX
-#Youtube embed should be youtube streaming link
 #Add patreon
-#ffmpeg should do aspect ratio 16:9
-#Include forum post for itch.io: https://itch.io/category/10022/new-topic
 #Refactor code:
 #- post should take message instead
 #Figure out where release.json should live
@@ -116,7 +99,7 @@ class MusicRelease():
         #WARNING: NOT TESTED FOR MULTIPLE FILES - First file assumed as default metadata after youtube
         #TODO: Specify which services to skip or use
 
-        #Youtube first
+        #Youtube first - TODO move for loop into youtube.upload, combine with below
         for (i, track) in enumerate(self.tracks):
             #Converting to string avoids issues with putting a Path() into JSON
             mp4 = str(Path(self.output_dir, track["title"] + ".mp4"))
@@ -126,10 +109,12 @@ class MusicRelease():
                 self.tracks[i]["streaming"]["youtube"] = str("https://youtu.be/"+ytid)
                 self.save()
         
-        #TODO Add soundcloud to the mix
-
-        #Itch.io & Newgrounds- assume that all music will be on same page, use first track to check if online yet or not
-        platforms = {"itch": "stores", "newgrounds": "streaming"}
+        #TODO Add soundcloud to the mix, combine youtube into this
+        #Upload tracks to remaining hosting services
+        platforms = {
+            "itch": "stores", 
+            "newgrounds": "streaming"
+        }
         for platform in platforms:
             #Iterate through places to upload to accounting for whether store or streaming
             try:
@@ -174,6 +159,7 @@ def create_mp4(source_file, dest_path=None, cover="Cover.png"):
     '''Use the shell to run ffmpeg and create an MP4'''
     if dest_path is None:
         dest_path = str(source_file)[:-3] + "mp4"
+    #Make an mp4 exactly the length of the song and add black borders to make it 16:9 for youtube
     subprocess.run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-loop", "1", "-i", cover, "-i", source_file, "-shortest",
                     "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1", dest_path])
 

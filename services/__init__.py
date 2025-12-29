@@ -42,6 +42,8 @@ def combine_tags(*args, separator=" ", prepend=""):
 
     return combined_array
 
+#TODO Piece out message builder functions maybe?
+#i.e: 
 def prep_post(release, service):
     msg = ""
     module = service.value
@@ -58,6 +60,7 @@ def prep_post(release, service):
 '''.format(release["summary"], 
            release["streaming"]["youtube"], 
            combine_tags(module.DEFAULT_TAGS, release["tags"], prepend="#"))
+    
     #INSTAGRAM
     elif service == Service.INSTAGRAM:
         msg = '''
@@ -68,6 +71,7 @@ See link in bio for more.
 {1}
 '''.format(release["summary"], 
            combine_tags(module.DEFAULT_TAGS, release["tags"], prepend="#"))
+    
     #YOUTUBE
     elif service == Service.YOUTUBE:
         msg = '''
@@ -80,5 +84,96 @@ Patreon (get stems & tracks in advance): https://patreon.com/ludoloonstudio
 
 {2}
 '''.format(release["summary"], release["url"], combine_tags(module.DEFAULT_TAGS, release["tags"]))
+    
+    #NEWGROUNDS
+    elif service == Service.NEWGROUNDS:
+        #Uploads pass multiple files, pick one for now
+        release = release[0]
+        msg = '''
+Title: {0}
+Tagline: {1}
+License: Creative commons, allow sharealike
+
+Classification: Soundtrack
+-----
+Description:
+-----
+
+{1}
+
+Format: .MP3 (VBR)
+Style: {2}
+BPM: {4}
+
+--More Music--
+Homepage: https://ludoloon.studio/music
+Itch.io: {3}
+Patreon (get stems & tracks in advance): https://patreon.com/ludoloonstudio
+
+-----
+Tags:  {2}
+'''.format(release["title"], 
+           release["summary"], 
+           combine_tags(module.DEFAULT_TAGS, release["tags"], separator=", "), 
+           release["stores"]["itch"],
+           release["details"]["bpm"],
+           release["embed"])
+
+    #ITCH.IO
+    elif service == Service.ITCH:
+        #Get the number of tracks before re-assigning release
+        num_tracks = len(release)
+        release = release[0]
+        msg = '''
+Title: {0}
+Tagline: {1}
+Youtube Video: {7}
+Classification: Soundtrack
+
+Description:
+-----
+<em>{1}</em>
+
+<h4>Technical Details</h4>
+<ul>
+<li><strong>License: Creative Commons International 4.0 Attribution (Royalty Free)</strong></li>
+<li><strong>Number of tracks:</strong> {5}</li>
+<li><strong>Format:</strong> .WAV <em>(44.1khz / 16-bit)</em> | .MP3 <em>(VBR)</em> / {2} / Stereo</li>
+<li><strong>Style:</strong> {3} </li>
+<li><strong>BPM:</strong> {6}</li>
+</ul>
+
+<h4>Contact</h4>
+<a href="mailto:support@ludoloon.studio">Support & inquiries</a> | <a href="mailto:connect@ludoloon.studio">Send your promo with my music</a>
+<a href="https://www.patreon.com/c/ludoloonstudio/">Patreon (Stems & More!)</a> | <a href="https://ludoloon.studio/hire">Available for hire</a>
+
+<h4>More Music</h4>
+<ul>
+<li><a href="https://ludoloon.studio">Homepage - LudoLoon Studio</a></li>
+<li><a href="https://ludoloonstudio.bandcamp.com/">Bandcamp</a></li>
+<li><a href="https://ludoloonstudio.newgrounds.com/audio">Newgrounds</a></li>
+<li><a href="https://soundcloud.com/ludoloonstudio">Soundcloud</a></li>
+<li><a href="https://youtube.com/channel/UCziXXRaD4uUuTL7tMWtQeVQ">Youtube</a></li>
+<li><a href="https://ludoloonstudio.itch.io/">More on Itch.io!</a></li>
+</ul>
+
+<h4>Socials</h4>
+<a href="https://bsky.app/profile/ludoloonstudio.bsky.social">Bluesky</a> | <a href="https://instagram.com/ludoloonstudio/">Instagram</a> | <a href="https://mastodon.gamedev.place/@ludoloon">Mastodon</a>
+
+-----
+Tags: {4}
+
+BG: #222
+BG2: #333
+Text: #eaeaea
+Link: #2ce8f4
+'''.format(release["title"], 
+           release["summary"], 
+           release["details"]["loop"],
+           ", ".join(release["tags"]),
+           combine_tags(module.DEFAULT_TAGS, release["tags"], separator=", "),
+           num_tracks,
+           release["details"]["bpm"],
+           release["streaming"]["youtube"])
 
     return msg
