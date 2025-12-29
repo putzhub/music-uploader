@@ -84,10 +84,6 @@ class TestWithFiles(unittest.TestCase):
         create_zip(src, str(target)[:-4]) #shutil.make_archive() doesn't need .zip extension
         assertIsFile(target)
 
-    def test_upload_music(self):
-        '''Make sure the full flow of uploading music works'''
-        MusicRelease(TEST_JSON_PATH, SOURCE_DIR, TESTING_DIR).upload_music()
-
 class TestPreprocessing(unittest.TestCase):
     #Prep & cleanup
     @classmethod
@@ -106,6 +102,20 @@ class TestPreprocessing(unittest.TestCase):
         files = ["Test.mp3", "Test.mp4", "Stems.zip", "test.webp"]
         for f in files:
             assertIsFile(Path(TESTING_DIR, f))
+    
+    def test_upload_music(self):
+        '''Make sure the full flow of uploading music works'''
+        music_release = MusicRelease(TEST_JSON_PATH, CONTENT_DIR, TESTING_DIR)
+        music_release.preprocessing()
+        music_release.upload_music()
+    
+    @unittest.skip("Annoying to test frequently")
+    def test_ludoloon_studio(self):
+        music_release = MusicRelease(TEST_JSON_PATH, CONTENT_DIR, TESTING_DIR)
+        music_release.preprocessing()
+        services.lls.post(music_release)
+        os.remove("/home/pootz/Documentos/Websites/LudoLoonStudio/ludoloon.studio/content/images/covers/test.webp")
+
 
 class TestServices(unittest.TestCase):
     def test_combine_tags(self):
@@ -193,9 +203,6 @@ class TestSocialMedia(unittest.TestCase):
     @unittest.skip("Annoying to test often")
     def test_patreon(self):
         services.patreon.post(MusicRelease(TEST_JSON_PATH, SOURCE_DIR))
-    
-    def test_ludoloon_studio(self):
-        services.lls.post(MusicRelease(TEST_JSON_PATH, SOURCE_DIR))
 
 if __name__ == "__main__":
     unittest.main()
