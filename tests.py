@@ -78,9 +78,9 @@ class TestWithFiles(unittest.TestCase):
         assertIsFile(dest_path)
 
     def test_zip_stems(self):
-        src = Path(SOURCE_DIR, "Stems/")
-        target = Path(TESTING_DIR, "Stems.zip")
-        create_zip(src, str(target)[:-4]) #shutil.make_archive() doesn't need .zip extension
+        src = Path(SOURCE_DIR)
+        target = Path(TESTING_DIR, "Source.zip")
+        create_zip(src, target) #shutil.make_archive() doesn't need .zip extension
         assertIsFile(target)
 
 class TestPreprocessing(unittest.TestCase):
@@ -98,7 +98,7 @@ class TestPreprocessing(unittest.TestCase):
         #Init the release
         MusicRelease(TEST_JSON_PATH, CONTENT_DIR, TESTING_DIR).preprocessing()
 
-        files = ["Test.mp3", "Test.mp4", "Stems.zip", "test.webp"]
+        files = ["Test.mp3", "Test.mp4", "Test.zip", "test.webp"]
         for f in files:
             assertIsFile(Path(TESTING_DIR, f))
     

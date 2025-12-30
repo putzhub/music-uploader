@@ -3,7 +3,7 @@ import json
 import argparse
 import subprocess
 import glob
-import shutil
+import zipfile
 
 from pathlib import Path
 from mutagen.id3 import APIC, ID3
@@ -37,7 +37,7 @@ class MusicRelease():
         source = Path(content_dir, "Source")
         self.source_dir = source if source.exists() else self.content_dir
         self.output_dir = output_dir if output_dir != "" else self.source_dir
-        #Cover path
+        #Cover path - deal with custom, default or no cover at all.
         self.cover_file = Path(self.source_dir, cover_file) if Path(self.source_dir, cover_file).exists() else ""
         #read in from JSON file
         self.load()
@@ -85,10 +85,10 @@ class MusicRelease():
             else:
                 print("Cover file not found, skipping .mp4 & .webp in preprocessing", )
 
-        #If we have stems then package them
-        stems_path = Path(self.source_dir, "Stems/")
-        if stems_path.exists():
-            create_zip(stems_path, Path(self.output_dir, "Stems"))
+        #If we have stems or patterns then package them
+        if Path(self.source_dir, "Stems/").exists() or Path(self.source_dir, "Patterns/"):
+            zip_name = self.tracks[0]["album"] if "album" in self.tracks[0] else self.tracks[0]["title"]
+            create_zip(self.source_dir, Path(self.output_dir, str(zip_name + ".zip")))
 
     #Upload music online
     def upload_music(self):
@@ -191,10 +191,17 @@ def create_webp(src_path, dest_path=None):
         img.save(dest_path, "WEBP", quality=85)
 
 def create_zip(source, dest_path=None):
-    "Create an archive"
+    '''Create an archive'''
     if dest_path is None:
-        dest_path = str(source)
-    shutil.make_archive(dest_path, "zip", source)
+        dest_path = str(source + ".zip")
+
+    with zipfile.ZipFile(dest_path, "w", compression=zipfile.ZIP_DEFLATED) as zip:
+        #Recurse the directory, only zip WAV files though
+        for path in Path(source).rglob("*.wav"):
+            #Remove source path from archive file names
+            trunc = len(str(source))
+            zip.write(path, str(path)[trunc:])
+
 
 if __name__ == "__main__":
     #Construct the parser
