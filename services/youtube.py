@@ -204,6 +204,7 @@ def upload(release):
   '''Upload a MusicRelease() to youtube'''
   #Make sure we don't write tags
   release = deepcopy(release)
+  print("hit")
 
   #will hold a tuple
   urls = []
