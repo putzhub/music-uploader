@@ -101,7 +101,7 @@ class TestPreprocessing(unittest.TestCase):
         #Init the release
         MusicRelease(TEST_JSON_PATH, CONTENT_DIR, TESTING_DIR).preprocessing()
 
-        files = ["Test.mp3", "Test.mp4", "Test.zip", "test.webp"]
+        files = ["Test.mp3", "Test.mp4", "Release.zip", "test.webp"]
         for f in files:
             assertIsFile(Path(TESTING_DIR, f))
     
@@ -162,7 +162,7 @@ See link in bio for more.
 
     def test_youtube(self):
         '''Youtube related tests'''
-        #Ensure that we return False for code that depends on that.
+        #Ensure that we reutrn the expected result for code that depends on that.
         self.assertEqual([('',''), ('', '')], 
                          services.youtube.upload(MusicRelease(TEST_JSON_PATH, SOURCE_DIR)))
     

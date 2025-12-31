@@ -13,12 +13,15 @@ from PIL import Image
 
 
 # TODO
+# Move release.json to content_dir
+# Create release.json if it doesn't exist and populate
 # Add album exporting
 # - Skip unwanted services or specify which ones
 # - Refactor code to make more sense for a multi-song approach
 #Figure out where release.json should live
 #TODO: Specify which services to skip or use
-#TODO Add more services: Bandcamp, Soundcloud, Jamendo, Archive.org, Godot marketplace, Unity, Unreal, Gamedevmarket
+#TODO Add more services:
+# - Bandcamp(text), Soundcloud(API), Archive.org(API), Unity (Cmdline?), Jamendo(text), Unreal(text), Gamedevmarket(text)
 #Implement logger
 
 class MusicRelease():
@@ -88,10 +91,9 @@ class MusicRelease():
             else:
                 print("Cover file not found, skipping .mp4 & .webp in preprocessing", )
 
-        #If we have stems or patterns then package them
+        #If we have stems or patterns then assume we should pack this into a .zip
         if Path(self.source_dir, "Stems/").exists() or Path(self.source_dir, "Patterns/"):
-            zip_name = self.tracks[0]["album"] if "album" in self.tracks[0] else self.tracks[0]["title"]
-            create_zip(self.source_dir, Path(self.output_dir, str(zip_name + ".zip")))
+            create_zip(self.source_dir, Path(self.output_dir, "Release.zip"))
 
     #Upload music online
     def upload_music(self):
