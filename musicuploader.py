@@ -4,7 +4,6 @@ import argparse
 import subprocess
 import zipfile
 import os
-import shutil
 
 from pathlib import Path
 from mutagen.id3 import APIC, ID3
@@ -15,6 +14,8 @@ from PIL import Image
 
 # TODO
 # Add album exporting
+# - Skip unwanted services or specify which ones
+# - Refactor code to make more sense for a multi-song approach
 #Figure out where release.json should live
 #TODO: Specify which services to skip or use
 #TODO Add more services: Bandcamp, Soundcloud, Jamendo, Archive.org, Godot marketplace, Unity, Unreal, Gamedevmarket
@@ -94,7 +95,7 @@ class MusicRelease():
 
     #Upload music online
     def upload_music(self):
-        #WARNING: NOT TESTED FOR MULTIPLE FILES - First file assumed as default metadata after youtube
+        #WARNING: NOT THOROUGHLY TESTED FOR MULTIPLE FILES - First file assumed as default metadata after youtube
         
         #Upload tracks to remaining hosting services
         platforms = {
@@ -107,8 +108,9 @@ class MusicRelease():
             try:
                 #"streaming" or "stores"
                 style = platforms[platform]
-                #if this fails we need to create it
-                self.tracks[0][style][platform]
+                #if this fails we need to upload to the specified platform
+                for track in self.tracks:
+                    track[style][platform]
             except KeyError:
                 #use the platform name to let us call the upload method
                 urls = getattr(services, platform).upload(self)

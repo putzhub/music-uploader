@@ -163,7 +163,7 @@ See link in bio for more.
     def test_youtube(self):
         '''Youtube related tests'''
         #Ensure that we return False for code that depends on that.
-        self.assertEqual([('','')], 
+        self.assertEqual([('',''), ('', '')], 
                          services.youtube.upload(MusicRelease(TEST_JSON_PATH, SOURCE_DIR)))
     
     @unittest.skip("Annoying to test often")
