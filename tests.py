@@ -17,6 +17,7 @@ TEST_JSON_PATH = "tests/release_example.json"
 # Files in tests folder: Cover.png and *.wav 
 # Test does not cover albums yet
 # Account for Missing cover image
+# Source dir vs no specified Source dir
 
 #Helpers
 def assertIsFile(path):
@@ -137,25 +138,23 @@ class TestServices(unittest.TestCase):
         track = music_release.tracks[0]
 
         #MASTODON
-        masto_msg = '''
-{0}
+        masto_msg = f'''
+{track["summary"]}
 
-{1}
+{track["streaming"]["youtube"]}
 
-{2}
-'''.format(track["summary"], 
-           track["streaming"]["youtube"], 
-           services.combine_tags(services.mastoposter.DEFAULT_TAGS, track["tags"], prepend="#"))
+{services.combine_tags(services.mastoposter.DEFAULT_TAGS, track["tags"], prepend="#")}
+'''
         #Test results
         self.assertEqual(masto_msg, services.prep_post(music_release, services.Service.MASTODON))
         #INSTAGRAM
-        insta_msg = '''
-{0}
+        insta_msg = f'''
+{track["summary"]}
 
 See link in bio for more.
 
-{1}
-'''.format(track["summary"], services.combine_tags(services.instagram.DEFAULT_TAGS, track["tags"], prepend="#"))
+{services.combine_tags(services.instagram.DEFAULT_TAGS, track["tags"], prepend="#")}
+'''
         #Test if we got the expected results
         self.assertEqual(insta_msg, services.prep_post(music_release, services.Service.INSTAGRAM))
 

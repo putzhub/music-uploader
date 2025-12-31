@@ -54,46 +54,43 @@ def prep_post(release, service):
 
     #MASTODON & BLUESKY
     if service == Service.MASTODON or service == Service.BSKY:
-        msg = '''
-{0}
+        msg = f'''
+{track["summary"]}
 
-{1}
+{track["streaming"]["youtube"]}
 
-{2}
-'''.format(track["summary"], 
-           track["streaming"]["youtube"], 
-           combine_tags(module.DEFAULT_TAGS, track["tags"], prepend="#"))
+{combine_tags(module.DEFAULT_TAGS, track["tags"], prepend="#")}
+'''
     
     #INSTAGRAM
     elif service == Service.INSTAGRAM:
-        msg = '''
-{0}
+        msg = f'''
+{track["summary"]}
 
 See link in bio for more.
 
-{1}
-'''.format(track["summary"], 
-           combine_tags(module.DEFAULT_TAGS, track["tags"], prepend="#"))
+{combine_tags(module.DEFAULT_TAGS, track["tags"], prepend="#")}
+'''
     
     #YOUTUBE
     elif service == Service.YOUTUBE:
-        msg = '''
-{0}
+        msg = f'''
+{track["summary"]}
 
-homepage: https://ludoloon.studio/music#{1}
-itch.io: https://ludoloonstudio.itch.io/{1}
+homepage: https://ludoloon.studio/music#{track["url"]}
+itch.io: https://ludoloonstudio.itch.io/{track["url"]}
 Newgrounds: https://ludoloonstudio.newgrounds.com/audio
 Patreon (get stems & tracks in advance): https://patreon.com/ludoloonstudio
 
-{2}
-'''.format(track["summary"], track["url"], combine_tags(module.DEFAULT_TAGS, track["tags"]))
+{combine_tags(module.DEFAULT_TAGS, track["tags"])}
+'''
     
     #NEWGROUNDS
     elif service == Service.NEWGROUNDS:
         #Uploads pass multiple files, pick one for now
-        msg = '''
-Title: {0}
-Tagline: {1}
+        msg = f'''
+Title: {track["title"]}
+Tagline: {track["summary"]}
 License: Creative commons, allow sharealike
 
 Classification: Soundtrack
@@ -101,47 +98,42 @@ Classification: Soundtrack
 Description:
 -----
 
-{1}
+{track["summary"]}
 
 Format: .MP3 (VBR)
-Style: {2}
-BPM: {4}
+Style: {combine_tags(track["tags"], separator=", ")}
+BPM: {track["details"]["bpm"]}
 
 --More Music--
 Homepage: https://ludoloon.studio/music
-Itch.io: {3}
+Itch.io: {track["stores"]["itch"]}
 Patreon (get stems & tracks in advance): https://patreon.com/ludoloonstudio
 
 -----
-Tags:  {2}
-'''.format(track["title"], 
-           track["summary"], 
-           combine_tags(module.DEFAULT_TAGS, track["tags"], separator=", "), 
-           track["stores"]["itch"],
-           track["details"]["bpm"],
-           track["embed"])
+Tags:  {combine_tags(module.DEFAULT_TAGS, track["tags"], separator=", ")}
+'''
 
     #ITCH.IO
     elif service == Service.ITCH:
         #Get the number of tracks before re-assigning release
         num_tracks = len(release.tracks)
-        msg = '''
-Title: {0}
-Tagline: {1}
-Youtube Video: {7}
+        msg = f'''
+Title: {track["title"]}
+Tagline: {track["summary"]}
+Youtube Video: {track["streaming"]["youtube"]}
 Classification: Soundtrack
 
 Description:
 -----
-<em>{1}</em>
+<em>{track["summary"]}</em>
 
 <h4>Technical Details</h4>
 <ul>
 <li><strong>License: Creative Commons International 4.0 Attribution (Royalty Free)</strong></li>
-<li><strong>Number of tracks:</strong> {5}</li>
-<li><strong>Format:</strong> .WAV <em>(44.1khz / 16-bit)</em> | .MP3 <em>(VBR)</em> / {2} / Stereo</li>
-<li><strong>Style:</strong> {3} </li>
-<li><strong>BPM:</strong> {6}</li>
+<li><strong>Number of tracks:</strong> {num_tracks}</li>
+<li><strong>Format:</strong> .WAV <em>(44.1khz / 16-bit)</em> | .MP3 <em>(VBR)</em> / {track["details"]["loop"]} / Stereo</li>
+<li><strong>Style:</strong> {combine_tags(track["tags"], separator=", ")} </li>
+<li><strong>BPM:</strong> {track["details"]["bpm"]}</li>
 </ul>
 
 <h4>Contact</h4>
@@ -162,19 +154,12 @@ Description:
 <a href="https://bsky.app/profile/ludoloonstudio.bsky.social">Bluesky</a> | <a href="https://instagram.com/ludoloonstudio/">Instagram</a> | <a href="https://mastodon.gamedev.place/@ludoloon">Mastodon</a>
 
 -----
-Tags: {4}
+Tags: {combine_tags(module.DEFAULT_TAGS, track["tags"], separator=", ")}
 
 BG: #222
 BG2: #333
 Text: #eaeaea
 Link: #2ce8f4
-'''.format(track["title"], 
-           track["summary"], 
-           track["details"]["loop"],
-           ", ".join(track["tags"]),
-           combine_tags(module.DEFAULT_TAGS, track["tags"], separator=", "),
-           num_tracks,
-           track["details"]["bpm"],
-           track["streaming"]["youtube"])
+'''
 
     return msg

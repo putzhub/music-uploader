@@ -29,18 +29,6 @@
             "newgrounds": "https://newgrounds.com",
             "youtube": "https://youtu.be/k6lf5WzG-DY"
         },
-        "file": "test/testing/Test.mp4",
-        "category": "10",
-        "keywords": "music asset gameaudio vgm bgm royaltyfreemusic soundtrack indie renoise composer game videogame gamemusic ost pack bundle MusicPack Example Test",
-        "description": "\nTesting out this music cross poster thing!\n\nhomepage: https://ludoloon.studio/music#test-url\nitch.io: https://ludoloonstudio.itch.io/test-url\nNewgrounds: https://ludoloonstudio.newgrounds.com/audio\nPatreon (get stems & tracks in advance): https://patreon.com/ludoloonstudio\n\nmusic asset gameaudio vgm bgm royaltyfreemusic soundtrack indie renoise composer game videogame gamemusic ost pack bundle MusicPack Example Test\n",
-        "privacyStatus": "private",
-        "logging_level": "ERROR",
-        "noauth_local_webserver": false,
-        "auth_host_name": "localhost",
-        "auth_host_port": [
-            8080,
-            8090
-        ],
         "embed": "https://youtube.com/embed/k6lf5WzG-DY"
     }
 ]

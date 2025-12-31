@@ -202,6 +202,9 @@ def upload_track(mp4, args):
 
 def upload(release):
   '''Upload a MusicRelease() to youtube'''
+  #Make sure we don't write tags
+  release = deepcopy(release)
+
   #will hold a tuple
   urls = []
   
