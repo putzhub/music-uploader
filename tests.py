@@ -37,7 +37,8 @@ class TestWithFiles(unittest.TestCase):
     #Prep & cleanup
     @classmethod
     def setUpClass(self):
-        os.makedirs(TESTING_DIR)
+        if not Path(TESTING_DIR).exists():
+            os.makedirs(TESTING_DIR)
     
     @classmethod
     def tearDownClass(self):
@@ -88,7 +89,8 @@ class TestPreprocessing(unittest.TestCase):
     #Prep & cleanup
     @classmethod
     def setUpClass(self):
-        os.makedirs(TESTING_DIR)
+        if not Path(TESTING_DIR).exists():
+            os.makedirs(TESTING_DIR)
     
     @classmethod
     def tearDownClass(self):

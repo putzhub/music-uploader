@@ -30,22 +30,21 @@ class MusicRelease():
     json_file = ""
 
     def __init__(self, json_file, content_dir, output_dir="", cover_file="Cover.png"):
-        #Init variables
+        #Read JSON file
         self.json_file = json_file
+        self.load()
         #Content dir is the root of all our work
         self.content_dir = content_dir
-        #Source path is where files we build with live
+        #Source path is where files we build with live, assign as output dir if none is provided
         source = Path(content_dir, "Source")
         self.source_dir = source if source.exists() else self.content_dir
+        if not Path(output_dir).exists() and output_dir != "":
+            os.makedirs(output_dir)
         self.output_dir = output_dir if output_dir != "" else self.source_dir
-        if not Path(self.output_dir).exists():
-            os.makedirs(self.output_dir)
-        #Cover path - deal with custom, default or no cover at all.
+        #Check if cover file actually exists
         self.cover_file = Path(self.source_dir, cover_file) if Path(self.source_dir, cover_file).exists() else ""
-        #read in from JSON file
-        self.load()
         
-        #Make sure we have the expected keys (and hopefully by extension data)
+        #Make sure we have the expected keys in the json file (and hopefully by extension data)
         for entry in self.tracks:
             for key in ["title", "summary", "date", "url", "tags"]:
                 assert key in entry
@@ -233,5 +232,4 @@ if __name__ == "__main__":
     music_release.preprocessing()
     music_release.upload_music()
     if args.promote is True:
-        #print(args.promote)
         music_release.promote()
