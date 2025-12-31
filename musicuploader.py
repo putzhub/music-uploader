@@ -2,8 +2,9 @@ import services
 import json
 import argparse
 import subprocess
-import glob
 import zipfile
+import os
+import shutil
 
 from pathlib import Path
 from mutagen.id3 import APIC, ID3
@@ -37,6 +38,8 @@ class MusicRelease():
         source = Path(content_dir, "Source")
         self.source_dir = source if source.exists() else self.content_dir
         self.output_dir = output_dir if output_dir != "" else self.source_dir
+        if not Path(self.output_dir).exists():
+            os.makedirs(self.output_dir)
         #Cover path - deal with custom, default or no cover at all.
         self.cover_file = Path(self.source_dir, cover_file) if Path(self.source_dir, cover_file).exists() else ""
         #read in from JSON file
@@ -213,18 +216,20 @@ if __name__ == "__main__":
     #Add arguments
     parser.add_argument("content_dir", 
                         help="Root directory of music content")
+    parser.add_argument("--promote", action="store_true",
+                        help="Publish to social media channels")
     parser.add_argument("--json", type=str, default="release.json", 
                         help="Specify a release.json config file")
     parser.add_argument("--cover", type=str, default="Cover.png", 
                         help="Specify the filename of the PNG cover art image (FILENAME ONLY, default: Cover.png)")
-    parser.add_argument("--promote", action="store_true",
-                        help="Publish to social media channels")
+    parser.add_argument("--output", type=str, default="",
+                        help="Specify an output directory other than the source directory")
 
     #Parse arguments
     args = parser.parse_args() 
 
     # Read metadata and store into release info
-    music_release = MusicRelease(args.json, args.content_dir, cover_file=args.cover)
+    music_release = MusicRelease(args.json, args.content_dir, args.output, cover_file=args.cover)
     music_release.preprocessing()
     music_release.upload_music()
     if args.promote is True:

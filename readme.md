@@ -29,7 +29,11 @@ Regardless, you'll need a few things to be true:
 
 To use music-uploader.py, fill out a release.json file with the relevant information (see release_example.json).
 
-Structure a folder as so:
+It expects at minimum a .wav file. Titles in the release.json file must match filenames of the .wavs you want processed. You can include a .png Cover, which will be included as the mp3 album art, made into an mp4 and converted to .webp.
+
+Output will be written to the source folder unless an ouput dir is specified.
+
+If you'd like to seperate source material from other files you can structure the folder as so:
 
 CONTENT_DIRECTORY/
     - Source/
@@ -38,5 +42,9 @@ CONTENT_DIRECTORY/
         Cover.png
         files.wav
         [...]
+    - Other Folders/
+    - Other files...
 
-Titles in the release.json file must match filenames of the .wavs you want processed.
+Alternatively the folder passed via commandline will default as the source directory.
+
+If a Stems or Patterns folder is found a zip will be created with any .wav files in the source dir.
