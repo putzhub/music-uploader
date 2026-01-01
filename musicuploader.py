@@ -78,31 +78,36 @@ class MusicRelease():
             f.write(json.dumps(self.tracks, indent=4))
 
     #Preprocess the source material into the needed files
-    def preprocessing(self):
+    def preprocessing(self, overwrite=False):
         '''The process of creating .mp3, .mp4, .webp, etc'''
 
         #Iterate over each track in the pack
         for (i, track) in enumerate(self.tracks):
-            #Build the filename
+            #Build the filename paths
             wav_file = Path(self.source_dir, track["title"] + ".wav")
+            mp3_path = Path(self.output_dir, wav_file.stem + ".mp3")
+            mp4_path = Path(self.output_dir, wav_file.stem + ".mp4")
+            webp_file = Path(self.output_dir, self.tracks[i]["cover"])
+            zip_file = Path(self.output_dir, "Release.zip")
 
             #Create files
-            mp3_path = Path(self.output_dir, wav_file.stem + ".mp3")
-            create_mp3(wav_file, self.tracks[i], mp3_path, self.cover_file)
+            if (mp3_path.exists() and overwrite) or not mp3_path.exists():
+                create_mp3(wav_file, self.tracks[i], mp3_path, self.cover_file)
+
             if self.cover_file != "":
-                mp4_path = Path(self.output_dir, wav_file.stem + ".mp4")
-                create_mp4(wav_file, mp4_path, self.cover_file)
+                if (mp4_path.exists() and overwrite) or not mp4_path.exists():
+                    create_mp4(wav_file, mp4_path, self.cover_file)
                 #Create .webp version of cover art for ludoloon.studio
                 if self.tracks[i]["cover"]:
-                    webp_file = Path(self.output_dir, self.tracks[i]["cover"])
-                    if not webp_file.exists():
+                    if (webp_file.exists() and overwrite) or not webp_file.exists():
                         create_webp(self.cover_file, webp_file)
             else:
                 print("Cover file not found, skipping .mp4 & .webp in preprocessing", )
 
         #If we have stems or patterns then assume we should pack this into a .zip
         if Path(self.source_dir, "Stems/").exists() or Path(self.source_dir, "Patterns/"):
-            create_zip(self.source_dir, Path(self.output_dir, "Release.zip"))
+            if (zip_file.exists() and overwrite) or not zip_file.exists():
+                create_zip(self.source_dir, zip_file)
 
     #Upload music online
     def upload_music(self):
@@ -261,13 +266,15 @@ if __name__ == "__main__":
                         help="Specify the filename of the PNG cover art image (FILENAME ONLY, default: Cover.png)")
     parser.add_argument("--output", type=str, default="",
                         help="Specify an output directory other than the source directory")
+    parser.add_argument("--overwrite", type=str, default=False,
+                        help="Preprocessing should overwrite the .mp3, .mp4, .webp, .zip files")
 
     #Parse arguments
     args = parser.parse_args() 
 
     # Read metadata and store into release info
     music_release = MusicRelease(args.json, args.content_dir, args.output, cover_file=args.cover)
-    music_release.preprocessing()
+    music_release.preprocessing(args.overwrite)
     music_release.upload_music()
     if args.promote is True:
         music_release.promote()
