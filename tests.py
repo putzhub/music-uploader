@@ -84,6 +84,17 @@ class TestWithFiles(unittest.TestCase):
         target = Path(TESTING_DIR, "Source.zip")
         create_zip(src, target) #shutil.make_archive() doesn't need .zip extension
         assertIsFile(target)
+    
+    def test_overwrite_option(self):
+        '''Test the overwrite toggle for preprocessing.'''
+        #Check for modification times, files shouldn't be modified on first pass.
+        mod_times = []
+        for file in Path(TESTING_DIR).rglob("*"):
+            mod_times.append(os.stat(file).st_atime)
+        self.music_release.preprocessing(overwrite=False)
+        
+        for i, file in enumerate(Path(TESTING_DIR).rglob("*")):
+            self.assertEqual(mod_times[i], os.stat(file).st_atime)
 
 class TestPreprocessing(unittest.TestCase):
     #Prep & cleanup
