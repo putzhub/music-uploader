@@ -15,7 +15,6 @@ from PIL import Image
 
 # TODO
 #Default to not overwriting MP4, etc, but pass flag to do so if desired
-#handle when "streaming" & "store" dict keys are missing
 #default youtube to public when --promote is passed
 # Move release.json to content_dir
 # Create release.json if it doesn't exist and populate
@@ -25,7 +24,7 @@ from PIL import Image
 #TODO: Add genre to ludoloon "details"
 #TODO: Specify which services to skip or use
 #TODO Add more services:
-# - Bandcamp(text), Soundcloud(API), Archive.org(API), Fab/Unreal(text), Reddit(API), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
+# - Bandcamp(text), Archive.org(API), Fab/Unreal(text), Reddit(API), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
 #Implement logger
 
 
@@ -118,34 +117,37 @@ class MusicRelease():
         }
         for platform in platforms:
             #Iterate through places to upload to accounting for whether store or streaming
-            try:
-                #"streaming" or "stores"
-                style = platforms[platform]
-                #if this fails we need to upload to the specified platform
-                for track in self.tracks:
-                    track[style][platform]
-            except KeyError:
-                #use the platform name to let us call the upload method
-                urls = getattr(services, platform).upload(self)
-                #Apply the link to *all* tracks
-                if platform == "youtube":
-                    for i, track in enumerate(self.tracks):
-                        #Skip if a track wasn't uploaded (should already exist)
-                        if urls[i] == ('', ''):
-                            continue
-                        #First entry in tuple is embed url, Second youtu.be/
-                        track["embed"] = urls[i][0]
-                        track[style][platform] = urls[i][1]
-                else:
-                    #Figure out if we have multiple urls or not and apply to all tracks
-                    for track in self.tracks:
-                        if type(urls) == str:
-                            track[style][platform] = urls
-                        else:
-                            track[style][platform] = str(urls[0])
-                    
-                #save after creating the URL for relevant page
-                self.save()
+
+            #"streaming" or "stores"
+            style = platforms[platform]
+            for track in self.tracks:
+                #If streaming or stores aren't in the .json yet, add them
+                track["streaming"] = {} if "streaming" not in track else track["streaming"]
+                track["stores"] = {} if "stores" not in track else track["stores"]
+
+                #If we don't have a link yet, add one.
+                if platform not in track[style]:
+                    #use the platform name to let us call the upload method
+                    urls = getattr(services, platform).upload(self)
+                    #Apply the link to *all* tracks
+                    if platform == "youtube":
+                        for i, track in enumerate(self.tracks):
+                            #Skip if a track wasn't uploaded (should already exist)
+                            if urls[i] == ('', ''):
+                                continue
+                            #First entry in tuple is embed url, Second youtu.be/
+                            track["embed"] = urls[i][0]
+                            track[style][platform] = urls[i][1]
+                    else:
+                        #Figure out if we have multiple urls or not and apply to all tracks
+                        for track in self.tracks:
+                            if type(urls) == str:
+                                track[style][platform] = urls
+                            else:
+                                track[style][platform] = str(urls[0])
+                        
+                    #save after creating the URL for relevant page
+                    self.save()
     
     def promote(self):
         social_media = ["mastoposter", "bsky", "instagram", "patreon", "lls"]

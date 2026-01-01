@@ -22,15 +22,15 @@
             "loop": "Loopable",
             "stems": "Stems"
         },
-        "stores": {
-            "itch": "https://itch.io/game/new"
-        },
         "streaming": {
-            "newgrounds": "https://newgrounds.com",
-            "youtube": "https://youtu.be/mz82-dK0qwc",
-            "soundcloud": "test"
+            "youtube": "https://youtu.be/wnKat7Dwgws",
+            "newgrounds": "newgrounds.com",
+            "soundcloud": "soundcloud.com"
         },
-        "embed": "https://youtube.com/embed/mz82-dK0qwc"
+        "stores": {
+            "itch": "itch.io"
+        },
+        "embed": "https://youtube.com/embed/wnKat7Dwgws"
     },
     {
         "title": "Test 2",
@@ -56,12 +56,12 @@
             "stems": "Stems"
         },
         "stores": {
-            "itch": "https://itch.io/game/new"
+            "itch": "itch.io"
         },
         "streaming": {
-            "newgrounds": "https://newgrounds.com",
+            "newgrounds": "newgrounds.com",
             "youtube": "https://youtu.be/Xka18bUq_fA",
-            "soundcloud": "test"
+            "soundcloud": "soundcloud.com"
         },
         "embed": "https://youtube.com/embed/Xka18bUq_fA"
     }
