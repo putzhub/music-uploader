@@ -4,6 +4,7 @@
         "date": "2025-12-20",
         "url": "test-url",
         "cover": "test.webp",
+        "test": "True",
         "summary": "Testing out this music cross poster thing!",
         "tags": [
             "Music Pack",
@@ -23,20 +24,21 @@
             "stems": "Stems"
         },
         "streaming": {
-            "youtube": "https://youtu.be/wnKat7Dwgws",
             "newgrounds": "newgrounds.com",
-            "soundcloud": "soundcloud.com"
+            "soundcloud": "soundcloud.com",
+            "youtube": "https://youtu.be/dNxSWlmUNP8"
         },
         "stores": {
             "itch": "itch.io"
         },
-        "embed": "https://youtube.com/embed/wnKat7Dwgws"
+        "embed": "https://youtube.com/embed/dNxSWlmUNP8"
     },
     {
         "title": "Test 2",
         "date": "2025-12-20",
         "url": "test-url",
         "cover": "test.webp",
+        "test": "True",
         "summary": "Testing out this music cross poster thing!",
         "tags": [
             "Music Pack",
