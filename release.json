@@ -1,43 +1,42 @@
 [
     {
-        "title": "Animal Town",
-        "date": "2025-12-21",
-        "url": "animal-town",
-        "cover": "animal-town.webp",
-        "summary": "It's a good day to be a chill little critter and vibe.",
+        "title": "Techno Purgatory",
+        "date": "2026-1-1",
+        "url": "techno-purgatory",
+        "cover": "techno-purgatory.webp",
+        "summary": "The party never stops in purgatory.",
         "tags": [
-            "Chill",
-            "Casual",
-            "Cute",
-            "Exploration",
-            "Funky",
+            "Dance",
+            "Dark",
+            "Driving",
+            "Energetic",
+            "Fast",
             "Groovy",
-            "HipHop",
-            "Relaxing",
-            "RPG",
-            "Smooth",
-            "Upbeat",
-            "Visual Novel"
+            "Hard",
+            "Racing",
+            "Rhythm",
+            "Space"
         ],
         "mp3": {
-            "genre": "Game",
+            "genre": "Techno",
             "website": "https://ludoloon.studio",
             "artist": "LudoLoon Studio",
             "album": ""
         },
         "details": {
-            "bpm": 94,
+            "bpm": 140,
             "cost": "Free",
             "loop": "Loopable",
             "stems": "No-Stems"
         },
         "stores": {
-            "itch": "https://ludoloonstudio.itch.io/animal-town"
+            "itch": "https://ludoloonstudio.itch.io/techno-purgatory"
         },
         "streaming": {
-            "youtube": "https://youtu.be/5Ho5VJyXgIY",
-            "newgrounds": "https://www.newgrounds.com/audio/listen/1506338"
+            "newgrounds": "https://www.newgrounds.com/audio/listen/1508340",
+            "youtube": "https://youtu.be/RmnqJ2i04_c",
+            "soundcloud": "https://soundcloud.com/ludoloonstudio/techno-purgatory"
         },
-        "embed": "https://youtube.com/embed/5Ho5VJyXgIY"
+        "embed": "https://youtube.com/embed/RmnqJ2i04_c"
     }
 ]

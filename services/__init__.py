@@ -82,9 +82,34 @@ itch.io: https://ludoloonstudio.itch.io/{track["url"]}
 Newgrounds: https://ludoloonstudio.newgrounds.com/audio
 Patreon (get stems & tracks in advance): https://patreon.com/ludoloonstudio
 
-{combine_tags(module.DEFAULT_TAGS, track["tags"])}
+{combine_tags(module.DEFAULT_TAGS, track["tags"], prepend="#")}
 '''
-    
+    #SOUNDCLOUD
+    elif service == Service.SOUNDCLOUD:
+        #Uploads pass multiple files, pick one for now
+        msg = f'''
+Title: {track["title"]}
+URL: {track["url"]}
+License: Creative commons, allow sharealike
+
+-----
+Description:
+-----
+
+{track["summary"]}
+
+Style: {combine_tags(track["tags"], separator=", ")}
+BPM: {track["details"]["bpm"]}
+
+--More Music--
+Homepage: https://ludoloon.studio/music
+Itch.io: {track["stores"]["itch"]}
+Patreon (get stems & tracks in advance): https://patreon.com/ludoloonstudio
+
+-----
+Tags:  {combine_tags(module.DEFAULT_TAGS, track["tags"], separator=", ")}
+'''
+
     #NEWGROUNDS
     elif service == Service.NEWGROUNDS:
         #Uploads pass multiple files, pick one for now

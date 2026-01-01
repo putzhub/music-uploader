@@ -27,7 +27,8 @@
         },
         "streaming": {
             "newgrounds": "https://newgrounds.com",
-            "youtube": "https://youtu.be/mz82-dK0qwc"
+            "youtube": "https://youtu.be/mz82-dK0qwc",
+            "soundcloud": "test"
         },
         "embed": "https://youtube.com/embed/mz82-dK0qwc"
     },
@@ -59,7 +60,8 @@
         },
         "streaming": {
             "newgrounds": "https://newgrounds.com",
-            "youtube": "https://youtu.be/Xka18bUq_fA"
+            "youtube": "https://youtu.be/Xka18bUq_fA",
+            "soundcloud": "test"
         },
         "embed": "https://youtube.com/embed/Xka18bUq_fA"
     }

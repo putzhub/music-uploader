@@ -181,6 +181,14 @@ See link in bio for more.
         ng_url = services.newgrounds.upload(MusicRelease(TEST_JSON_PATH, SOURCE_DIR))
         self.assertIsNotNone(ng_url)
         self.assertIsNot(ng_url, "")
+    
+    @unittest.skip("Annoying to test often")
+    def test_soundcloud(self):
+        '''Prepare for posting to Soundcloud'''
+        #Should return something other than empty
+        sc_url = services.soundcloud.upload(MusicRelease(TEST_JSON_PATH, SOURCE_DIR))
+        self.assertIsNotNone(sc_url)
+        self.assertIsNot(sc_url, "")
 
 class TestSocialMedia(unittest.TestCase):
     def test_mastodon(self):

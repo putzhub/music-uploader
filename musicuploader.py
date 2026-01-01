@@ -5,6 +5,7 @@ import subprocess
 import zipfile
 import os
 
+from copy import deepcopy
 from pathlib import Path
 from mutagen.id3 import APIC, ID3
 from mutagen.easyid3 import EasyID3
@@ -13,12 +14,15 @@ from PIL import Image
 
 
 # TODO
+#Default to not overwriting MP4, etc, but pass flag to do so if desired
+#handle when "streaming" & "store" dict keys are missing
+#default youtube to public when --promote is passed
 # Move release.json to content_dir
 # Create release.json if it doesn't exist and populate
 # Add album exporting
 # - Skip unwanted services or specify which ones
 # - Refactor code to make more sense for a multi-song approach
-#Figure out where release.json should live
+#TODO: Add genre to ludoloon "details"
 #TODO: Specify which services to skip or use
 #TODO Add more services:
 # - Bandcamp(text), Soundcloud(API), Archive.org(API), Fab/Unreal(text), Reddit(API), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
@@ -109,7 +113,8 @@ class MusicRelease():
         platforms = {
             "youtube": "streaming",
             "itch": "stores", 
-            "newgrounds": "streaming"
+            "newgrounds": "streaming",
+            "soundcloud": "streaming"
         }
         for platform in platforms:
             #Iterate through places to upload to accounting for whether store or streaming
@@ -143,12 +148,33 @@ class MusicRelease():
                 self.save()
     
     def promote(self):
-        social_media = ["mastoposter", "bksy", "instagram", "patreon", "lls"]
+        social_media = ["mastoposter", "bsky", "instagram", "patreon", "lls"]
 
         for platform in social_media:
             getattr(services, platform).post(self)
 
 #Preprocessing helpers
+#TODO left off here
+def create_json(json_file):
+    print("Creating a new .json for release!")
+
+    template = {}
+    for group in  REQUIRED_KEYS:
+        for key in REQUIRED_KEYS[group]:
+            if group != "root":
+                template[group][key]
+            else:
+                template[key]
+
+    num_tracks = int(input("How many tracks are in your release?"))
+    if num_tracks == 0:
+        num_tracks = 1
+
+    for track in num_tracks:
+        pass
+    
+    
+
 def create_mp3(source_file, json, dest_path=None, cover=""):
     '''Use the shell to run LAME and create an MP3, add tags'''
     #Create file
