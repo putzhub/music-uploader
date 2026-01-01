@@ -183,8 +183,8 @@ def upload_track(mp4, args):
   args["keywords"] = services.combine_tags(DEFAULT_TAGS, args["tags"])
   #Prep the description
   args["description"] = services.prep_post(args, services.Service.YOUTUBE)
-  #Set privacy status
-  args["privacyStatus"] = VALID_PRIVACY_STATUSES[1] #private for now
+  #Set privacy status - private if testing
+  args["privacyStatus"] = VALID_PRIVACY_STATUSES[1] if "Test" in args["title"] else VALID_PRIVACY_STATUSES[0] 
 
   #Avoid issues with oauth stuff
   args["logging_level"] = "ERROR"

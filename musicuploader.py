@@ -14,7 +14,6 @@ from PIL import Image
 
 
 # TODO
-#Default to not overwriting MP4, etc, but pass flag to do so if desired
 #default youtube to public when --promote is passed
 # Move release.json to content_dir
 # Create release.json if it doesn't exist and populate
