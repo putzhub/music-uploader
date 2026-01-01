@@ -26,6 +26,11 @@ def assertIsFile(path):
 
 #Move to class itself
 class TestInit(unittest.TestCase):
+    def test_create_json(self):
+        '''Make sure we can create a .json file'''
+        MusicRelease("nonexistant_release.json", CONTENT_DIR, TESTING_DIR)
+        os.remove(Path(CONTENT_DIR, "nonexistant_release.json"))
+
     #Make sure we can load a valid configuration
     def test_read_json(self):
         '''Make sure we can load the music data json file'''

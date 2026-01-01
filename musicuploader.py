@@ -14,7 +14,6 @@ from PIL import Image
 
 
 # TODO
-#default youtube to public when --promote is passed
 # Move release.json to content_dir
 # Create release.json if it doesn't exist and populate
 # Add album exporting
@@ -43,11 +42,15 @@ class MusicRelease():
     json_file = ""
 
     def __init__(self, json_file, content_dir, output_dir="", cover_file="Cover.png"):
-        #Read JSON file
-        self.json_file = json_file
-        self.load()
         #Content dir is the root of all our work
         self.content_dir = content_dir
+        self.tracks = []
+        #Read JSON file
+        self.json_file = Path(content_dir, json_file) if str(Path(json_file).parent) == "." else Path(json_file)
+        try:
+            self.load()
+        except FileNotFoundError:
+            self.create()
         #Source path is where files we build with live, assign as output dir if none is provided
         source = Path(content_dir, "Source")
         self.source_dir = source if source.exists() else self.content_dir
@@ -68,13 +71,37 @@ class MusicRelease():
     
     #Helpers
     def load(self):
+        '''Load a release.json file and read its contents'''
         with open(self.json_file) as f:
             self.tracks = json.load(f)
 
     def save(self):
         '''Save our tracks[] JSON metadata to the file we read from.'''
-        with open(self.json_file,"w") as f:
+        with open(self.json_file, "w") as f:
             f.write(json.dumps(self.tracks, indent=4))
+
+    def create(self):
+        '''Create a new release.json'''
+        print("Creating a new .json for release!")
+
+        template = {}
+        for group in  REQUIRED_KEYS:
+            if group != "root":
+                template[group] = {}
+            for key in REQUIRED_KEYS[group]:
+                if group != "root":
+                    template[group][key] = ""
+                else:
+                    template[key] = ""
+
+        num_tracks = int(input("How many tracks are in your release?"))
+        if num_tracks == 0:
+            num_tracks = 1
+
+        for track in range(num_tracks):
+            self.tracks.append(deepcopy(template))
+        
+        self.save()
 
     #Preprocess the source material into the needed files
     def preprocessing(self, overwrite=False):
@@ -154,33 +181,13 @@ class MusicRelease():
                     self.save()
     
     def promote(self):
-        social_media = ["mastoposter", "bsky", "instagram", "patreon", "lls"]
+        #Put automated ones last in case we fuck up on the non-automated ones.
+        social_media = ["bsky", "instagram", "patreon", "lls", "mastoposter"]
 
         for platform in social_media:
             getattr(services, platform).post(self)
 
 #Preprocessing helpers
-#TODO left off here
-def create_json(json_file):
-    print("Creating a new .json for release!")
-
-    template = {}
-    for group in  REQUIRED_KEYS:
-        for key in REQUIRED_KEYS[group]:
-            if group != "root":
-                template[group][key]
-            else:
-                template[key]
-
-    num_tracks = int(input("How many tracks are in your release?"))
-    if num_tracks == 0:
-        num_tracks = 1
-
-    for track in num_tracks:
-        pass
-    
-    
-
 def create_mp3(source_file, json, dest_path=None, cover=""):
     '''Use the shell to run LAME and create an MP3, add tags'''
     #Create file
