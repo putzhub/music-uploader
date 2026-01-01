@@ -266,7 +266,7 @@ if __name__ == "__main__":
                         help="Specify the filename of the PNG cover art image (FILENAME ONLY, default: Cover.png)")
     parser.add_argument("--output", type=str, default="",
                         help="Specify an output directory other than the source directory")
-    parser.add_argument("--overwrite", type=str, default=False,
+    parser.add_argument("--overwrite", action="store_true", default=False,
                         help="Preprocessing should overwrite the .mp3, .mp4, .webp, .zip files")
 
     #Parse arguments
