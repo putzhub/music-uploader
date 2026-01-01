@@ -21,8 +21,15 @@ from PIL import Image
 #Figure out where release.json should live
 #TODO: Specify which services to skip or use
 #TODO Add more services:
-# - Bandcamp(text), Soundcloud(API), Archive.org(API), Unity (Cmdline?), Jamendo(text), Unreal(text), Gamedevmarket(text)
+# - Bandcamp(text), Soundcloud(API), Archive.org(API), Fab/Unreal(text), Reddit(API), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
 #Implement logger
+
+
+REQUIRED_KEYS = {
+    "root": ["title", "summary", "date", "url", "tags"],
+    "details": ["bpm", "cost", "loop", "stems"],
+    "mp3": ["genre", "album", "artist", "website"]
+}
 
 class MusicRelease():
     #Class Variables
@@ -50,13 +57,12 @@ class MusicRelease():
         
         #Make sure we have the expected keys in the json file (and hopefully by extension data)
         for entry in self.tracks:
-            for key in ["title", "summary", "date", "url", "tags"]:
-                assert key in entry
-            #Do the same for MP3 and Details tags
-            for key in ["bpm", "cost", "loop", "stems"]:
-                assert key in entry["details"]
-            for key in ["genre", "album", "artist", "website"]:
-                assert key in entry["mp3"]
+            for group in  REQUIRED_KEYS:
+                for key in REQUIRED_KEYS[group]:
+                    if group != "root":
+                        assert key in entry[group]
+                    else:
+                        assert key in entry
     
     #Helpers
     def load(self):
