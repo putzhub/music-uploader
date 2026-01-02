@@ -26,10 +26,16 @@ def assertIsFile(path):
 
 #Move to class itself
 class TestInit(unittest.TestCase):
+    @classmethod
+    def tearDownClass(self):
+        os.remove(Path(CONTENT_DIR, "nonexistant_release.json"))
+
     def test_create_json(self):
         '''Make sure we can create a .json file'''
+        with self.assertRaises(SystemExit):
+            MusicRelease("nonexistant_release.json", CONTENT_DIR, TESTING_DIR)
+        #Make sure the file can be loaded after we create it
         MusicRelease("nonexistant_release.json", CONTENT_DIR, TESTING_DIR)
-        os.remove(Path(CONTENT_DIR, "nonexistant_release.json"))
 
     #Make sure we can load a valid configuration
     def test_read_json(self):

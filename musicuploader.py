@@ -14,7 +14,6 @@ from PIL import Image
 
 
 # TODO
-# Move release.json to content_dir
 # Create release.json if it doesn't exist and populate
 # Add album exporting
 # - Skip unwanted services or specify which ones
@@ -45,12 +44,13 @@ class MusicRelease():
         #Content dir is the root of all our work
         self.content_dir = content_dir
         self.tracks = []
-        #Read JSON file
+        #Read JSON file, relative to content_dir if it's just a filename, otherwise relative to CWD.
         self.json_file = Path(content_dir, json_file) if str(Path(json_file).parent) == "." else Path(json_file)
-        try:
+        if self.json_file.exists():
             self.load()
-        except FileNotFoundError:
+        else:
             self.create()
+            
         #Source path is where files we build with live, assign as output dir if none is provided
         source = Path(content_dir, "Source")
         self.source_dir = source if source.exists() else self.content_dir
@@ -93,15 +93,20 @@ class MusicRelease():
                     template[group][key] = ""
                 else:
                     template[key] = ""
-
-        num_tracks = int(input("How many tracks are in your release?"))
-        if num_tracks == 0:
+        try:
+            num_tracks = int(input("How many tracks are in your release: "))
+            if num_tracks < 1:
+                num_tracks = 1
+        except ValueError:
+            print("Invalid input, assuming 1 track")
             num_tracks = 1
 
         for track in range(num_tracks):
             self.tracks.append(deepcopy(template))
         
         self.save()
+        print("New release.json created! Program will exit so you can fill out the details in the new file.")
+        exit()
 
     #Preprocess the source material into the needed files
     def preprocessing(self, overwrite=False):
