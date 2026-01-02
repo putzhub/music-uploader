@@ -17,10 +17,9 @@ from PIL import Image
 # Add album exporting
 # - Skip unwanted services or specify which ones
 # - Refactor code to make more sense for a multi-song approach
-#TODO: Add genre to ludoloon "details" instead of "mp3"
 #TODO: Specify which services to skip or use
 #TODO Add more services:
-# - Bandcamp(text), Archive.org(API), Fab/Unreal(text), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
+# - Bandcamp(text), Fab/Unreal(text), Archive.org(API), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
 #Implement logger
 
 
