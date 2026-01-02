@@ -14,11 +14,10 @@ from PIL import Image
 
 
 # TODO
-# Create release.json if it doesn't exist and populate
 # Add album exporting
 # - Skip unwanted services or specify which ones
 # - Refactor code to make more sense for a multi-song approach
-#TODO: Add genre to ludoloon "details"
+#TODO: Add genre to ludoloon "details" instead of "mp3"
 #TODO: Specify which services to skip or use
 #TODO Add more services:
 # - Bandcamp(text), Archive.org(API), Fab/Unreal(text), Reddit(API), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
