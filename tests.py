@@ -240,5 +240,9 @@ class TestSocialMedia(unittest.TestCase):
     def test_patreon(self):
         services.patreon.post(MusicRelease(TEST_JSON_PATH, SOURCE_DIR))
 
+    #@unittest.skip("Annoying to test often")
+    def test_reddit(self):
+        services.reddit.post(MusicRelease(TEST_JSON_PATH, SOURCE_DIR))
+
 if __name__ == "__main__":
     unittest.main()
