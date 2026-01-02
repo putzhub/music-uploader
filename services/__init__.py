@@ -72,6 +72,14 @@ See link in bio for more.
 {combine_tags(module.DEFAULT_TAGS, track["tags"], prepend="#")}
 '''
     
+    #REDDIT
+    elif service == Service.REDDIT:
+        msg = f'''
+Title: {track["title"]}
+Summary: {track["summary"]}
+Link: {track["stores"]["itch"]}
+'''
+
     #YOUTUBE
     elif service == Service.YOUTUBE:
         msg = f'''
