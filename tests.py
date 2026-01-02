@@ -71,7 +71,8 @@ class TestWithFiles(unittest.TestCase):
         #Test tag data
         audio = EasyID3(dest_path)
         self.assertEqual(audio["title"], ["Test"])
-        tags = ["artist", "website", "genre", "album"]
+        self.assertEqual(audio["genre"], ["Game"])
+        tags = ["artist", "website"]
         for tag in tags:
             self.assertEqual(audio[tag], [self.music_release.tracks[0]["mp3"][tag]])
 

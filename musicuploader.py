@@ -20,14 +20,14 @@ from PIL import Image
 #TODO: Add genre to ludoloon "details" instead of "mp3"
 #TODO: Specify which services to skip or use
 #TODO Add more services:
-# - Bandcamp(text), Archive.org(API), Fab/Unreal(text), Reddit(API), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
+# - Bandcamp(text), Archive.org(API), Fab/Unreal(text), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
 #Implement logger
 
 
 REQUIRED_KEYS = {
     "root": ["title", "summary", "date", "url", "tags"],
-    "details": ["bpm", "cost", "loop", "stems"],
-    "mp3": ["genre", "album", "artist", "website"]
+    "details": ["bpm", "cost", "loop", "genre"],
+    "mp3": ["album", "artist", "website"]
 }
 
 class MusicRelease():
@@ -205,8 +205,9 @@ def create_mp3(source_file, json, dest_path=None, cover=""):
     #Write tags to their relevant spots
     for tag in ["title", "date"]:
         mp3[tag] = json[tag]
-    for tag in ["artist", "website", "genre", "album"]:
+    for tag in ["artist", "website", "album"]:
         mp3[tag] = json["mp3"][tag]
+    mp3["genre"] = json["details"]["genre"]
     mp3.save()
     #Add cover if available
     if cover != "":

@@ -12,7 +12,6 @@
             "Test"
         ],
         "mp3": {
-            "genre": "game",
             "website": "https://ludoloon.studio",
             "artist": "LudoLoon Studio",
             "album": "test"
@@ -21,7 +20,7 @@
             "bpm": 80,
             "cost": "Paid",
             "loop": "Loopable",
-            "stems": "Stems"
+            "genre": "Game"
         },
         "streaming": {
             "newgrounds": "newgrounds.com",
@@ -46,7 +45,6 @@
             "Test"
         ],
         "mp3": {
-            "genre": "game",
             "website": "https://ludoloon.studio",
             "artist": "LudoLoon Studio",
             "album": "test"
@@ -55,7 +53,7 @@
             "bpm": 80,
             "cost": "Paid",
             "loop": "Loopable",
-            "stems": "Stems"
+            "genre": "Game"
         },
         "stores": {
             "itch": "itch.io"
