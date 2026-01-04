@@ -24,7 +24,6 @@ logger = logging.getLogger(__name__)
 #TODO: Specify which services to skip or use
 #TODO Add more services:
 # - Bandcamp(text), Fab/Unreal(text), Archive.org(API), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
-#Implement logging
 
 
 REQUIRED_KEYS = {
