@@ -13,6 +13,8 @@ from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
 from PIL import Image
 
+__VERSION__ = "0.1.0"
+
 #Start the logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -302,6 +304,7 @@ if __name__ == "__main__":
                         help="Preprocessing should overwrite the .mp3, .mp4, .webp, .zip files")
     parser.add_argument("--verbose", action="store_true", default=False,
                         help="Display advanced logging info.")
+    parser.add_argument("--version", action="version", version=f"Music-Uploader Version: {__VERSION__}")
 
     #Parse arguments
     args = parser.parse_args() 
