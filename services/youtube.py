@@ -5,6 +5,7 @@ import os
 import random
 import sys
 import time
+import logging
 from types import SimpleNamespace
 from copy import deepcopy
 from pathlib import Path
@@ -17,6 +18,9 @@ from oauth2client.file import Storage
 from oauth2client.tools import argparser, run_flow
 
 import services
+
+#Start logging
+logger = logging.getLogger(__name__)
 
 #Default tags for posting
 DEFAULT_TAGS = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
@@ -77,6 +81,7 @@ https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 VALID_PRIVACY_STATUSES = ("public", "private", "unlisted")
 
 def get_authenticated_service(args):
+  logger.debug("Authenticating to youtube...")
   flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE,
     scope=YOUTUBE_UPLOAD_SCOPE,
     message=MISSING_CLIENT_SECRETS_MESSAGE)
@@ -130,6 +135,7 @@ def initialize_upload(youtube, options):
 # This method implements an exponential backoff strategy to resume a
 # failed upload.
 def resumable_upload(insert_request):
+  logger.debug("Starting upload request...")
   response = None
   error = None
   retry = 0
@@ -139,7 +145,7 @@ def resumable_upload(insert_request):
       status, response = insert_request.next_chunk()
       if response is not None:
         if 'id' in response:
-          print("Video id '%s' was successfully uploaded." % response['id'])
+          logger.info("Video id '%s' was successfully uploaded." % response['id'])
           return response['id']
         else:
           exit("The upload failed with an unexpected response: %s" % response)
@@ -202,6 +208,8 @@ def upload_track(mp4, args):
 
 def upload(release):
   '''Upload a MusicRelease() to youtube'''
+  logger.debug("Uploading release to youtube")
+
   #Make sure we don't write tags
   release = deepcopy(release)
 
@@ -213,8 +221,10 @@ def upload(release):
     mp4 = str(Path(release.output_dir, track["title"] + ".mp4"))
     ytid = upload_track(mp4, track)
     if ytid is not False:
+      logger.debug(f"Track successfully uploaded. Youtube ID: {ytid}")
       urls.append((str("https://youtube.com/embed/"+ytid), str("https://youtu.be/"+ytid)))
     else:
+      logger.debug(f"Track already has a youtube link. Youtube ID: {track["streaming"]["youtube"]}")
       urls.append(('', ''))
   
   return urls

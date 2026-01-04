@@ -1,14 +1,19 @@
 import unittest
 from musicuploader import *
+import musicuploader
 import os
 from pathlib import Path
 import shutil
 from mutagen.easyid3 import EasyID3
+import logging
 
 TESTING_DIR = "./test/testing"
 CONTENT_DIR = "./tests/"
 SOURCE_DIR = "./tests/Source"
 TEST_JSON_PATH = "tests/release_example.json"
+
+#Start the logger
+#logging.basicConfig(level=logging.DEBUG)
 
 #TODO Add more config files to test
 # - Track that hasn't been uploaded yet
@@ -31,7 +36,7 @@ class TestInit(unittest.TestCase):
         if Path(CONTENT_DIR, "nonexistant_release.json").exists():
             os.remove(Path(CONTENT_DIR, "nonexistant_release.json"))
 
-    @unittest.skip("breaks other tests?")
+    @unittest.skip("break social media tests?")
     def test_create_json(self):
         '''Make sure we can create a .json file'''
         with self.assertRaises(SystemExit):

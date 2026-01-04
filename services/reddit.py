@@ -5,6 +5,7 @@ def post(release, testing=False):
     '''Prepare a message to copy & paste onto bluesky for promotion.'''
     print(services.prep_post(release, services.Service.REDDIT))
     webbrowser.open("https://www.reddit.com/r/gameassets/")
+    webbrowser.open("https://www.reddit.com/r/freegameassets/")
     webbrowser.open("https://www.reddit.com/r/itchio/")
     input("Welp, did ya post it to reddit? [press enter]")
     return True

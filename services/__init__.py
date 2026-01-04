@@ -1,3 +1,5 @@
+import logging
+
 from enum import Enum
 from copy import deepcopy
 
@@ -13,6 +15,9 @@ from . import soundcloud
 from . import youtube
 from . import newgrounds
 from . import archiveorg
+
+#start logger
+logger = logging.getLogger(__name__)
 
 class Service(Enum):
     BSKY = bsky
@@ -44,6 +49,7 @@ def combine_tags(*args, separator=" ", prepend=""):
 
 #TODO Piece out message builder functions for common info groups maybe?
 def prep_post(release, service):
+    logger.debug(f"Preparing message for {service}")
     msg = ""
     module = service.value
     #First track data only, for where it's relevant

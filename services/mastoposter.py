@@ -3,6 +3,9 @@
 from mastodon import Mastodon, errors
 from getpass import getpass
 import services
+import logging
+
+logger = logging.getLogger(__name__)
 
 SECRETS_FILE="secrets/mastocred.secrets"
 DEFAULT_TAGS = ["music", "asset", "gameaudio", "vgm", "bgm", "royaltyfreemusic", 
@@ -25,7 +28,7 @@ def post(release, testing=False):
 
     #Don't bother posting without a video
     if "embed" not in track or "summary" not in track:
-        print("No video or summary, not posting to Mastodon")
+        logger.error("No video or summary, not posting to Mastodon")
         return False
     
     #Initialize our vairables.

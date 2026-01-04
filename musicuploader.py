@@ -4,6 +4,7 @@ import argparse
 import subprocess
 import zipfile
 import os
+import logging
 
 from copy import deepcopy
 from pathlib import Path
@@ -12,6 +13,9 @@ from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
 from PIL import Image
 
+#Start the logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # TODO
 # Add album exporting
@@ -20,7 +24,7 @@ from PIL import Image
 #TODO: Specify which services to skip or use
 #TODO Add more services:
 # - Bandcamp(text), Fab/Unreal(text), Archive.org(API), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
-#Implement logger
+#Implement logging
 
 
 REQUIRED_KEYS = {
@@ -70,17 +74,20 @@ class MusicRelease():
     #Helpers
     def load(self):
         '''Load a release.json file and read its contents'''
+        logger.debug(f"Loading file: {self.json_file}")
         with open(self.json_file) as f:
             self.tracks = json.load(f)
 
     def save(self):
+        logger.info(f"Loading file: {self.json_file}")
         '''Save our tracks[] JSON metadata to the file we read from.'''
+        logger.debug(f"Saving file: {self.json_file}")
         with open(self.json_file, "w") as f:
             f.write(json.dumps(self.tracks, indent=4))
 
     def create(self):
         '''Create a new release.json'''
-        print("Creating a new .json for release!")
+        logger.info("Creating a new .json for release!")
 
         template = {}
         for group in  REQUIRED_KEYS:
@@ -96,19 +103,20 @@ class MusicRelease():
             if num_tracks < 1:
                 num_tracks = 1
         except ValueError:
-            print("Invalid input, assuming 1 track")
+            logger.warning("Invalid input, assuming 1 track")
             num_tracks = 1
 
-        for track in range(num_tracks):
+        for _ in range(num_tracks):
             self.tracks.append(deepcopy(template))
         
         self.save()
-        print("New release.json created! Program will exit so you can fill out the details in the new file.")
+        logger.info("New release.json created! Program will exit so you can fill out the details in the new file.")
         exit()
 
     #Preprocess the source material into the needed files
     def preprocessing(self, overwrite=False):
         '''The process of creating .mp3, .mp4, .webp, etc'''
+        logger.debug(f"Start preprocssing. Overwrite: {overwrite}")
 
         #Iterate over each track in the pack
         for (i, track) in enumerate(self.tracks):
@@ -131,17 +139,20 @@ class MusicRelease():
                     if (webp_file.exists() and overwrite) or not webp_file.exists():
                         create_webp(self.cover_file, webp_file)
             else:
-                print("Cover file not found, skipping .mp4 & .webp in preprocessing", )
+                logger.warning("Cover file not found, skipping .mp4 & .webp in preprocessing", )
 
         #If we have stems or patterns then assume we should pack this into a .zip
         if Path(self.source_dir, "Stems/").exists() or Path(self.source_dir, "Patterns/"):
+            logger.debug("Stems or Patterns folder found.")
             if (zip_file.exists() and overwrite) or not zip_file.exists():
                 create_zip(self.source_dir, zip_file)
+        
+        logger.debug("Preprocessing complete.")
 
     #Upload music online
     def upload_music(self):
         #WARNING: NOT THOROUGHLY TESTED FOR MULTIPLE FILES - First file assumed as default metadata after youtube
-        
+        logger.debug("Uploading music...")
         #Upload tracks to remaining hosting services
         platforms = {
             "youtube": "streaming",
@@ -151,6 +162,7 @@ class MusicRelease():
         }
         for platform in platforms:
             #Iterate through places to upload to accounting for whether store or streaming
+            logger.debug(f"Checking for existing link: {platform}")
 
             #"streaming" or "stores"
             style = platforms[platform]
@@ -161,6 +173,7 @@ class MusicRelease():
 
                 #If we don't have a link yet, add one.
                 if platform not in track[style]:
+                    logger.debug(f"Existing link not found, uploading to {platform}")
                     #use the platform name to let us call the upload method
                     urls = getattr(services, platform).upload(self)
                     #Apply the link to *all* tracks
@@ -196,10 +209,13 @@ def create_mp3(source_file, json, dest_path=None, cover=""):
     #Create file
     if dest_path is None:
         dest_path = str(source_file)[:-3] + "mp3"
+    
+    logger.debug(f"Creating mp3 of {source_file} at {dest_path}")
     subprocess.run(["lame", "--quiet", "-V0", "-h", source_file, dest_path])
 
     #Add MP3 tags
     mp3 = MP3(dest_path, ID3=EasyID3)
+    logger.debug("Adding mp3 tags...")
     mp3.add_tags()  #Add EasyID3 header
     #Write tags to their relevant spots
     for tag in ["title", "date"]:
@@ -210,6 +226,7 @@ def create_mp3(source_file, json, dest_path=None, cover=""):
     mp3.save()
     #Add cover if available
     if cover != "":
+        logger.debug(f"Adding cover image to mp3 file {dest_path}")
         with open(cover, 'rb') as art:
             audio = ID3(dest_path)
             audio.add(
@@ -228,6 +245,8 @@ def create_mp4(source_file, dest_path=None, cover="Cover.png"):
     '''Use the shell to run ffmpeg and create an MP4'''
     if dest_path is None:
         dest_path = str(source_file)[:-3] + "mp4"
+
+    logger.debug(f"Creating mp4 of {source_file} using {cover} at {dest_path}")
     #Make an mp4 exactly the length of the song and add black borders to make it 16:9 for youtube
     subprocess.run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-loop", "1", "-i", cover, "-i", source_file, "-shortest",
                     "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1", dest_path])
@@ -237,6 +256,8 @@ def create_webp(src_path, dest_path=None):
     if dest_path is None:
         dest_path = str(src_path)[:-3] + "webp"
     
+    logger.debug(f"Creating mp3 of {src_path} at {dest_path}")
+
     with Image.open(src_path) as img:
         # PNGs support transparency, which WebP also supports.
         # However, if the image has a palette (e.g., PNG-8), converting to 'RGB' 
@@ -249,6 +270,8 @@ def create_zip(source, dest_path=None):
     '''Create an archive'''
     if dest_path is None:
         dest_path = str(source + ".zip")
+
+    logger.debug(f"Creating zip of {source} at {dest_path}")
 
     with zipfile.ZipFile(dest_path, "w", compression=zipfile.ZIP_DEFLATED) as zip:
         #Recurse the directory, only zip WAV files though
@@ -278,10 +301,15 @@ if __name__ == "__main__":
                         help="Specify an output directory other than the source directory")
     parser.add_argument("--overwrite", action="store_true", default=False,
                         help="Preprocessing should overwrite the .mp3, .mp4, .webp, .zip files")
+    parser.add_argument("--verbose", action="store_true", default=False,
+                        help="Display advanced logging info.")
 
     #Parse arguments
     args = parser.parse_args() 
 
+    #Set logging
+    log_level = logging.INFO if not args.verbose else logging.DEBUG
+    logger.setLevel(log_level)
     # Read metadata and store into release info
     music_release = MusicRelease(args.json, args.content_dir, args.output, cover_file=args.cover)
     music_release.preprocessing(args.overwrite)
