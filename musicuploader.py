@@ -20,13 +20,14 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # TODO
+# Deal with encoding track info into filename:
+#   i.e: BPM (look at fmod or whatever format)
 # Add album exporting
 # - Skip unwanted services or specify which ones
 # - Refactor code to make more sense for a multi-song approach
 #TODO: Specify which services to skip or use
 #TODO Add more services:
-# - Bandcamp(text), Fab/Unreal(text), Archive.org(API), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
-
+# - Bandcamp(text), Fab/Unreal(text), Lemmy(API), Archive.org(API), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
 
 REQUIRED_KEYS = {
     "root": ["title", "summary", "date", "url", "tags"],

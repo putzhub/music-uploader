@@ -222,7 +222,7 @@ def upload(release):
     ytid = upload_track(mp4, track)
     if ytid is not False:
       logger.debug(f"Track successfully uploaded. Youtube ID: {ytid}")
-      urls.append((str("https://youtube.com/embed/"+ytid), str("https://youtu.be/"+ytid)))
+      urls.append((str("https://www.youtube-nocookie.com/embed/"+ytid), str("https://youtu.be/"+ytid)))
     else:
       logger.debug(f"Track already has a youtube link. Youtube ID: {track["streaming"]["youtube"]}")
       urls.append(('', ''))
