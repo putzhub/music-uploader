@@ -81,8 +81,7 @@ class MusicRelease():
             self.tracks = json.load(f)
 
     def save(self):
-        logger.info(f"Loading file: {self.json_file}")
-        '''Save our tracks[] JSON metadata to the file we read from.'''
+        '''Save tracks[] JSON metadata to the file being read from.'''
         logger.debug(f"Saving file: {self.json_file}")
         with open(self.json_file, "w") as f:
             f.write(json.dumps(self.tracks, indent=4))
