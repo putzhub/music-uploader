@@ -6,6 +6,7 @@ import zipfile
 import os
 import logging
 
+from glob import glob
 from copy import deepcopy
 from pathlib import Path
 from mutagen.id3 import APIC, ID3
@@ -100,9 +101,9 @@ class MusicRelease():
                 else:
                     template[key] = ""
         try:
-            num_tracks = int(input("How many tracks are in your release: "))
-            if num_tracks < 1:
-                num_tracks = 1
+            guess = len(glob(f"{self.content_dir}/*.wav"))
+            num_tracks = input(f"How many tracks are there [if {guess} hit enter]: ")
+            num_tracks = guess if num_tracks == "" else int(num_tracks)
         except ValueError:
             logger.warning("Invalid input, assuming 1 track")
             num_tracks = 1
