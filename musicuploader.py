@@ -13,7 +13,7 @@ from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
 from PIL import Image
 
-__VERSION__ = "0.1.0"
+__VERSION__ = "2026.9.23.0"
 
 #Start the logging
 logging.basicConfig(level=logging.DEBUG)
