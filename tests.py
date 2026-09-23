@@ -32,7 +32,7 @@ def assertIsFile(path):
 #Move to class itself
 class TestInit(unittest.TestCase):
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         if Path(CONTENT_DIR, "nonexistant_release.json").exists():
             os.remove(Path(CONTENT_DIR, "nonexistant_release.json"))
 
@@ -54,12 +54,12 @@ class TestInit(unittest.TestCase):
 class TestWithFiles(unittest.TestCase):
     #Prep & cleanup
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         if not Path(TESTING_DIR).exists():
             os.makedirs(TESTING_DIR)
     
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         shutil.rmtree("test")
 
     music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR, TESTING_DIR)
@@ -87,7 +87,7 @@ class TestWithFiles(unittest.TestCase):
         src_path = Path(SOURCE_DIR, fname)
         dest_path = Path(TESTING_DIR, fname[:-3] + "mp4")
         cover = Path(SOURCE_DIR, "Cover.png")
-        create_mp4(src_path, dest_path, cover)
+        create_mp4(src_path, dest_path, str(cover))
         assertIsFile(dest_path)
 
     def test_make_webp(self):
@@ -124,12 +124,12 @@ class TestWithFiles(unittest.TestCase):
 class TestPreprocessing(unittest.TestCase):
     #Prep & cleanup
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         if not Path(TESTING_DIR).exists():
             os.makedirs(TESTING_DIR)
     
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         shutil.rmtree("test")
 
     #Tests
