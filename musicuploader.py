@@ -36,7 +36,7 @@ REQUIRED_KEYS = {
 }
 
 class MusicRelease():
-    #Class Variables
+    #Class variables
     tracks = []
     content_dir = ""
     source_dir = ""
@@ -219,6 +219,7 @@ def create_mp3(source_file, json, dest_path=None, cover=""):
     mp3 = MP3(dest_path, ID3=EasyID3)
     logger.debug("Adding mp3 tags...")
     mp3.add_tags()  #Add EasyID3 header
+
     #Write tags to their relevant spots
     for tag in ["title", "date"]:
         mp3[tag] = json[tag]
@@ -226,6 +227,7 @@ def create_mp3(source_file, json, dest_path=None, cover=""):
         mp3[tag] = json["mp3"][tag]
     mp3["genre"] = json["details"]["genre"]
     mp3.save()
+
     #Add cover if available
     if cover != "":
         logger.debug(f"Adding cover image to mp3 file {dest_path}")
@@ -242,7 +244,6 @@ def create_mp3(source_file, json, dest_path=None, cover=""):
                 )
             audio.save()
     
-
 def create_mp4(source_file, dest_path=None, cover="Cover.png"):
     '''Use the shell to run ffmpeg and create an MP4'''
     if dest_path is None:
@@ -269,7 +270,7 @@ def create_webp(src_path, dest_path=None):
         img.save(dest_path, "WEBP", quality=85)
 
 def create_zip(source, dest_path=None):
-    '''Create an archive'''
+    '''Create an archive of source at dest_path'''
     if dest_path is None:
         dest_path = str(source + ".zip")
 
@@ -281,7 +282,6 @@ def create_zip(source, dest_path=None):
             #Remove source path from archive file names
             trunc = len(str(source))
             zip.write(path, str(path)[trunc:])
-
 
 if __name__ == "__main__":
     #Construct the parser
@@ -296,7 +296,7 @@ if __name__ == "__main__":
     parser.add_argument("--promote", action="store_true",
                         help="Publish to social media channels")
     parser.add_argument("--json", type=str, default="release.json", 
-                        help="Specify a release.json config file")
+                        help="Specify a release.json config file (default: ./release.json)")
     parser.add_argument("--cover", type=str, default="Cover.png", 
                         help="Specify the filename of the PNG cover art image (FILENAME ONLY, default: Cover.png)")
     parser.add_argument("--output", type=str, default="",
@@ -313,6 +313,7 @@ if __name__ == "__main__":
     #Set logging
     log_level = logging.INFO if not args.verbose else logging.DEBUG
     logger.setLevel(log_level)
+    
     # Read metadata and store into release info
     music_release = MusicRelease(args.json, args.content_dir, args.output, cover_file=args.cover)
     music_release.preprocessing(args.overwrite)
