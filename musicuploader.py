@@ -147,7 +147,7 @@ class MusicRelease():
 
         #If we have stems or patterns then assume we should pack this into a .zip
         zip_file = Path(self.output_dir, "Release.zip")
-        
+
         if Path(self.source_dir, "Stems/").exists() or Path(self.source_dir, "Patterns/"):
             logger.debug("Stems or Patterns folder found.")
             if (zip_file.exists() and overwrite) or not zip_file.exists():
@@ -307,6 +307,8 @@ if __name__ == "__main__":
                         help="Specify an output directory other than the source directory")
     parser.add_argument("--overwrite", action="store_true", default=False,
                         help="Preprocessing should overwrite the .mp3, .mp4, .webp, .zip files")
+    parser.add_argument("--upload", action="store_true", default=False,
+                        help="Preprocessing should overwrite the .mp3, .mp4, .webp, .zip files")
     parser.add_argument("--verbose", action="store_true", default=False,
                         help="Display advanced logging info.")
     parser.add_argument("--version", action="version", version=f"Music-Uploader Version: {__VERSION__}")
@@ -321,6 +323,7 @@ if __name__ == "__main__":
     # Read metadata and store into release info
     music_release = MusicRelease(args.json, args.content_dir, args.output, cover_file=args.cover)
     music_release.preprocessing(args.overwrite)
-    music_release.upload_music()
+    if args.upload is True:
+        music_release.upload_music()
     if args.promote is True:
         music_release.promote()
