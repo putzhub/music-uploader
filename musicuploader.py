@@ -9,7 +9,8 @@ import logging
 from glob import glob
 from copy import deepcopy
 from pathlib import Path
-from mutagen.id3 import APIC, ID3
+from mutagen.id3 import ID3
+from mutagen.id3._frames import APIC
 from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
 from PIL import Image
@@ -49,6 +50,7 @@ class MusicRelease():
         #Content dir is the root of all our work
         self.content_dir = content_dir
         self.tracks = []
+
         #Read JSON file, relative to content_dir if it's just a filename, otherwise relative to CWD.
         self.json_file = Path(content_dir, json_file) if str(Path(json_file).parent) == "." else Path(json_file)
         if self.json_file.exists():
@@ -62,8 +64,9 @@ class MusicRelease():
         if not Path(output_dir).exists() and output_dir != "":
             os.makedirs(output_dir)
         self.output_dir = output_dir if output_dir != "" else self.source_dir
+
         #Check if cover file actually exists
-        self.cover_file = Path(self.source_dir, cover_file) if Path(self.source_dir, cover_file).exists() else ""
+        self.cover_file = str(Path(self.source_dir, cover_file)) if Path(self.source_dir, cover_file).exists() else ""
         
         #Make sure we have the expected keys in the json file (and hopefully by extension data)
         for entry in self.tracks:
@@ -127,7 +130,6 @@ class MusicRelease():
             mp3_path = Path(self.output_dir, wav_file.stem + ".mp3")
             mp4_path = Path(self.output_dir, wav_file.stem + ".mp4")
             webp_file = Path(self.output_dir, self.tracks[i]["cover"])
-            zip_file = Path(self.output_dir, "Release.zip")
 
             #Create files
             if (mp3_path.exists() and overwrite) or not mp3_path.exists():
@@ -144,6 +146,8 @@ class MusicRelease():
                 logger.warning("Cover file not found, skipping .mp4 & .webp in preprocessing", )
 
         #If we have stems or patterns then assume we should pack this into a .zip
+        zip_file = Path(self.output_dir, "Release.zip")
+        
         if Path(self.source_dir, "Stems/").exists() or Path(self.source_dir, "Patterns/"):
             logger.debug("Stems or Patterns folder found.")
             if (zip_file.exists() and overwrite) or not zip_file.exists():
