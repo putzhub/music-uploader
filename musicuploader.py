@@ -104,6 +104,7 @@ class MusicRelease():
                 else:
                     template[key] = ""
 
+        #Auto-detect the number of entires for this release
         file_names = glob(f"{self.content_dir}/*.wav")
         guess = len(file_names)
         logging.info("Hitting enter below will automatically detect file paths for .json, otherwise it's manual.")
@@ -114,19 +115,22 @@ class MusicRelease():
             logger.warning("Invalid input, assuming 1 track")
             num_tracks = 1
 
+        #Fill out shared data before copying template individually
         template["mp3"]["artist"] = input("What is the artist name? [Enter to leave blank] ")
         template["mp3"]["album"] = input("What is the album name? [Enter to leave blank] ")
         template["mp3"]["website"] = input("What is the website? [Enter to leave blank] ")
         album_date = input("What date was the release? [Enter for today] ")
         template["date"] = album_date if album_date != "" else str(date.today())
 
+        #Auto-detect and populate cover
         png_files = glob(f"{self.content_dir}/*.png")
         if len(png_files) == 1:
             template["cover"] = png_files[0]
         else:
             png_file = input(f"Set Cover path [hit enter if {self.cover_file}]: ")
             template["cover"] = png_file if png_file != "" else self.cover_file
-        
+
+        #Add entries to the .json
         for i in range(num_tracks):
             self.tracks.append(deepcopy(template))
             if num_tracks == guess:
