@@ -11,6 +11,7 @@ TESTING_DIR = "./test/testing"
 CONTENT_DIR = "./tests/"
 SOURCE_DIR = "./tests/Source"
 TEST_JSON_PATH = "tests/release_example.json"
+TEST_TITLE = "Testing a different name"
 
 #Start the logger
 #logging.basicConfig(level=logging.DEBUG)
@@ -49,7 +50,7 @@ class TestInit(unittest.TestCase):
         '''Make sure we can load the music data json file'''
         music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR)
         self.assertIsInstance(music_release, MusicRelease)
-        self.assertEqual(music_release.tracks[0]["title"], "Test")
+        self.assertEqual(music_release.tracks[0]["title"], TEST_TITLE)
 
 class TestWithFiles(unittest.TestCase):
     #Prep & cleanup
@@ -75,7 +76,7 @@ class TestWithFiles(unittest.TestCase):
 
         #Test tag data
         audio = EasyID3(dest_path)
-        self.assertEqual(audio["title"], ["Test"])
+        self.assertEqual(audio["title"], [TEST_TITLE])
         self.assertEqual(audio["genre"], ["Game"])
         tags = ["artist", "website"]
         for tag in tags:

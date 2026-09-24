@@ -1,6 +1,7 @@
 [
     {
-        "title": "Test",
+        "file": "Test.wav",
+        "title": "Testing a different name",
         "date": "2025-12-20",
         "url": "test-url",
         "cover": "test.webp",
@@ -33,6 +34,7 @@
         "embed": "https://youtube.com/embed/dNxSWlmUNP8"
     },
     {
+        "file": "Test 2.wav",
         "title": "Test 2",
         "date": "2025-12-20",
         "url": "test-url",
