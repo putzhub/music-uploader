@@ -6,9 +6,9 @@ import shutil
 from mutagen.easyid3 import EasyID3
 import logging
 
-TESTING_DIR = "./test/testing"
-CONTENT_DIR = "./tests/"
-SOURCE_DIR = "./tests/Source"
+TESTING_DIR = "test/testing"
+CONTENT_DIR = "tests/"
+SOURCE_DIR = "tests/Source"
 TEST_JSON_PATH = "tests/release_example.json"
 TEST_TITLE = "Testing a different name"
 
@@ -114,7 +114,7 @@ class TestWithFiles(unittest.TestCase):
         #TODO: Refactor so this is less hardcoded
         # Test using CWD
         os.chdir(SOURCE_DIR)
-        src = Path(".")
+        src = Path("./")
         target = Path(TESTING_DIR, "Source.zip")
         #Account for being in SOURCE_DIR when creating zip, while using target later for testing
         create_zip(src, f"../../{target}")
