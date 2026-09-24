@@ -5,6 +5,7 @@ import subprocess
 import zipfile
 import os
 import logging
+from datetime import date
 
 from glob import glob
 from copy import deepcopy
@@ -95,7 +96,7 @@ class MusicRelease():
         logger.info("Creating a new .json for release!")
 
         template = {}
-        for group in  REQUIRED_KEYS:
+        for group in REQUIRED_KEYS:
             if group != "root":
                 template[group] = {}
             for key in REQUIRED_KEYS[group]:
@@ -103,16 +104,29 @@ class MusicRelease():
                     template[group][key] = ""
                 else:
                     template[key] = ""
+
+        file_names = glob(f"{self.content_dir}/*.wav")
+        guess = len(file_names)
+        logging.info("Hitting enter below will automatically detect file paths for .json, otherwise it's manual.")
         try:
-            guess = len(glob(f"{self.content_dir}/*.wav"))
             num_tracks = input(f"How many tracks are there [if {guess} hit enter]: ")
-            num_tracks = guess if num_tracks == "" else int(num_tracks)
+            num_tracks = guess if num_tracks == "" else int(num_tracks)                    
         except ValueError:
             logger.warning("Invalid input, assuming 1 track")
             num_tracks = 1
 
-        for _ in range(num_tracks):
+        template["mp3"]["artist"] = input("What is the artist name? [Enter to leave blank] ")
+        template["mp3"]["album"] = input("What is the album name? [Enter to leave blank] ")
+        template["mp3"]["website"] = input("What is the website? [Enter to leave blank] ")
+        album_date = input("What date was the release? [Enter for today] ")
+        template["date"] = album_date if album_date != "" else str(date.today())
+        
+        for i in range(num_tracks):
             self.tracks.append(deepcopy(template))
+            if num_tracks == guess:
+                # We can assume every .wav is a track with an entry
+                self.tracks[-1]["file"] = file_names[i]
+                self.tracks[-1]["title"] = file_names[i][:-4]
         
         self.save()
         logger.info("New release.json created! Program will exit so you can fill out the details in the new file.")
