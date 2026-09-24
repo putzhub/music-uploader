@@ -6,10 +6,11 @@ import zipfile
 import os
 import logging
 from datetime import date
-
 from glob import glob
 from copy import deepcopy
 from pathlib import Path
+
+#3rd party libs
 from mutagen.id3 import ID3
 from mutagen.id3._frames import APIC
 from mutagen.easyid3 import EasyID3
@@ -26,8 +27,6 @@ logger = logging.getLogger(__name__)
 # Deal with encoding track info into filename:
 #   i.e: BPM (look at fmod or whatever format)
 # Add album exporting
-# - Skip unwanted services or specify which ones
-# - Refactor code to make more sense for a multi-song approach
 #TODO: Specify which services to skip or use
 #TODO Add more services:
 # - Bandcamp(text), Fab/Unreal(text), Lemmy(API), Archive.org(API), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
@@ -330,7 +329,7 @@ if __name__ == "__main__":
     parser.add_argument("--overwrite", action="store_true", default=False,
                         help="Preprocessing should overwrite the .mp3, .mp4, .webp, .zip files")
     parser.add_argument("--upload", action="store_true", default=False,
-                        help="Preprocessing should overwrite the .mp3, .mp4, .webp, .zip files")
+                        help="Run the routines to upload music to different platforms")
     parser.add_argument("--verbose", action="store_true", default=False,
                         help="Display advanced logging info.")
     parser.add_argument("--version", action="version", version=f"Music-Uploader Version: {__VERSION__}")
