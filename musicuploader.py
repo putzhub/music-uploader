@@ -92,7 +92,7 @@ class MusicRelease():
 
     def create(self):
         '''Create a new release.json'''
-        logger.info("Creating a new .json for release!")
+        print("Creating a new .json for release!")
 
         template = {}
         for group in REQUIRED_KEYS:
@@ -107,7 +107,7 @@ class MusicRelease():
         #Auto-detect the number of entires for this release
         file_names = glob(f"{self.content_dir}/*.wav")
         guess = len(file_names)
-        logging.info("Hitting enter below will automatically detect file paths for .json, otherwise it's manual.")
+        print("Hitting enter below will automatically detect file paths for .json, otherwise it's manual.")
         try:
             num_tracks = input(f"How many tracks are there [if {guess} hit enter]: ")
             num_tracks = guess if num_tracks == "" else int(num_tracks)                    
@@ -342,7 +342,7 @@ if __name__ == "__main__":
     args = parser.parse_args() 
 
     #Set logging
-    log_level = logging.INFO if not args.verbose else logging.DEBUG
+    log_level = logging.WARNING if not args.verbose else logging.DEBUG
     logger.setLevel(log_level)
     
     # Read metadata and store into release info
