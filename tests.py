@@ -1,6 +1,5 @@
 import unittest
 from musicuploader import *
-import musicuploader
 import os
 from pathlib import Path
 import shutil
@@ -99,11 +98,34 @@ class TestWithFiles(unittest.TestCase):
         create_webp(cover, dest_path)
         assertIsFile(dest_path)
 
-    def test_zip_stems(self):
+    def test_zip_stems_from_content_dir(self):
+        # Test using a content dir
         src = Path(SOURCE_DIR)
         target = Path(TESTING_DIR, "Source.zip")
-        create_zip(src, target) #shutil.make_archive() doesn't need .zip extension
+        create_zip(src, target)
         assertIsFile(target)
+        #Verify inner contents are as expected
+        with zipfile.ZipFile(target) as z:
+            # amount of characters to truncate so they're the same paths
+            trunc = len(str(src))+1
+            self.assertEqual(z.namelist(), [str(path)[trunc:] for path in Path(src).rglob("*.wav")])
+
+    def test_zip_stems_from_cwd(self):
+        #TODO: Refactor so this is less hardcoded
+        # Test using CWD
+        os.chdir(SOURCE_DIR)
+        src = Path(".")
+        target = Path(TESTING_DIR, "Source.zip")
+        #Account for being in SOURCE_DIR when creating zip, while using target later for testing
+        create_zip(src, f"../../{target}")
+        #Change dir before possible failures
+        os.chdir(f"../../")
+        assertIsFile(target)
+        #Verify inner contents are as expected
+        with zipfile.ZipFile(target) as z:
+            # amount of characters to truncate so they're the same paths
+            trunc = len(str(Path(SOURCE_DIR, src)))+1
+            self.assertEqual(z.namelist(), [str(path)[trunc:] for path in Path(SOURCE_DIR).rglob("*.wav")])
     
     def test_overwrite_option(self):
         '''Test the overwrite toggle for preprocessing.'''
@@ -199,7 +221,7 @@ See link in bio for more.
 
     def test_youtube(self):
         '''Youtube related tests'''
-        #Ensure that we reutrn the expected result for code that depends on that.
+        #Ensure that we return the expected result for code that depends on that.
         self.assertEqual([('',''), ('', '')], 
                          services.youtube.upload(MusicRelease(TEST_JSON_PATH, SOURCE_DIR)))
     
@@ -228,6 +250,7 @@ See link in bio for more.
         self.assertIsNot(sc_url, "")
 
 class TestSocialMedia(unittest.TestCase):
+    @unittest.skip("Avoid rate limits")
     def test_mastodon(self):
         '''Mastodon - Make sure we can do everything besides post'''
         self.assertTrue(services.mastoposter.post(MusicRelease(TEST_JSON_PATH, SOURCE_DIR), 
