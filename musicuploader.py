@@ -126,7 +126,7 @@ class MusicRelease():
         #Iterate over each track in the pack
         for (i, track) in enumerate(self.tracks):
             #Build the filename paths
-            wav_file = Path(self.source_dir, track["title"] + ".wav")
+            wav_file = Path(self.source_dir, track["file"])
             mp3_path = Path(self.output_dir, wav_file.stem + ".mp3")
             mp4_path = Path(self.output_dir, wav_file.stem + ".mp4")
             webp_file = Path(self.output_dir, self.tracks[i]["cover"])
@@ -321,7 +321,10 @@ if __name__ == "__main__":
     logger.setLevel(log_level)
     
     # Read metadata and store into release info
-    music_release = MusicRelease(args.json, args.content_dir, args.output, cover_file=args.cover)
+    music_release = MusicRelease(args.json, 
+                                args.content_dir, 
+                                args.output, 
+                                cover_file=args.cover)
     music_release.preprocessing(args.overwrite)
     if args.upload is True:
         music_release.upload_music()
