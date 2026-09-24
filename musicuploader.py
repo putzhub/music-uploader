@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 # - Bandcamp(text), Fab/Unreal(text), Lemmy(API), Archive.org(API), Unity (Cmdline?), Jamendo(text), Gamedevmarket(text)
 
 REQUIRED_KEYS = {
-    "root": ["title", "summary", "date", "url", "tags"],
+    "root": ["file", "title", "summary", "date", "url", "tags"],
     "details": ["bpm", "cost", "loop", "genre"],
     "mp3": ["album", "artist", "website"]
 }
