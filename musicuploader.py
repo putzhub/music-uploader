@@ -120,13 +120,20 @@ class MusicRelease():
         template["mp3"]["website"] = input("What is the website? [Enter to leave blank] ")
         album_date = input("What date was the release? [Enter for today] ")
         template["date"] = album_date if album_date != "" else str(date.today())
+
+        png_files = glob(f"{self.content_dir}/*.png")
+        if len(png_files) == 1:
+            template["cover"] = png_files[0]
+        else:
+            png_file = input(f"Set Cover path [hit enter if {self.cover_file}]: ")
+            template["cover"] = png_file if png_file != "" else self.cover_file
         
         for i in range(num_tracks):
             self.tracks.append(deepcopy(template))
             if num_tracks == guess:
                 # We can assume every .wav is a track with an entry
                 self.tracks[-1]["file"] = file_names[i]
-                self.tracks[-1]["title"] = file_names[i][:-4]
+                self.tracks[-1]["title"] = file_names[i][2:-4]
         
         self.save()
         logger.info("New release.json created! Program will exit so you can fill out the details in the new file.")
