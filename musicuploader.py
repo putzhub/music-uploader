@@ -308,10 +308,8 @@ def create_zip(source, dest_path=None):
     with zipfile.ZipFile(dest_path, "w", compression=zipfile.ZIP_DEFLATED) as zip:
         #Recurse the directory, only zip WAV files though
         for path in Path(source).rglob("*.wav"):
-            #TODO: Fix truncation error when path is .
             #Remove source path from archive file names
-            trunc = len(str(source))
-            zip.write(path, str(path)[trunc:])
+            zip.write(path, str(path.relative_to(source)))
 
 if __name__ == "__main__":
     #Construct the parser
