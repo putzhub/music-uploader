@@ -320,7 +320,7 @@ if __name__ == "__main__":
         epilog="(Author: Pierce - LudoLoon Studio, ludoloon.studio)")
     
     #Add arguments
-    parser.add_argument("content_dir", 
+    parser.add_argument("content_dir", nargs="?", type=str, default="./",
                         help="Root directory of music content")
     parser.add_argument("--promote", action="store_true",
                         help="Publish to social media channels")
