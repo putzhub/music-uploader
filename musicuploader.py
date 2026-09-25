@@ -172,9 +172,8 @@ class MusicRelease():
         #If we have stems or patterns then assume we should pack this into a .zip
         zip_file = Path(self.output_dir, "Release.zip")
 
-        #TODO: Replace with any folders found
-        if Path(self.source_dir, "Stems/").exists() or Path(self.source_dir, "Patterns/"):
-            logger.debug("Stems or Patterns folder found.")
+        if len(glob(f"{self.source_dir}/*/*.wav")) > 1:
+            logger.debug("Stems or Patterns folder found, bundling into .zip")
             if overwrite or not zip_file.exists():
                 create_zip(self.source_dir, zip_file)
         
