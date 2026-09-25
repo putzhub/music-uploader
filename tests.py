@@ -108,6 +108,22 @@ class TestWithFiles(unittest.TestCase):
         with zipfile.ZipFile(target) as z:
             self.assertEqual(z.namelist(), [str(path.relative_to(src)) for path in Path(src).rglob("*.wav")])
 
+    def test_zip_stems_for_wav_and_mp3(self):
+        selections = [
+                        "*.wav",
+                        "*.mp3",
+                        "**/*.wav"
+                    ]
+        
+        for i, selection in enumerate(selections):
+            src = Path(SOURCE_DIR)
+            target = Path(TESTING_DIR, f"Source-{i}.zip")
+            create_zip(src, target, selection)
+            assertIsFile(target)
+            #Verify inner contents are as expected
+            with zipfile.ZipFile(target) as z:
+                self.assertEqual(z.namelist(), [str(path.relative_to(SOURCE_DIR)) for path in Path(SOURCE_DIR).glob(selection)])
+
     def test_zip_stems_from_cwd(self):
         #TODO: Refactor so this is less hardcoded
         # Test using CWD
