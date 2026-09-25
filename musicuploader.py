@@ -91,7 +91,7 @@ class MusicRelease():
             f.write(json.dumps(self.tracks, indent=4))
 
     def create(self):
-        '''Create a new release.json'''
+        '''Create a new release.json, runs if one doesn't exist.'''
         print("Creating a new .json for release!")
 
         template = {}
@@ -123,12 +123,23 @@ class MusicRelease():
         template["date"] = album_date if album_date != "" else str(date.today())
 
         #Auto-detect and populate cover
-        png_files = glob(f"{self.content_dir}/*.png")
-        if len(png_files) == 1:
-            template["cover"] = png_files[0]
+        extensions = [".png", ".jp*g", ".webp"]
+        img_files = []
+        
+        for ext in extensions:
+            img_files += glob(f"{self.content_dir}/*{ext}")
+
+        #TODO: Make more flexible?
+        if len(img_files) == 1 and ".webp" not in img_files[0]:
+            print(f"Cover art file detected: {img_files[0]}")
+            webp = input("Convert to .webp by typing a file name ending in .webp, otherwise hit enter:  ")
+            if webp != "":
+                template["cover"] = webp
+            else:
+                template["cover"] = img_files[0]
         else:
-            png_file = input(f"Set Cover path [hit enter if {self.cover_file}]: ")
-            template["cover"] = png_file if png_file != "" else self.cover_file
+            img_file = input(f"Set Cover path [hit enter if {self.cover_file}]: ")
+            template["cover"] = img_file if img_file != "" else self.cover_file
 
         #Add entries to the .json
         for i in range(num_tracks):
