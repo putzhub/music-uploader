@@ -139,7 +139,7 @@ class MusicRelease():
                 self.tracks[-1]["title"] = file_names[i][2:-4]
         
         self.save()
-        logger.info("New release.json created! Program will exit so you can fill out the details in the new file.")
+        print("New release.json created! Program will exit so you can fill out the details in the new file.")
         exit()
 
     #Preprocess the source material into the needed files
