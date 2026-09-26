@@ -172,7 +172,7 @@ class TestPreprocessing(unittest.TestCase):
         #Init the release
         MusicRelease(TEST_JSON_PATH, CONTENT_DIR, TESTING_DIR).preprocessing()
 
-        files = ["Test.mp3", "Test.mp4", "Release.zip", "test.webp"]
+        files = ["Test.mp3", "Test.mp4", "Release [STEMS].zip", "Release [WAV].zip", "Release [MP3].zip", "test.webp"]
         for f in files:
             assertIsFile(Path(TESTING_DIR, f))
     
