@@ -308,7 +308,7 @@ def create_webp(src_path, dest_path=None):
             img = img.convert('RGBA')
         img.save(dest_path, "WEBP", quality=85)
 
-def create_zip(source, dest_path=None, selection="*.wav"):
+def create_zip(source, dest_path=None, selection="**/*.wav"):
     '''Create an archive of source at dest_path'''
     if dest_path is None:
         dest_path = str(source + ".zip")
@@ -317,7 +317,7 @@ def create_zip(source, dest_path=None, selection="*.wav"):
 
     with zipfile.ZipFile(dest_path, "w", compression=zipfile.ZIP_DEFLATED) as zip:
         #Recurse the directory, only zip WAV files though
-        for path in Path(source).rglob(selection):
+        for path in Path(source).glob(selection):
             #Remove source path from archive file names
             zip.write(path, str(path.relative_to(source)))
 
