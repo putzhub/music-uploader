@@ -180,13 +180,22 @@ class MusicRelease():
             else:
                 logger.warning("Cover file not found, skipping .mp4 & .webp in preprocessing", )
 
-        #If we have stems or patterns then assume we should pack this into a .zip
-        zip_file = Path(self.output_dir, "Release.zip")
+        #Pack stems, .wavs and .mp3s into appropriate .zip files
+        selections = [
+                        ("*.wav", "WAV"),
+                        ("*.mp3", "MP3"),
+                        ("**/*.wav", "STEMS"),
+                    ]
+        for pair in selections:
+            selection, label = pair
+            zip_file = Path(self.output_dir, f"Release [{label}].zip")
 
-        if len(glob(f"{self.source_dir}/*/*.wav")) > 1:
-            logger.debug("Stems or Patterns folder found, bundling into .zip")
-            if overwrite or not zip_file.exists():
-                create_zip(self.source_dir, zip_file)
+            if len(glob(f"{self.source_dir}/{selection}")) or len(glob(f"{self.output_dir}/{selection}")) > 1:
+                logger.debug(f"Zipping {label}")
+                if overwrite or not zip_file.exists() and "wav" in selection:
+                    create_zip(self.source_dir, zip_file, selection)
+                elif overwrite or not zip_file.exists() and "mp3" in selection:
+                    create_zip(self.output_dir, zip_file, selection)
         
         logger.debug("Preprocessing complete.")
 
