@@ -146,17 +146,17 @@ class TestWithFiles(unittest.TestCase):
     def test_overwrite_option(self):
         '''Test the overwrite toggle for preprocessing.'''
         #Start fresh
-        self.music_release.preprocessing(overwrite=True)
+        self.music_release.preprocessing(overwrite=True, normalize=True)
         
         #Check for modification times after calling, files shouldn't be modified on first pass.
         mod_times = []
         for file in Path(TESTING_DIR).rglob("*"):
             mod_times.append(os.stat(file).st_mtime)
-        self.music_release.preprocessing(overwrite=False)
+        self.music_release.preprocessing(overwrite=False, normalize=True)
         for i, file in enumerate(Path(TESTING_DIR).rglob("*")):
             self.assertEqual(mod_times[i], os.stat(file).st_mtime)
         #Do it again, with overwrite on this time.
-        self.music_release.preprocessing(overwrite=True)
+        self.music_release.preprocessing(overwrite=True, normalize=True)
         for i, file in enumerate(Path(TESTING_DIR).rglob("*")):
             self.assertNotEqual(mod_times[i], os.stat(file).st_mtime)
 
