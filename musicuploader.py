@@ -106,7 +106,13 @@ class MusicRelease():
                     template[key] = ""
 
         #Auto-detect the number of entires for this release
+        #First, search the content dir for .wavs
         file_names = glob(f"{self.content_dir}/*.wav")
+        
+        #If there are none, then assume they reside one directory deeper
+        if len(file_names) == 0:
+            file_names = glob(f"{self.content_dir}/**/*.wav")
+
         guess = len(file_names)
         print("Hitting enter below will automatically detect file paths for .json, otherwise it's manual.")
         try:
@@ -360,9 +366,6 @@ def normalize_track(source, dest_path=None):
     if dest_path is None:
             dest_path = source
 
-    if not dest_path.exists():
-        os.makedirs(dest_path)
-
     proc = subprocess.run(
                     [
                         'ffmpeg',
@@ -380,6 +383,9 @@ def normalize_track(source, dest_path=None):
         max_volume = float(match.group(1))
         if max_volume != 0.0:
             logger.debug(f"Normalizing: {source}")
+            #Create paths if needed
+            if not Path(dest_path).parent.exists():
+                    os.makedirs(Path(dest_path).parent)
             proc = subprocess.run(
                                 [
                                     'ffmpeg',
