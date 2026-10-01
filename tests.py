@@ -164,7 +164,7 @@ class TestWithFiles(unittest.TestCase):
         '''Normalize audio files to -0.0dB'''        
         #Normalize source files
         for wav in Path(SOURCE_DIR).rglob("*.wav"):
-            normalize(wav, Path(TESTING_DIR, wav.relative_to(SOURCE_DIR)))
+            normalize_track(wav, Path(TESTING_DIR, wav.relative_to(SOURCE_DIR)))
 
         #If there's no files to test then fail
         target_paths = [p for p in Path(TESTING_DIR).rglob("*.wav")]

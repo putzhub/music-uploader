@@ -5,6 +5,7 @@ import subprocess
 import zipfile
 import os
 import logging
+import re
 from datetime import date
 from glob import glob
 from copy import deepcopy
@@ -299,8 +300,23 @@ def create_mp4(source_file, dest_path=None, cover="Cover.png"):
 
     logger.debug(f"Creating mp4 of {source_file} using {cover} at {dest_path}")
     #Make an mp4 exactly the length of the song and add black borders to make it 16:9 for youtube
-    subprocess.run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-loop", "1", "-i", cover, "-i", source_file, "-shortest",
-                    "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1", dest_path])
+    subprocess.run(
+                    [
+                        "ffmpeg", 
+                        "-y", ""
+                        "-hide_banner", 
+                        "-loglevel", "error", 
+                        "-loop", "1", 
+                        "-i", cover, 
+                        "-i", source_file, 
+                        "-shortest",
+                        "-c:v", "libx264", 
+                        "-tune", "stillimage", 
+                        "-c:a", "copy", 
+                        "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1", 
+                        dest_path
+                    ]
+                )
 
 def create_webp(src_path, dest_path=None):
     '''Use the shell to run ImageMagick to convert to .webp'''
@@ -329,6 +345,45 @@ def create_zip(source, dest_path=None, selection="**/*.wav"):
         for path in Path(source).glob(selection):
             #Remove source path from archive file names
             zip.write(path, str(path.relative_to(source)))
+
+def normalize(source, dest_path=None):
+    '''Increase the volume of the source .wav files to 0dB max_volume'''
+    if dest_path is None:
+            dest_path = source
+
+    if not dest_path.exists():
+        os.makedirs(dest_path)
+
+    proc = subprocess.run(
+                    [
+                        'ffmpeg',
+                        '-i', source,
+                        '-filter:a', 'volumedetect',
+                        '-map', '0:a',
+                        '-f', 'null', '/dev/null'
+                    ],
+                    capture_output=True,
+                    text=True
+                )
+    
+    match = re.search(r'max_volume:\s*([-\d.]+)\s*dB', proc.stderr)
+    if match:
+        max_volume = float(match.group(1))
+        if max_volume != 0.0:
+            logger.debug(f"Normalizing: {source}")
+            proc = subprocess.run(
+                                [
+                                    'ffmpeg',
+                                    '-y',
+                                    '-hide_banner',
+                                    '-i', source,
+                                    '-filter:a', f'volume={abs(max_volume)}dB',
+                                    f'{str(dest_path)[:-4]}-NORMALIZED.wav'
+                                ],
+                                capture_output=True,
+                                text=True
+                            )
+    
 
 if __name__ == "__main__":
     #Construct the parser
