@@ -155,9 +155,18 @@ class MusicRelease():
         exit()
 
     #Preprocess the source material into the needed files
-    def preprocessing(self, overwrite=False):
+    def preprocessing(self, overwrite=False, normalize=False):
         '''The process of creating .mp3, .mp4, .webp, etc'''
         logger.debug(f"Start preprocssing. Overwrite: {overwrite}")
+
+        #Normalize wavs
+        if normalize:
+            if overwrite:
+                for wav in Path(self.output_dir).glob("**/*-NORMALIZED.wav"):
+                    os.remove(wav)
+            for wav in Path(self.source_dir).glob("**/*.wav"):
+                if overwrite or not Path(self.output_dir, wav).exists():
+                    normalize_track(wav, Path(self.output_dir, wav))
 
         #Iterate over each track in the pack
         for (i, track) in enumerate(self.tracks):
@@ -346,7 +355,7 @@ def create_zip(source, dest_path=None, selection="**/*.wav"):
             #Remove source path from archive file names
             zip.write(path, str(path.relative_to(source)))
 
-def normalize(source, dest_path=None):
+def normalize_track(source, dest_path=None):
     '''Increase the volume of the source .wav files to 0dB max_volume'''
     if dest_path is None:
             dest_path = source
@@ -401,6 +410,8 @@ if __name__ == "__main__":
                         help="Specify a release.json config file (default: ./release.json)")
     parser.add_argument("--cover", type=str, default="Cover.png", 
                         help="Specify the filename of the PNG cover art image (FILENAME ONLY, default: Cover.png)")
+    parser.add_argument("--normalize", action="store_true", default=False,
+                        help="Normalize source .wav files.")
     parser.add_argument("--output", type=str, default="",
                         help="Specify an output directory other than the source directory")
     parser.add_argument("--overwrite", action="store_true", default=False,
@@ -423,7 +434,7 @@ if __name__ == "__main__":
                                 args.content_dir, 
                                 args.output, 
                                 cover_file=args.cover)
-    music_release.preprocessing(args.overwrite)
+    music_release.preprocessing(args.overwrite, args.normalize)
     if args.upload is True:
         music_release.upload_music()
     if args.promote is True:

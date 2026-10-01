@@ -158,7 +158,8 @@ class TestWithFiles(unittest.TestCase):
         #Do it again, with overwrite on this time.
         self.music_release.preprocessing(overwrite=True, normalize=True)
         for i, file in enumerate(Path(TESTING_DIR).rglob("*")):
-            self.assertNotEqual(mod_times[i], os.stat(file).st_mtime)
+            if file.is_file():
+                self.assertNotEqual(mod_times[i], os.stat(file).st_mtime, f"{file} was the same even after overwrite")
 
     def test_normalize(self):
         '''Normalize audio files to -0.0dB'''        
