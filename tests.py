@@ -1,10 +1,14 @@
 import unittest
 from musicuploader import *
 import os
-from pathlib import Path
 import shutil
-from mutagen.easyid3 import EasyID3
 import logging
+import subprocess
+import re
+from pathlib import Path
+
+#3rd Party
+from mutagen.easyid3 import EasyID3
 
 TESTING_DIR = "test/testing"
 CONTENT_DIR = "tests/"
@@ -155,6 +159,34 @@ class TestWithFiles(unittest.TestCase):
         self.music_release.preprocessing(overwrite=True)
         for i, file in enumerate(Path(TESTING_DIR).rglob("*")):
             self.assertNotEqual(mod_times[i], os.stat(file).st_mtime)
+
+    def test_normalize(self):
+        '''Normalize audio files to -0.0dB'''        
+        #Normalize source files
+        for wav in Path(SOURCE_DIR).rglob("*.wav"):
+            normalize(wav, Path(TESTING_DIR, wav.relative_to(SOURCE_DIR)))
+
+        #If there's no files to test then fail
+        target_paths = [p for p in Path(TESTING_DIR).rglob("*.wav")]
+        self.assertGreater(len(target_paths), 2, f"No .wav files in {TESTING_DIR}")
+        #Make sure they've been normalized
+        for wav in Path(TESTING_DIR).rglob("*.wav"):
+            proc = subprocess.run(
+                [
+                    'ffmpeg',
+                    '-i', wav,
+                    '-filter:a', 'volumedetect',
+                    '-map', '0:a',
+                    '-f', 'null', '/dev/null'
+                ],
+                capture_output=True,
+                text=True
+            )
+
+            match = re.search(r'max_volume:\s*([-\d.]+)\s*dB', proc.stderr)
+            if match:
+                max_volume = float(match.group(1))
+                self.assertEqual(max_volume, 0.0)
 
 class TestPreprocessing(unittest.TestCase):
     #Prep & cleanup
