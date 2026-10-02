@@ -1,3 +1,4 @@
+#Std lib
 import unittest
 from musicuploader import *
 import os
@@ -5,12 +6,15 @@ import shutil
 import logging
 import subprocess
 import re
+
+#Specific imports
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 #3rd Party
 from mutagen.easyid3 import EasyID3
 
-TESTING_DIR = "test/testing"
+#self.testing_dir = "test/testing"
 CONTENT_DIR = "tests/"
 SOURCE_DIR = "tests/Source"
 TEST_JSON_PATH = "tests/release_example.json"
@@ -35,18 +39,20 @@ def assertIsFile(path):
 
 #Move to class itself
 class TestInit(unittest.TestCase):
-    @classmethod
-    def tearDownClass(cls):
-        if Path(CONTENT_DIR, "nonexistant_release.json").exists():
-            os.remove(Path(CONTENT_DIR, "nonexistant_release.json"))
+    def setUp(self):
+        self.temp_dir = TemporaryDirectory()
+        self.testing_dir = self.temp_dir.name
+    
+    def tearDown(self):
+        self.temp_dir.cleanup()
 
     @unittest.skip("break social media tests?")
     def test_create_json(self):
         '''Make sure we can create a .json file'''
         with self.assertRaises(SystemExit):
-            MusicRelease("nonexistant_release.json", CONTENT_DIR, TESTING_DIR)
+            MusicRelease("nonexistant_release.json", CONTENT_DIR, self.testing_dir)
         #Make sure the file can be loaded after we create it
-        MusicRelease("nonexistant_release.json", CONTENT_DIR, TESTING_DIR)
+        MusicRelease("nonexistant_release.json", CONTENT_DIR, self.testing_dir)
 
     #Make sure we can load a valid configuration
     def test_read_json(self):
@@ -57,23 +63,20 @@ class TestInit(unittest.TestCase):
 
 class TestWithFiles(unittest.TestCase):
     #Prep & cleanup
-    @classmethod
-    def setUpClass(cls):
-        if not Path(TESTING_DIR).exists():
-            os.makedirs(TESTING_DIR)
-    
-    @classmethod
-    def tearDownClass(cls):
-        shutil.rmtree("test")
+    def setUp(self):
+        self.temp_dir = TemporaryDirectory()
+        self.testing_dir = self.temp_dir.name
+        self.music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR, self.testing_dir)
 
-    music_release = MusicRelease(TEST_JSON_PATH, SOURCE_DIR, TESTING_DIR)
+    def tearDown(self):
+        self.temp_dir.cleanup()
 
     #Tests
     def test_make_mp3(self):
         #Create the file
         fname = "Test.wav"
         src_path = Path(SOURCE_DIR, fname)
-        dest_path = Path(TESTING_DIR, fname[:-3] + "mp3")
+        dest_path = Path(self.testing_dir, fname[:-3] + "mp3")
         create_mp3(src_path, self.music_release.tracks[0], dest_path=dest_path)
         assertIsFile(dest_path)
 
@@ -89,7 +92,7 @@ class TestWithFiles(unittest.TestCase):
         #Create the file
         fname = "Test.wav"
         src_path = Path(SOURCE_DIR, fname)
-        dest_path = Path(TESTING_DIR, fname[:-3] + "mp4")
+        dest_path = Path(self.testing_dir, fname[:-3] + "mp4")
         cover = Path(SOURCE_DIR, "Cover.png")
         create_mp4(src_path, dest_path, str(cover))
         assertIsFile(dest_path)
@@ -97,7 +100,7 @@ class TestWithFiles(unittest.TestCase):
     def test_make_webp(self):
         #Create the file
         fname = "Cover.png"
-        dest_path = Path(TESTING_DIR, self.music_release.tracks[0]["cover"])
+        dest_path = Path(self.testing_dir, self.music_release.tracks[0]["cover"])
         cover = Path(SOURCE_DIR, "Cover.png")
         create_webp(cover, dest_path)
         assertIsFile(dest_path)
@@ -105,7 +108,7 @@ class TestWithFiles(unittest.TestCase):
     def test_zip_stems_from_content_dir(self):
         # Test using a content dir
         src = Path(SOURCE_DIR)
-        target = Path(TESTING_DIR, "Source.zip")
+        target = Path(self.testing_dir, "Source.zip")
         create_zip(src, target)
         assertIsFile(target)
         #Verify inner contents are as expected
@@ -121,7 +124,7 @@ class TestWithFiles(unittest.TestCase):
         
         for i, selection in enumerate(selections):
             src = Path(SOURCE_DIR)
-            target = Path(TESTING_DIR, f"Source-{i}.zip")
+            target = Path(self.testing_dir, f"Source-{i}.zip")
             create_zip(src, target, selection)
             assertIsFile(target)
             #Verify inner contents are as expected
@@ -133,7 +136,7 @@ class TestWithFiles(unittest.TestCase):
         # Test using CWD
         os.chdir(SOURCE_DIR)
         src = Path("./")
-        target = Path(TESTING_DIR, "Source.zip")
+        target = Path(self.testing_dir, "Source.zip")
         #Account for being in SOURCE_DIR when creating zip, while using target later for testing
         create_zip(src, f"../../{target}")
         #Change dir before possible failures
@@ -150,14 +153,14 @@ class TestWithFiles(unittest.TestCase):
         
         #Check for modification times after calling, files shouldn't be modified on first pass.
         mod_times = []
-        for file in Path(TESTING_DIR).rglob("*"):
+        for file in Path(self.testing_dir).rglob("*"):
             mod_times.append(os.stat(file).st_mtime)
         self.music_release.preprocessing(overwrite=False, normalize=True)
-        for i, file in enumerate(Path(TESTING_DIR).rglob("*")):
+        for i, file in enumerate(Path(self.testing_dir).rglob("*")):
             self.assertEqual(mod_times[i], os.stat(file).st_mtime)
         #Do it again, with overwrite on this time.
         self.music_release.preprocessing(overwrite=True, normalize=True)
-        for i, file in enumerate(Path(TESTING_DIR).rglob("*")):
+        for i, file in enumerate(Path(self.testing_dir).rglob("*")):
             if file.is_file():
                 self.assertNotEqual(mod_times[i], os.stat(file).st_mtime, f"{file} was the same even after overwrite")
 
@@ -165,13 +168,13 @@ class TestWithFiles(unittest.TestCase):
         '''Normalize audio files to -0.0dB'''        
         #Normalize source files
         for wav in Path(SOURCE_DIR).rglob("*.wav"):
-            normalize_track(wav, Path(TESTING_DIR, wav.relative_to(SOURCE_DIR)))
+            normalize_track(wav, Path(self.testing_dir, wav.relative_to(SOURCE_DIR)))
 
         #If there's no files to test then fail
-        target_paths = [p for p in Path(TESTING_DIR).rglob("*.wav")]
-        self.assertGreater(len(target_paths), 2, f"No .wav files in {TESTING_DIR}")
+        target_paths = [p for p in Path(self.testing_dir).rglob("*.wav")]
+        self.assertGreater(len(target_paths), 2, f"No .wav files in {self.testing_dir}")
         #Make sure they've been normalized
-        for wav in Path(TESTING_DIR).rglob("*.wav"):
+        for wav in Path(self.testing_dir).rglob("*.wav"):
             proc = subprocess.run(
                 [
                     'ffmpeg',
@@ -191,33 +194,31 @@ class TestWithFiles(unittest.TestCase):
 
 class TestPreprocessing(unittest.TestCase):
     #Prep & cleanup
-    @classmethod
-    def setUpClass(cls):
-        if not Path(TESTING_DIR).exists():
-            os.makedirs(TESTING_DIR)
-    
-    @classmethod
-    def tearDownClass(cls):
-        shutil.rmtree("test")
+    def setUp(self):
+        self.temp_dir = TemporaryDirectory()
+        self.testing_dir = self.temp_dir.name
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
 
     #Tests
     def test_preprocessing(self):
         #Init the release
-        MusicRelease(TEST_JSON_PATH, CONTENT_DIR, TESTING_DIR).preprocessing()
+        MusicRelease(TEST_JSON_PATH, CONTENT_DIR, self.testing_dir).preprocessing()
 
         files = ["Test.mp3", "Test.mp4", "Release [STEMS].zip", "Release [WAV].zip", "Release [MP3].zip", "test.webp"]
         for f in files:
-            assertIsFile(Path(TESTING_DIR, f))
+            assertIsFile(Path(self.testing_dir, f))
     
     def test_upload_music(self):
         '''Make sure the full flow of uploading music works'''
-        music_release = MusicRelease(TEST_JSON_PATH, CONTENT_DIR, TESTING_DIR)
+        music_release = MusicRelease(TEST_JSON_PATH, CONTENT_DIR, self.testing_dir)
         music_release.preprocessing()
         music_release.upload_music()
     
     @unittest.skip("Annoying to test frequently, most people won't care about this one")
     def test_ludoloon_studio(self):
-        music_release = MusicRelease(TEST_JSON_PATH, CONTENT_DIR, TESTING_DIR)
+        music_release = MusicRelease(TEST_JSON_PATH, CONTENT_DIR, self.testing_dir)
         music_release.preprocessing()
         services.lls.post(music_release)
         os.remove("/home/pootz/Documentos/Websites/LudoLoonStudio/ludoloon.studio/content/images/covers/test.webp")
