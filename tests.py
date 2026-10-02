@@ -32,11 +32,6 @@ TEST_TITLE = "Testing a different name"
 # Account for Missing cover image
 # Source dir vs no specified Source dir
 
-#Helpers
-def assertIsFile(path):
-    if not Path(path).resolve().is_file():
-        raise AssertionError("File does not exist: %s" % str(path))
-
 #Move to class itself
 class TestInit(unittest.TestCase):
     def setUp(self):
@@ -78,7 +73,7 @@ class TestWithFiles(unittest.TestCase):
         src_path = Path(SOURCE_DIR, fname)
         dest_path = Path(self.testing_dir, fname[:-3] + "mp3")
         create_mp3(src_path, self.music_release.tracks[0], dest_path=dest_path)
-        assertIsFile(dest_path)
+        self.assertTrue(dest_path.is_file())
 
         #Test tag data
         audio = EasyID3(dest_path)
@@ -95,7 +90,7 @@ class TestWithFiles(unittest.TestCase):
         dest_path = Path(self.testing_dir, fname[:-3] + "mp4")
         cover = Path(SOURCE_DIR, "Cover.png")
         create_mp4(src_path, dest_path, str(cover))
-        assertIsFile(dest_path)
+        self.assertTrue(dest_path.is_file())
 
     def test_make_webp(self):
         #Create the file
@@ -103,14 +98,14 @@ class TestWithFiles(unittest.TestCase):
         dest_path = Path(self.testing_dir, self.music_release.tracks[0]["cover"])
         cover = Path(SOURCE_DIR, "Cover.png")
         create_webp(cover, dest_path)
-        assertIsFile(dest_path)
+        self.assertTrue(dest_path.is_file())
 
     def test_zip_stems_from_content_dir(self):
         # Test using a content dir
         src = Path(SOURCE_DIR)
         target = Path(self.testing_dir, "Source.zip")
         create_zip(src, target)
-        assertIsFile(target)
+        self.assertTrue(target.is_file())
         #Verify inner contents are as expected
         with zipfile.ZipFile(target) as z:
             self.assertEqual(z.namelist(), [str(path.relative_to(src)) for path in Path(src).rglob("*.wav")])
@@ -126,7 +121,7 @@ class TestWithFiles(unittest.TestCase):
             src = Path(SOURCE_DIR)
             target = Path(self.testing_dir, f"Source-{i}.zip")
             create_zip(src, target, selection)
-            assertIsFile(target)
+            self.assertTrue(target.is_file())
             #Verify inner contents are as expected
             with zipfile.ZipFile(target) as z:
                 self.assertEqual(z.namelist(), [str(path.relative_to(SOURCE_DIR)) for path in Path(SOURCE_DIR).glob(selection)])
@@ -141,7 +136,7 @@ class TestWithFiles(unittest.TestCase):
         create_zip(src, f"../../{target}")
         #Change dir before possible failures
         os.chdir(f"../../")
-        assertIsFile(target)
+        self.assertTrue(target.is_file())
         #Verify inner contents are as expected
         with zipfile.ZipFile(target) as z:
             self.assertEqual(z.namelist(), [str(path.relative_to(SOURCE_DIR)) for path in Path(SOURCE_DIR).rglob("*.wav")])
@@ -208,7 +203,7 @@ class TestPreprocessing(unittest.TestCase):
 
         files = ["Test.mp3", "Test.mp4", "Release [STEMS].zip", "Release [WAV].zip", "Release [MP3].zip", "test.webp"]
         for f in files:
-            assertIsFile(Path(self.testing_dir, f))
+            self.assertTrue(Path(self.testing_dir, f).is_file())
     
     def test_upload_music(self):
         '''Make sure the full flow of uploading music works'''
