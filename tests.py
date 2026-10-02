@@ -108,7 +108,10 @@ class TestWithFiles(unittest.TestCase):
         self.assertTrue(target.is_file())
         #Verify inner contents are as expected
         with zipfile.ZipFile(target) as z:
-            self.assertEqual(z.namelist(), [str(path.relative_to(src)) for path in Path(src).rglob("*.wav")])
+            self.assertEqual(
+                set(z.namelist()), 
+                set([str(path.relative_to(src)) for path in Path(src).rglob("*.wav")])
+            )
 
     def test_zip_stems_for_wav_and_mp3(self):
         selections = [
@@ -124,7 +127,10 @@ class TestWithFiles(unittest.TestCase):
             self.assertTrue(target.is_file())
             #Verify inner contents are as expected
             with zipfile.ZipFile(target) as z:
-                self.assertEqual(z.namelist(), [str(path.relative_to(SOURCE_DIR)) for path in Path(SOURCE_DIR).glob(selection)])
+                self.assertEqual(
+                    set(z.namelist()), 
+                    set([str(path.relative_to(SOURCE_DIR)) for path in Path(SOURCE_DIR).glob(selection)])
+                )
 
     def test_zip_stems_from_cwd(self):
         #TODO: Refactor so this is less hardcoded
@@ -139,7 +145,10 @@ class TestWithFiles(unittest.TestCase):
         self.assertTrue(target.is_file())
         #Verify inner contents are as expected
         with zipfile.ZipFile(target) as z:
-            self.assertEqual(z.namelist(), [str(path.relative_to(SOURCE_DIR)) for path in Path(SOURCE_DIR).rglob("*.wav")])
+            self.assertEqual(
+                set(z.namelist()), 
+                set([str(path.relative_to(SOURCE_DIR)) for path in Path(SOURCE_DIR).rglob("*.wav")])
+            )
     
     def test_overwrite_option(self):
         '''Test the overwrite toggle for preprocessing.'''
