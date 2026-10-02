@@ -171,8 +171,9 @@ class MusicRelease():
                 for wav in Path(self.output_dir).glob("**/*-NORMALIZED.wav"):
                     os.remove(wav)
             for wav in Path(self.source_dir).glob("**/*.wav"):
-                if overwrite or not Path(self.output_dir, wav).exists():
-                    normalize_track(wav, Path(self.output_dir, wav))
+                dest = Path(self.output_dir, wav)
+                if not dest.exists():
+                    normalize_track(wav, dest)
 
         #Iterate over each track in the pack
         for (i, track) in enumerate(self.tracks):
@@ -384,8 +385,7 @@ def normalize_track(source, dest_path=None):
         if max_volume != 0.0:
             logger.debug(f"Normalizing: {source}")
             #Create paths if needed
-            if not Path(dest_path).parent.exists():
-                    os.makedirs(Path(dest_path).parent)
+            Path(dest_path).mkdir(parents=True, exist_ok=True)
             proc = subprocess.run(
                                 [
                                     'ffmpeg',
