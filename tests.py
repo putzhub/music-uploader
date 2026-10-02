@@ -10,6 +10,7 @@ import re
 #Specific imports
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from contextlib import contextmanager
 
 #3rd Party
 from mutagen.easyid3 import EasyID3
@@ -31,6 +32,18 @@ TEST_TITLE = "Testing a different name"
 # Test does not cover albums yet
 # Account for Missing cover image
 # Source dir vs no specified Source dir
+
+#Helper functions
+@contextmanager
+def working_directory(path):
+    '''Change the working directory gracefully and clean up properly'''
+    old = Path.cwd()
+    os.chdir(path)
+    logger.debug(f'Changing working directory to: {os.getcwd()}')
+    try:
+        yield
+    finally:
+        os.chdir(old)
 
 #Move to class itself
 class TestInit(unittest.TestCase):
@@ -133,22 +146,19 @@ class TestWithFiles(unittest.TestCase):
                 )
 
     def test_zip_stems_from_cwd(self):
-        #TODO: Refactor so this is less hardcoded
         # Test using CWD
-        os.chdir(SOURCE_DIR)
-        src = Path("./")
-        target = Path(self.testing_dir, "Source.zip")
-        #Account for being in SOURCE_DIR when creating zip, while using target later for testing
-        create_zip(src, f"../../{target}")
-        #Change dir before possible failures
-        os.chdir(f"../../")
-        self.assertTrue(target.is_file())
-        #Verify inner contents are as expected
-        with zipfile.ZipFile(target) as z:
-            self.assertEqual(
-                set(z.namelist()), 
-                set([str(path.relative_to(SOURCE_DIR)) for path in Path(SOURCE_DIR).rglob("*.wav")])
-            )
+        with working_directory(SOURCE_DIR):
+            src = Path(".")
+            target = Path(self.testing_dir, "Source.zip")
+            create_zip(src, target)
+            #Change dir before possible failures
+            self.assertTrue(target.is_file())
+            #Verify inner contents are as expected
+            with zipfile.ZipFile(target) as z:
+                self.assertEqual(
+                    set(z.namelist()), 
+                    set([str(path.relative_to(src)) for path in Path(src).rglob("*.wav")])
+                )
     
     def test_overwrite_option(self):
         '''Test the overwrite toggle for preprocessing.'''
