@@ -20,6 +20,8 @@ CONTENT_DIR = "tests/"
 SOURCE_DIR = "tests/Source"
 TEST_JSON_PATH = "tests/release_example.json"
 TEST_TITLE = "Testing a different name"
+#Get the file names in the Source directory
+TEST_FILE_PATHS = [path.relative_to(SOURCE_DIR) for path in Path(SOURCE_DIR).rglob("*")]
 
 #Start the logger
 #logging.basicConfig(level=logging.DEBUG)
@@ -123,26 +125,27 @@ class TestWithFiles(unittest.TestCase):
         with zipfile.ZipFile(target) as z:
             self.assertEqual(
                 set(z.namelist()), 
-                set([str(path.relative_to(src)) for path in Path(src).rglob("*.wav")])
+                set([str(path) for path in TEST_FILE_PATHS if "wav" in str(path) ])
             )
 
     def test_zip_stems_for_wav_and_mp3(self):
         selections = [
-                        "*.wav",
-                        "*.mp3",
-                        "**/*.wav"
+                        ("*.wav", "Test.wav"),
+                        ("*.mp3", "mp3"),
+                        ("**/*.wav", "wav")
                     ]
         
         for i, selection in enumerate(selections):
             src = Path(SOURCE_DIR)
             target = Path(self.testing_dir, f"Source-{i}.zip")
-            create_zip(src, target, selection)
+            create_zip(src, target, selection[0])
             self.assertTrue(target.is_file())
             #Verify inner contents are as expected
             with zipfile.ZipFile(target) as z:
+                logger.debug(selection[1])
                 self.assertEqual(
                     set(z.namelist()), 
-                    set([str(path.relative_to(SOURCE_DIR)) for path in Path(SOURCE_DIR).glob(selection)])
+                    set([str(path) for path in TEST_FILE_PATHS if selection[1] in str(path) ])
                 )
 
     def test_zip_stems_from_cwd(self):
@@ -157,7 +160,7 @@ class TestWithFiles(unittest.TestCase):
             with zipfile.ZipFile(target) as z:
                 self.assertEqual(
                     set(z.namelist()), 
-                    set([str(path.relative_to(src)) for path in Path(src).rglob("*.wav")])
+                    set([str(path) for path in TEST_FILE_PATHS if "wav" in str(path) ])
                 )
     
     def test_overwrite_option(self):
